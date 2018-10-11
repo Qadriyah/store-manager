@@ -135,26 +135,35 @@ body {
   margin-top: 30px;
 }
 
-.cart {
+.content {
   float: left;
   margin: 5px;
   padding: 5px;
-  width: calc(100% - 180px);
-  width: -webkit-calc(100% - 180px);
-  width: -moz-calc(100% - 180px);
+  width: calc(100% - 155px);
+  width: -webkit-calc(100% - 155px);
+  width: -moz-calc(100% - 155px);
   height: 100%;
+  border-radius: 3px;
+  margin-left: 155px;
+  box-sizing: border-box;
+}
+
+.cart {
+  float: left;
+  width: 98%;
+  height: 100%;
+  padding: 5px;
   border: solid thin grey;
   text-align: center;
   border-radius: 3px;
   background-color: rgb(128, 128, 128, 0.05);
-  margin-left: 155px;
 }
 
 .cart h2 {
   margin-bottom: 10px;
 }
 
-.cart select {
+.content select {
   border: solid thin maroon;
   border-radius: 4px;
   padding: 5px;
@@ -217,12 +226,18 @@ body {
 .tooltip {
   position: relative;
   display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip-one {
+  position: relative;
+  cursor: pointer;
 }
 
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 80px;
-  background-color: black;
+  background-color: rgb(130, 7, 146);
   color: #fff;
   text-align: center;
   font-size: normal;
@@ -235,8 +250,43 @@ body {
   z-index: 1;
 }
 
+.tooltip-one .tooltipdesc {
+  visibility: hidden;
+  width: 150px;
+  background-color: rgb(130, 7, 146);
+  color: #fff;
+  text-align: left;
+  font-size: normal;
+  font-weight: normal;
+  border-radius: 4px;
+  padding: 10px;
+  position: absolute;
+  top: -27px;
+  left: 80px;
+}
+
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+.tooltip-one:hover .tooltipdesc {
+  visibility: visible;
+}
+
+.product-qty {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.product-list {
+  float: left;
+  width: 98%;
+  height: 100%;
+  padding: 5px;
+  border: solid thin grey;
+  text-align: center;
+  border-radius: 3px;
+  background-color: rgb(128, 128, 128, 0.05);
 }
 
 .landing {
@@ -392,7 +442,7 @@ input[type='date'] {
     display: block;
   }
 
-  .cart {
+  .content {
     margin-left: 5px;
     width: 95%;
   }
@@ -414,6 +464,10 @@ input[type='date'] {
   .login-form {
     width: 95%;
   }
+
+  .content {
+    width: 95%;
+  }
 }
 
 @media screen and (max-width: 320px) {
@@ -426,7 +480,7 @@ input[type='date'] {
     width: 320px;
   }
 
-  .cart {
+  .content {
     width: 320px;
   }
 }
