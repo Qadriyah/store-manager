@@ -180,8 +180,12 @@ body {
 .cart-items > thead > tr > th,
 .cart-items > tbody > tr > td {
   padding: 5px;
-  border-top: solid thin gray;
-  border-bottom: solid thin grey;
+  border-top: solid thin rgb(168, 167, 167);
+  border-bottom: solid thin rgb(168, 167, 167);
+}
+
+.striped-table tr:nth-child(even) {
+  background-color: white;
 }
 
 .cart-items > thead > tr {
@@ -298,6 +302,16 @@ input[type='password'] {
   margin-bottom: 20px;
   box-sizing: border-box;
   font-size: 18px;
+}
+
+input[type='date'] {
+  border: solid thin maroon;
+  border-radius: 4px;
+  padding: 6px;
+  box-sizing: border-box;
+  font-size: 12px;
+  margin-bottom: 3px;
+  width: 120px;
 }
 
 .wide-btn {
