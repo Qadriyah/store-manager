@@ -365,7 +365,7 @@ body {
   padding: 20px;
   margin-bottom: 20px;
   float: left;
-  height: 350px;
+  height: 420px;
   box-sizing: border-box;
   background-color: white;
   box-shadow: -1px 4px 26px 11px rgba(0, 0, 0, 0.75);
@@ -373,9 +373,13 @@ body {
   -moz-box-shadow: -1px 4px 26px 11px rgba(0, 0, 0, 0.75);
 }
 
-.login-form h1 {
+.login-form h1, h2 {
   text-align: center;
   margin: 20px;
+}
+
+.login-form p {
+  margin-top: 20px;
 }
 
 input[type='text'],
@@ -427,6 +431,41 @@ input[type='date'] {
 .btn-sm:hover {
   cursor: pointer;
   background-color: rgb(130, 7, 146);
+}
+
+.btn-container {
+  display: flex;
+  width: 100%;
+}
+
+.btn-medium {
+  flex: 1;
+  padding: 10px;
+  border: solid thin rgb(78, 37, 173);
+  border-radius: 4px;
+  background-color: rgb(78, 37, 173);
+  color: white;
+  font-size: 16px;
+  float: left;
+  text-align: center;
+}
+
+.btn-medium:hover {
+  cursor: pointer;
+  background-color: rgb(130, 7, 146);
+}
+
+#form1,
+#form2 {
+  margin-top: 50px;
+}
+
+#form2 {
+  margin-left: 5px;
+}
+
+#admin {
+  display: none;
 }
 
 /*************************************************
