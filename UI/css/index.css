@@ -289,6 +289,41 @@ body {
   background-color: rgb(128, 128, 128, 0.05);
 }
 
+.inner-content {
+  float: left;
+  width: 40%;
+  height: 100%;
+  padding: 10px;
+  border: solid thin grey;
+  text-align: center;
+  border-radius: 3px;
+  margin-right: 5px;
+  background-color: rgb(128, 128, 128, 0.05);
+}
+
+.inner-content h2 {
+  margin-bottom: 20px;
+}
+
+.inner-content label {
+  text-align: left;
+}
+
+.inner-content-one {
+  float: left;
+  width: 50%;
+  height: 100%;
+  padding: 10px;
+  border: solid thin grey;
+  text-align: center;
+  border-radius: 3px;
+  background-color: rgb(128, 128, 128, 0.05);
+}
+
+.inner-content-one h2 {
+  margin-bottom: 20px;
+}
+
 .landing {
   position: fixed;
   height: 100vh;
@@ -428,6 +463,14 @@ input[type='date'] {
   }
 }
 
+@media screen and (max-width: 750px) {
+  .inner-content,
+  .inner-content-one {
+    width: 95%;
+    margin-bottom: 5px;
+  }
+}
+
 @media screen and (max-width: 615px) {
   .side-menu {
     width: 0;
@@ -467,6 +510,12 @@ input[type='date'] {
 
   .content {
     width: 95%;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .sub-menu-item {
+    margin-right: 10px;
   }
 }
 
