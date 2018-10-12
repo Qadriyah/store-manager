@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin | Sales Report</title>
+    <title>Admin | Stock</title>
     <link rel="stylesheet" href="../css/index.css">
     <script src="../js/index.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
@@ -63,53 +63,62 @@
             </div>
         </div>
         <div class="content">
-            <div class="cart">
-                <h2>Sales Records</h2>
+            <div class="inner-content">
+                <h2>New Stock Item</h2>
                 <form action="#">
                     <select name="attendant">
-                        <option value="selected">All Attendants</option>
-                        <option value="1">Miria</option>
-                        <option value="2">Annah</option>
+                        <option value="selected">Select Product...</option>
+                        <option value="1">Sugar</option>
+                        <option value="2">Milk</option>
+                        <option value="3">Rice</option>
+                        <option value="4">Flour</option>
+                        <option value="5">Bread</option>
                     </select>
-                    <input type="date" name="from-date" id="from-date" />
-                    <input type="date" name="to-date" id="to-date" />
-                    <input type="submit" name="submit" value="Ok" class="btn-sm" />
+                    <input type="text" name="qty" placeholder="Quantity..." />
+                    <input type="submit" name="submit" value="Submit" class="wide-btn" />
                 </form>
+            </div>
+            <div class="inner-content-one">
+                <h2>Stock Levels</h2>
                 <table class="cart-items striped-table">
                     <thead>
                         <tr>
-                            <th>Sales Date</th>
+                            <th>#</th>
                             <th>Product</th>
-                            <th class="align-center">Qty</th>
-                            <th class="align-right">Unit Price</th>
-                            <th class="align-right">Line Total</th>
+                            <th class="align-center">Quantity</th>
+                            <th class="align-center">Min Quantity</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>12/10/2018</td>
-                            <td>Rice</td>
-                            <td class="align-center">5</td>
-                            <td class="align-right">10,000</td>
-                            <td class="align-right">50,000</td>
-                        </tr>
-                        <tr>
-                            <td>12/10/2018</td>
+                            <td>1</td>
                             <td>Sugar</td>
-                            <td class="align-center">1</td>
-                            <td class="align-right">6,000</td>
-                            <td class="align-right">6,000</td>
+                            <td class="align-center">100</td>
+                            <td class="align-center">10</td>
                         </tr>
                         <tr>
-                            <td>12/10/2018</td>
-                            <td>Bread</td>
-                            <td class="align-center">1</td>
-                            <td class="align-right">4,500</td>
-                            <td class="align-right">4,500</td>
+                            <td>2</td>
+                            <td>Milk</td>
+                            <td class="align-center">400</td>
+                            <td class="align-center">25</td>
                         </tr>
-                        <tr class="totals">
-                            <td colspan="4" class="align-right">Total</td>
-                            <td class="align-right">65,000</td>
+                        <tr>
+                            <td>3</td>
+                            <td>Bread</td>
+                            <td class="align-center">50</td>
+                            <td class="align-center">5</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Flour</td>
+                            <td class="align-center">150</td>
+                            <td class="align-center">10</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Rice</td>
+                            <td class="align-center">90</td>
+                            <td class="align-center">15</td>
                         </tr>
                     </tbody>
                 </table>

@@ -309,6 +309,11 @@ body {
   text-align: left;
 }
 
+.inner-content select {
+  width: 100%;
+  padding: 10px;
+}
+
 .inner-content-one {
   float: left;
   width: 50%;
