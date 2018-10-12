@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin | Dashboard</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/index.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="header">
+        <a href="#">
+            <img src="../media/logo1.png" alt="" class="logo">
+        </a>
+    </div>
+    <div class="container">
+        <div class="side-menu" id="drawer">
+            <a href="admin-dashboard.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-list-alt"></i> Product
+                </div>
+            </a>
+            <a href="stock.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-hdd"></i> Stock
+                </div>
+            </a>
+            <a href="sales-records.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-archive"></i> Sales
+                </div>
+            </a>
+            <a href="settings.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+            </a>
+            <a href="../index.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </a>
+        </div>
+        <div class="sub-menu-container">
+            <div class="sub-menu">
+                <div class="sub-menu-item">
+                    <a href="admin-dashboard.html">New Product</a>
+                </div>
+            </div>
+            <div class="active-user">
+                <i class="fas fa-user-circle"></i> Baker Sekitoleko
+            </div>
+            <div class="toggle-open" id="open">
+                <i class="fas fa-bars" onclick="openDrawer()"></i>
+            </div>
+            <div class="toggle-close" id="close">
+                <i class="fas fa-window-close" onclick="closeDrawer()"></i>
+            </div>
+        </div>
+        <div class="content">
+            <div class="inner-content">
+                <h2>New Attendant</h2>
+                <form action="#">
+                    <label for="name">
+                        <h4>Full Name</h4>
+                    </label>
+                    <input type="text" name="name" placeholder="Full Name...">
+                    <label for="username">
+                        <h4>Username</h4>
+                    </label>
+                    <input type="text" name="username" placeholder="Username...">
+                    <label for="password">
+                        <h4>Password</h4>
+                    </label>
+                    <input type="text" name="password" placeholder="Password...">
+                    <label for="password1">
+                        <h4>Re-enter Password</h4>
+                    </label>
+                    <input type="text" name="password1" placeholder="Re-enter Password...">
+                    <input type="submit" name="submit" value="Submit" class="wide-btn">
+                </form>
+            </div>
+            <div class="inner-content-one">
+                <h2>System Users</h2>
+                <table class="cart-items striped-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Access Level</th>
+                            <th>Date Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Baker Sekitoleko</td>
+                            <td>Baker</td>
+                            <td>Admin</td>
+                            <td>12/10/2018</td>
+                            <td class="align-center">
+                                <i class="fas fa-trash-alt trash tooltip">
+                                    <span class="tooltiptext">Delete</span>
+                                </i>
+                                <i class="fas fa-edit tooltip">
+                                    <span class="tooltiptext">Edit</span>
+                                </i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Aijuka Miria</td>
+                            <td>Miria</td>
+                            <td>Attendant</td>
+                            <td>12/09/2018</td>
+                            <td class="align-center">
+                                <i class="fas fa-trash-alt trash tooltip">
+                                    <span class="tooltiptext">Delete</span>
+                                </i>
+                                <i class="fas fa-edit tooltip">
+                                    <span class="tooltiptext">Edit</span>
+                                </i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Annah Kanyesigye</td>
+                            <td>Annah</td>
+                            <td>Attendant</td>
+                            <td>25/05/2018</td>
+                            <td class="align-center">
+                                <i class="fas fa-trash-alt trash tooltip">
+                                    <span class="tooltiptext">Delete</span>
+                                </i>
+                                <i class="fas fa-edit tooltip">
+                                    <span class="tooltiptext">Edit</span>
+                                </i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
