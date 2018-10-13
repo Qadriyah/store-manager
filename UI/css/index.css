@@ -378,7 +378,8 @@ body {
   -moz-box-shadow: -1px 4px 26px 11px rgba(0, 0, 0, 0.75);
 }
 
-.login-form h1, h2 {
+.login-form h1,
+h2 {
   text-align: center;
   margin: 20px;
 }
@@ -473,6 +474,22 @@ input[type='date'] {
   display: none;
 }
 
+.profile {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  float: left;
+  width: 95%;
+  background-color: white;
+  grid-gap: 10px;
+  padding: 10px;
+}
+
+.profile-item {
+  padding: 50px;
+  font-size: 28px;
+  background-color: rgb(128, 128, 128, 0.05);
+}
+
 /*************************************************
                 Media Queries
 **************************************************/
@@ -504,6 +521,11 @@ input[type='date'] {
     right: 5px;
     z-index: 2;
     color: white;
+  }
+
+  .profile-item {
+    padding: 30px;
+    font-size: 20px;
   }
 }
 
@@ -554,6 +576,11 @@ input[type='date'] {
 
   .content {
     width: 95%;
+  }
+
+  .profile-item {
+    padding: 15px;
+    font-size: 16px;
   }
 }
 
