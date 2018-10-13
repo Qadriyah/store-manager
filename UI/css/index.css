@@ -488,6 +488,7 @@ input[type='date'] {
   padding: 50px;
   font-size: 28px;
   background-color: rgb(128, 128, 128, 0.05);
+  border-radius: 8px;
 }
 
 /*************************************************
