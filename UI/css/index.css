@@ -157,6 +157,8 @@ body {
   text-align: center;
   border-radius: 3px;
   background-color: rgb(128, 128, 128, 0.05);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .cart h2 {
@@ -299,6 +301,8 @@ body {
   border-radius: 3px;
   margin-right: 5px;
   background-color: rgb(128, 128, 128, 0.05);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .inner-content h2 {
@@ -323,6 +327,8 @@ body {
   text-align: center;
   border-radius: 3px;
   background-color: rgb(128, 128, 128, 0.05);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .inner-content-one h2 {
@@ -530,14 +536,6 @@ input[type='date'] {
   }
 }
 
-@media screen and (max-width: 750px) {
-  .inner-content,
-  .inner-content-one {
-    width: 95%;
-    margin-bottom: 5px;
-  }
-}
-
 @media screen and (max-width: 615px) {
   .side-menu {
     width: 0;
@@ -585,9 +583,107 @@ input[type='date'] {
   }
 }
 
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 1024px) {
+  .inner-content,
+  .inner-content-one {
+    width: 92%;
+    margin-bottom: 5px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .inner-content,
+  .inner-content-one {
+    width: 92%;
+    margin-bottom: 5px;
+  }
+}
+
+@media screen and (max-width: 414px) {
+  body {
+    font-size: 13px;
+  }
+
+  .inner-content,
+  .inner-content-one {
+    width: 97%;
+  }
+
+  .content .cart select,
+  input[type='date'],
+  input[type='submit'] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .content .inner-content #aform input[type='text'],
+  input[type='password'],
+  input[type='submit'] {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .content .inner-content-one #table1 {
+    font-size: 8px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  body {
+    font-size: 13px;
+  }
+
+  .inner-content,
+  .inner-content-one {
+    width: 97%;
+  }
+
+  .content .cart select,
+  input[type='date'],
+  input[type='submit'] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .content .inner-content #aform input[type='text'],
+  input[type='password'],
+  input[type='submit'] {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .content .inner-content-one #table1 {
+    font-size: 8px;
+  }
+}
+
+@media screen and (max-width: 360px) {
   .sub-menu-item {
     margin-right: 10px;
+  }
+
+  .inner-content,
+  .inner-content-one {
+    width: 95%;
+  }
+
+  .content .cart form select,
+  input[type='date'],
+  input[type='submit'],
+  input[type='text'] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .content .inner-content #aform input[type='text'],
+  input[type='password'],
+  input[type='submit'] {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .content .inner-content-one #table1 {
+    font-size: 8px;
   }
 }
 
@@ -602,6 +698,33 @@ input[type='date'] {
   }
 
   .content {
-    width: 320px;
+    width: 95%;
+  }
+
+  .content .cart select,
+  input[type='date'],
+  input[type='submit'] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .content .inner-content #aform input[type='text'],
+  input[type='password'],
+  input[type='submit'] {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .content .inner-content-one #table1 {
+    font-size: 8px;
+  }
+
+  .inner-content,
+  .inner-content-one {
+    width: 95%;
+  }
+
+  body {
+    font-size: 11px;
   }
 }
