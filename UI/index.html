@@ -18,16 +18,18 @@
                     This application is meant for use in a single store</h1>
             </div>
             <div class="login-form">
-                <h1>Attendant</h1>
-                <h2>Login</h2>
-                <form onsubmit="onSubmit()" action="attendant/attendant-dashboard.html">
-                    <label for="name"><h4>Username:</h4></label>
+                <h1>Login</h1>
+                <form id="myform">
+                    <label for="name">
+                        <h4>Username:</h4>
+                    </label>
                     <input type="text" name="username" id="name" placeholder="Username..." />
-                    <label for="name"><h4>Password:</h4></label>
+                    <label for="name">
+                        <h4>Password:</h4>
+                    </label>
                     <input type="password" name="password" id="password" placeholder="Password..." />
                     <input type="submit" value="Login" class="wide-btn">
                 </form>
-                <p>Admin <a href="admin/login.html">Login</a></p>
             </div>
         </div>
     </div>
