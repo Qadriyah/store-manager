@@ -34,6 +34,22 @@ The project has no tests yet
 - [gh-pages](https://qadriyah.github.io/store-manager/UI/)
 - [No documentation yet]()
 
+## Usage
+
+### Default admin login details
+
+```
+Username: admin
+Password: admin
+```
+
+### Default attendant login details
+
+```
+Username:
+Password:
+```
+
 ## Author
 
 ```
