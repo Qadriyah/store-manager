@@ -22,6 +22,10 @@ The project has no tests yet
 * CSS - Used to describe how html elements are displayed
 * Javascript - The only true language for the web
 
+## Links
+* [gh-pages](https://qadriyah.github.io/store-manager/UI/)
+* [No documentation yet]
+
 ## Author
 ```
 Baker Sekitoleko
