@@ -6,11 +6,13 @@ These instrauctions will get you a copy of the project up and runnig on your loc
 
 ### Prerequisites
 You need `git` to get started.
-Download and install a copy of [git](https://git-scm.com/downloads) for your operating system
+Download and install a copy of [ git ](https://git-scm.com/downloads) for your operating system
 
 ### Installation
 Run the following command from the terminal to install the project on your local machine
-```git clone https://github.com/Qadriyah/store-manager.git```
+```
+git clone https://github.com/Qadriyah/store-manager.git
+```
 
 ## Runing the tests
 The project has no tests yet
@@ -21,9 +23,11 @@ The project has no tests yet
 * Javascript - The only true language for the web
 
 ## Author
-```Baker Sekitoleko```
+```
+Baker Sekitoleko
+```
 
 ## Acknowledgements
 * [Andela Uganda](https://andela.com/)
-* [w3schools] (https://www.w3schools.com/css/css_intro.asp)
+* [w3schools](https://www.w3schools.com/css/css_intro.asp)
 * All the bootcampers whose advise was so helpful
