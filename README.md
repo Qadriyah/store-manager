@@ -24,7 +24,7 @@ The project has no tests yet
 
 ## Links
 * [gh-pages](https://qadriyah.github.io/store-manager/UI/)
-* [No documentation yet]
+* [No documentation yet]()
 
 ## Author
 ```
