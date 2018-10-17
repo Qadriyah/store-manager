@@ -17,11 +17,19 @@ window.onload = () => {
   const close = document.getElementById('close');
   if (open && close) {
     open.addEventListener('click', event => {
-      openDrawer(1);
+      openDrawer({
+        style: 'width: 150px; position: absolute; top: 10px; z-index: 1;',
+        open: 'none',
+        close: 'block'
+      });
     });
 
     close.addEventListener('click', event => {
-      openDrawer(2);
+      openDrawer({
+        style: 'width: 0;',
+        open: 'block',
+        close: 'none'
+      });
     });
   }
 };
@@ -30,26 +38,23 @@ window.addEventListener('resize', () => {
   const drawer = document.getElementById('drawer');
   if (drawer) {
     if (this.window.innerWidth > 615) {
-      openDrawer(3);
+      openDrawer({
+        style: 'width: 150px;',
+        open: 'none',
+        close: 'none'
+      });
     } else {
-      openDrawer(2);
+      openDrawer({
+        style: 'width: 0;',
+        open: 'block',
+        close: 'none'
+      });
     }
   }
 });
 
-openDrawer = selectedOption => {
-  if (selectedOption === 1) {
-    document.getElementById('drawer').style =
-      'width: 150px; position: absolute; top: 10px; z-index: 1;';
-    document.getElementById('open').style.display = 'none';
-    document.getElementById('close').style.display = 'block';
-  } else if (selectedOption === 2) {
-    document.getElementById('drawer').style = 'width: 0;';
-    document.getElementById('close').style.display = 'none';
-    document.getElementById('open').style.display = 'block';
-  } else {
-    document.getElementById('drawer').style = 'width: 150px;';
-    document.getElementById('close').style.display = 'none';
-    document.getElementById('open').style.display = 'none';
-  }
+openDrawer = options => {
+  document.getElementById('drawer').style = options.style;
+  document.getElementById('open').style.display = options.open;
+  document.getElementById('close').style.display = options.close;
 };
