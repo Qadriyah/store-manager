@@ -14,8 +14,17 @@ validator = validate_product.ValidateProduct()
 @product.route("/products", methods=["POST"])
 def add_product():
     """Add product route"""
+
     if request.method == "POST":
         result = validator.validate_input_data(request.form)
         if not result["is_true"]:
             return jsonify(result["errors"]), 400
         return controller.add_product(request.form)
+
+
+@product.route("/products", methods=["GET"])
+def get_all_products():
+    """Gets products route"""
+
+    if request.method == "GET":
+        return controller.get_all_products()

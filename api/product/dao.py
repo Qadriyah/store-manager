@@ -41,7 +41,21 @@ class ProductController:
         Returns:
             list: A list of products
         """
-        pass
+        response = {}
+        if len(self.product_list) == 0:
+            response.update({"msg": "There are no products"})
+            self.status_code = 404
+        else:
+            items = [
+                dict(
+                    id=product.id,
+                    name=product.name,
+                    price=product.price,
+                    created_at=product.created_at) for product in self.product_list
+            ]
+            response.update({"items": items})
+            self.status_code = 200
+        return jsonify(response), self.status_code
 
     def is_product_exists(self, product_name):
         """
@@ -54,9 +68,11 @@ class ProductController:
             bool: True if exists, False otherwise
         """
         found = False
-        if len(self.product_list) > 0:
-            for product in self.product_list:
-                if product.name == product_name:
-                    found = True
-                    break
+        if len(self.product_list) == 0:
+            return found
+
+        for product in self.product_list:
+            if product.name == product_name:
+                found = True
+                break
         return found

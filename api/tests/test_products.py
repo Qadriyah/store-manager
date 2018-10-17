@@ -45,3 +45,15 @@ class TestProducts(TestCase):
         with app.app_context():
             self.assertEqual(json.loads(self.controller.add_product(self.new_product)[
                 0].get_data().decode("utf-8"))["msg"], "Product added successfully")
+
+    def test_get_all_products(self):
+        """Tests if products are fetched from the database"""
+        with app.app_context():
+            res = self.controller.get_all_products()
+            self.assertGreater(len(json.loads(
+                res[0].get_data().decode())["items"]), 0)
+
+    def test_get_all_products_route(self):
+        res = self.client.get("/api/v1/products")
+        self.assertGreater(len(json.loads(
+                res.get_data().decode())["items"]), 0)
