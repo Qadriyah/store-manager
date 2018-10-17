@@ -9,7 +9,6 @@ env:
 #  command to install dependences
 install:
   - 'pip install -r requirements.txt'
-  - 'pip install codecov'
 
 #  command to run tests
 script:
