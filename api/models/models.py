@@ -1,3 +1,7 @@
-class Product:
+from api.models import product, sale, stock
+
+
+class Models:
     def __init__(self):
-        pass
+        self.products = []
+        self.sales = []
