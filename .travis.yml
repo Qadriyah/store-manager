@@ -13,7 +13,7 @@ install:
 
 #  command to run tests
 script:
-  - pytest --cov=api/tests/
+  - python -m pytest --cov=api/tests/
 
 after_success:
   - coveralls
