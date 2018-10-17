@@ -17,11 +17,11 @@ window.onload = () => {
   const close = document.getElementById('close');
   if (open && close) {
     open.addEventListener('click', event => {
-      openDrawer();
+      openDrawer(1);
     });
 
     close.addEventListener('click', event => {
-      closeDrawer();
+      openDrawer(2);
     });
   }
 };
@@ -41,15 +41,15 @@ window.addEventListener('resize', () => {
   }
 });
 
-openDrawer = () => {
-  document.getElementById('drawer').style =
-    'width: 150px; position: absolute; top: 10px; z-index: 1;';
-  document.getElementById('open').style.display = 'none';
-  document.getElementById('close').style.display = 'block';
-};
-
-closeDrawer = () => {
-  document.getElementById('drawer').style = 'width: 0;';
-  document.getElementById('close').style.display = 'none';
-  document.getElementById('open').style.display = 'block';
+openDrawer = selectedOption => {
+  if (selectedOption === 1) {
+    document.getElementById('drawer').style =
+      'width: 150px; position: absolute; top: 10px; z-index: 1;';
+    document.getElementById('open').style.display = 'none';
+    document.getElementById('close').style.display = 'block';
+  } else {
+    document.getElementById('drawer').style = 'width: 0;';
+    document.getElementById('close').style.display = 'none';
+    document.getElementById('open').style.display = 'block';
+  }
 };
