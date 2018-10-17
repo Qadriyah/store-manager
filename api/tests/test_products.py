@@ -1,8 +1,8 @@
 from unittest import TestCase
 from datetime import datetime
 
-class TestEndPoints(TestCase):
-    def __init__(self):
+class TestProducts(TestCase):
+    def setUp(self):
         self.products = [
             {
                 "product_id": 1, 
