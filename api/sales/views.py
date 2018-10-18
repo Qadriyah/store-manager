@@ -26,3 +26,10 @@ def get_cart_items():
 
     if request.method == "GET":
         return controller.get_cart_items()
+
+
+@sales.route("/sales", methods=["POST", "GET"])
+def add_sales_record():
+
+    if request.method == "POST":
+        return controller.add_sales_record()

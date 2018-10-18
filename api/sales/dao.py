@@ -59,6 +59,41 @@ class SalesController:
             self.status_code = 200
         return jsonify(response), self.status_code
 
+    def add_sales_record(self):
+        """
+        Adds cart items into the sales record database
+
+        Args:
+            cart(object): Object that holds cart items
+
+        Returns:
+            tuple: With a response message and a status code
+        """
+        response = {}
+        if self.is_cart_empty():
+            response.update({"cart": "Empty cart"})
+            self.status_code = 404
+            return jsonify(response), self.status_code
+
+        order_number = secrets.token_hex(8)
+        for product in self.cart:
+            new_sale = Sale(
+                id=secrets.token_hex(4),
+                order_number=order_number,
+                product_id=product.product_id,
+                qty=product.qty,
+                price=product.price,
+                product_name=product.name
+            )
+            self.sales_records.append(new_sale)
+            #  clear the shopping cart
+            self.clear_cart()
+
+        response.update({"msg": "Sales order submitted successfully"})
+        self.status_code = 200
+
+        return jsonify(response), self.status_code
+
     def is_product_in_cart(self, product_name):
         """
         Checks if product has already been added to the cart

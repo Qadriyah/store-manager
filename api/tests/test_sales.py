@@ -63,3 +63,16 @@ class TestSales(TestCase):
         """Tests that the route gets items from the shopping cart"""
         res = self.client.get("/api/v1/sales/cart/items")
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
+
+    def test_add_sales_record(self):
+        """Tests that a sales record is added to the database"""
+        with app.app_context():
+            res = self.controller.add_sales_record()
+            self.assertEqual(json.loads(
+                res[0].data)["msg"], "Sales order submitted successfully")
+
+    ''' def test_add_sales_record_route(self):
+        """Tests that the route adds a sales record to the database"""
+        res = self.client.post("/api/v1/sales")
+        self.assertEqual(json.loads(res.data.decode())["cart"],
+                         "Sales order submitted successfully") '''

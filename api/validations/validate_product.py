@@ -21,11 +21,11 @@ class ValidateProduct:
             if not request_data["price"]:
                 errors.update({"price": "Product price is required"})
 
-            if request_data.get("qty") and not request_data.get("qty"):
-                errors.update({"qty": "Quantity is required"})
-            
             if request_data.get("qty"):
-                int(request_data.get("qty"))
+                if not request_data["qty"]:
+                    errors.update({"qty": "Quantity is required"})
+                else:
+                    int(request_data.get("qty"))
 
             int(request_data.get("price"))
         except ValueError:
@@ -36,3 +36,5 @@ class ValidateProduct:
             "errors": errors,
             "is_true": is_empty(errors)
         }
+                
+
