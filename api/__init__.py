@@ -11,4 +11,4 @@ from .product import product as product_bp
 app.register_blueprint(product_bp, url_prefix="/api/v1")
 
 from .sales import sales as sales_bp
-app.register_blueprint(sales_bp, url_orefix="/api/v1")
+app.register_blueprint(sales_bp, url_prefix="/api/v1")

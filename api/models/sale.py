@@ -5,6 +5,7 @@ class Sale:
 
     def __init__(self, **kwargs):
         self.id = kwargs['id']
+        self.order_number = kwargs['order_number']
         self.product_id = kwargs['product_id']
         self.qty = kwargs['qty']
         self.price = kwargs['price']

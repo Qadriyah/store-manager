@@ -23,11 +23,9 @@ class ValidateProduct:
 
             if request_data.get("qty") and not request_data.get("qty"):
                 errors.update({"qty": "Quantity is required"})
-            
-            if request_data.get("qty"):
-                int(request_data.get("qty"))
 
             int(request_data.get("price"))
+            #  int(request_data.get("qty"))
         except ValueError:
             errors.update(
                 {"value": "Only numbers allowed for both price and quantity"})
