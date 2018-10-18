@@ -14,10 +14,12 @@ class TestProducts(TestCase):
     def setUp(self):
         app.config.from_object(app_settings[os.environ.get("APP_ENV")])
         self.controller = dao.ProductController()
+        self.product_id = secrets.token_hex(4)
         self.controller.product_list = [
             Product(id=secrets.token_hex(4), name="Sugar", price=4500),
             Product(id=secrets.token_hex(4), name="Milk", price=3000),
-            Product(id=secrets.token_hex(4), name="Bread", price=2700)
+            Product(id=secrets.token_hex(4), name="Bread", price=2700),
+            Product(id=self.product_id, name="Flour", price=7000)
         ]
         self.new_product = {
             "name": "Rice",
@@ -32,9 +34,7 @@ class TestProducts(TestCase):
             price=7000
         ))
         self.assertEqual(
-            json.loads(response.get_data().decode())["msg"],
-            "Product added successfully"
-        )
+            json.loads(response.data)["msg"], "Product added successfully")
 
     def test_is_product_exists(self):
         """Tests if a product exists in the database"""
@@ -43,17 +43,28 @@ class TestProducts(TestCase):
     def test_add_product(self):
         """Test if product list is not empty"""
         with app.app_context():
-            self.assertEqual(json.loads(self.controller.add_product(self.new_product)[
-                0].get_data().decode("utf-8"))["msg"], "Product added successfully")
+            res = self.controller.add_product(self.new_product)
+            self.assertEqual(json.loads(res[0].data)[
+                             "msg"], "Product added successfully")
 
     def test_get_all_products(self):
         """Tests if products are fetched from the database"""
         with app.app_context():
             res = self.controller.get_all_products()
-            self.assertGreater(len(json.loads(
-                res[0].get_data().decode())["items"]), 0)
+            self.assertGreater(len(json.loads(res[0].data)["items"]), 0)
 
     def test_get_all_products_route(self):
+        """Tests get all products route"""
         res = self.client.get("/api/v1/products")
-        self.assertGreater(len(json.loads(
-                res.get_data().decode())["items"]), 0)
+        self.assertGreater(len(json.loads(res.data)["items"]), 0)
+
+    def test_get_single_product(self):
+        """Tests if a single product is fetched from the database"""
+        with app.app_context():
+            res = self.controller.get_single_product(self.product_id)
+            self.assertEqual(json.loads(res[0].data)["name"], "Flour")
+
+    def test_get_single_product_route(self):
+        """Tests get single product route"""
+        res = self.client.get("/api/v1/products/{}".format(self.product_id))
+        self.assertEqual(json.loads(res.data)["msg"], "Product not found")

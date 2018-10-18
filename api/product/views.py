@@ -24,7 +24,15 @@ def add_product():
 
 @product.route("/products", methods=["GET"])
 def get_all_products():
-    """Gets products route"""
+    """Get all products route"""
 
     if request.method == "GET":
         return controller.get_all_products()
+
+
+@product.route("/products/<product_id>", methods=["GET"])
+def get_single_product(product_id):
+    """Get a single product route"""
+
+    if request.method == "GET":
+        return controller.get_single_product(product_id)

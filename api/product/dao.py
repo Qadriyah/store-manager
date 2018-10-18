@@ -57,6 +57,36 @@ class ProductController:
             self.status_code = 200
         return jsonify(response), self.status_code
 
+    def get_single_product(self, product_id):
+        """
+        Retrieves a single product by product id
+
+        Args:
+            product_id(str): Unique product identifier
+
+        Returns:
+            tuple: With a response object and a status code
+        """
+        response = {}
+        found = False
+        for product in self.product_list:
+            if product.id == product_id:
+                response.update({
+                    "id": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "created_at": product.created_at
+                })
+                found = True
+                break
+        if found:
+            self.status_code = 200
+            return jsonify(response), self.status_code
+
+        response.update({"msg": "Product not found"})
+        self.status_code = 404
+        return jsonify(response), self.status_code
+
     def is_product_exists(self, product_name):
         """
         Checks if product already exists
