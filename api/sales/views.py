@@ -40,3 +40,10 @@ def get_all_sales_record():
 
     if request.method == "GET":
         return controller.get_all_sales_records()
+
+
+@sales.route("/sales/<sales_id>", methods=["GET"])
+def get_single_sales_record(sales_id):
+
+    if request.method == "GET":
+        return controller.get_single_sales_record(sales_id)

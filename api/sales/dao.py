@@ -164,6 +164,7 @@ class SalesController:
         else:
             items = [
                 dict(
+                    id=sales_item.id,
                     user_id=sales_item.user_id,
                     order_number=sales_item.order_number,
                     product_id=sales_item.product_id,
@@ -177,4 +178,37 @@ class SalesController:
             response.update({"items": items})
             self.status_code = 200
 
+        return jsonify(response), self.status_code
+
+    def get_single_sales_record(self, sales_id):
+        """
+        Retrieves a single sales records using the sales_id
+
+        Args:
+            sales_id(str): Sales record unique identifier
+
+        Returns:
+            tuple: With a single sales record and a status code
+        """
+        response = {}
+        found = False
+        for sales_item in self.sales_records:
+            if sales_item.id == sales_id:
+                response.update({
+                    "id": sales_item.id,
+                    "user_id": sales_item.user_id,
+                    "name": sales_item.product_name,
+                    "price": sales_item.price,
+                    "qty": sales_item.qty,
+                    "total": int(sales_item.price) * int(sales_item.qty),
+                    "created_at": sales_item.created_at
+                })
+                found = True
+                break
+        if found:
+            self.status_code = 200
+            return jsonify(response), self.status_code
+
+        response.update({"msg": "Sales record not found"})
+        self.status_code = 404
         return jsonify(response), self.status_code
