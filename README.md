@@ -1,5 +1,7 @@
 # Store-Manager
 
+[![Build Status](https://travis-ci.org/Qadriyah/store-manager.svg?branch=Feat-get-single-sales-record-161340699)](https://travis-ci.org/Qadriyah/store-manager) [![Maintainability](https://api.codeclimate.com/v1/badges/40a62aea724af677d9cb/maintainability)](https://codeclimate.com/github/Qadriyah/store-manager/maintainability) [![Coverage Status](https://coveralls.io/repos/github/Qadriyah/store-manager/badge.svg?branch=Feat-get-single-sales-record-161340699)](https://coveralls.io/github/Qadriyah/store-manager?branch=Feat-get-single-sales-record-161340699) [![codecov](https://codecov.io/gh/Qadriyah/store-manager/branch/Feat-get-single-sales-record-161340699/graph/badge.svg)](https://codecov.io/gh/Qadriyah/store-manager)
+
 Store Manager is a web application that helps store owners manage sales and product inventory  records. This application is meant for use in a single store.
 
 ## Getting Started
