@@ -7,10 +7,11 @@ from api.models.cart import Cart
 
 
 class SalesController:
+    sales_records = []
+    cart = []
+
     def __init__(self):
         self.status_code = 200
-        self.sales_records = []
-        self.cart = []
 
     def add_to_cart(self, request_data):
         """
@@ -70,7 +71,7 @@ class SalesController:
             tuple: With a response message and a status code
         """
         response = {}
-        if self.is_cart_empty():
+        if self.is_table_empty(self.cart):
             response.update({"cart": "Empty cart"})
             self.status_code = 404
             return jsonify(response), self.status_code
@@ -79,6 +80,7 @@ class SalesController:
         for product in self.cart:
             new_sale = Sale(
                 id=secrets.token_hex(4),
+                user_id=1,
                 order_number=order_number,
                 product_id=product.product_id,
                 qty=product.qty,
@@ -86,8 +88,8 @@ class SalesController:
                 product_name=product.name
             )
             self.sales_records.append(new_sale)
-            #  clear the shopping cart
-            self.clear_cart()
+        #  clear the shopping cart
+        self.clear_cart()
 
         response.update({"msg": "Sales order submitted successfully"})
         self.status_code = 200
@@ -105,7 +107,7 @@ class SalesController:
             bool: True if found, False otherwise
         """
         found = False
-        if self.is_cart_empty():
+        if self.is_table_empty(self.cart):
             return found
 
         for product in self.cart:
@@ -133,17 +135,46 @@ class SalesController:
                 break
         return 1
 
-    def is_cart_empty(self):
+    def is_table_empty(self, table):
         """
-        Checks if the shopping cart is empty
+        Checks if a relation is empty
 
         Returns:
             bool: True if empty, False otherwise
         """
-        if len(self.cart) == 0:
+        if len(table) == 0:
             return True
         return False
 
     def clear_cart(self):
         """Removes items from the shopping cart"""
         self.cart.clear()
+
+    def get_all_sales_records(self):
+        """
+        Retrieves all sales records from the database
+
+        Returns:
+            tuple: With all sales records and a status code
+        """
+        response = {}
+        if self.is_table_empty(self.sales_records):
+            response.update({"sales": "No sales"})
+            self.status_code = 404
+        else:
+            items = [
+                dict(
+                    user_id=sales_item.user_id,
+                    order_number=sales_item.order_number,
+                    product_id=sales_item.product_id,
+                    qty=sales_item.qty,
+                    product_name=sales_item.product_name,
+                    price=sales_item.price,
+                    created_at=sales_item.created_at,
+                    total=int(sales_item.price) * int(sales_item.qty))
+                for sales_item in self.sales_records
+            ]
+            response.update({"items": items})
+            self.status_code = 200
+
+        return jsonify(response), self.status_code

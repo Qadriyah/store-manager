@@ -28,8 +28,15 @@ def get_cart_items():
         return controller.get_cart_items()
 
 
-@sales.route("/sales", methods=["POST", "GET"])
+@sales.route("/sales", methods=["POST"])
 def add_sales_record():
 
     if request.method == "POST":
         return controller.add_sales_record()
+
+
+@sales.route("/sales", methods=["GET"])
+def get_all_sales_record():
+
+    if request.method == "GET":
+        return controller.get_all_sales_records()

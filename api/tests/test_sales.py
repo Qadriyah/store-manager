@@ -1,13 +1,14 @@
 import secrets
 import json
-from unittest import TestCase
+import unittest
 
 from api.sales import dao
 from api.models.cart import Cart
+from api.models.sale import Sale
 from api import app
 
 
-class TestSales(TestCase):
+class TestSales(unittest.TestCase):
 
     def setUp(self):
         self.controller = dao.SalesController()
@@ -24,6 +25,20 @@ class TestSales(TestCase):
             Cart(pid=secrets.token_hex(4), name="Milk", qty=4, price=1500),
             Cart(pid=self.product_id, name="Rice", qty=1, price=17000)
         ]
+        self.controller.sales_records = [
+            Sale(
+                id=secrets.token_hex(4),
+                user_id=1,
+                order_number=secrets.token_hex(8),
+                product_id=secrets.token_hex(4),
+                qty=2,
+                price=1500,
+                product_name="Bread"
+            )
+        ]
+
+    def tearDown(self):
+        pass
 
     def test_add_to_cart(self):
         """Tests that an item is added to the shopping cart"""
@@ -47,21 +62,32 @@ class TestSales(TestCase):
 
     def test_is_cart_empty(self):
         """Tests that the shopping cart is not empty"""
-        self.assertFalse(self.controller.is_cart_empty())
+        self.assertFalse(self.controller.is_table_empty(self.controller.cart))
 
     def test_add_to_cart_route(self):
         """Tests that the route adds an item to the cart"""
-        res = self.client.post("/api/v1/sales/cart", data=dict(
-            pid=secrets.token_hex(4),
-            name="Milk",
-            qty=2,
-            price=1500
-        ))
+        res = self.client.post(
+            "/api/v1/sales/cart",
+            data=dict(
+                pid=secrets.token_hex(4),
+                name="Milk",
+                qty=2,
+                price=1500
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
         self.assertEqual(res.data.decode(), "Success")
 
     def test_get_cart_items_route(self):
         """Tests that the route gets items from the shopping cart"""
-        res = self.client.get("/api/v1/sales/cart/items")
+        res = self.client.get(
+            "/api/v1/sales/cart/items",
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
 
     def test_add_sales_record(self):
@@ -71,8 +97,43 @@ class TestSales(TestCase):
             self.assertEqual(json.loads(
                 res[0].data)["msg"], "Sales order submitted successfully")
 
-    ''' def test_add_sales_record_route(self):
+    def test_get_all_sales_records(self):
+        """Tests that all sales records are retrieved from the database"""
+        with app.app_context():
+            res = self.controller.get_all_sales_records()
+            self.assertGreater(
+                len(json.loads(res[0].data)["items"]), 0)
+
+    def test_get_all_sales_records_route(self):
+        """Tests that the route retrieves all sales records"""
+        res = self.client.get(
+            "/api/v1/sales",
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
+        self.assertGreater(len(json.loads(res.data)["items"]), 0)
+
+    def test_add_sales_record_route(self):
         """Tests that the route adds a sales record to the database"""
-        res = self.client.post("/api/v1/sales")
-        self.assertEqual(json.loads(res.data.decode())["cart"],
-                         "Sales order submitted successfully") '''
+        with app.app_context():
+            self.client.post(
+                "/api/v1/sales/cart",
+                data=dict(
+                    pid=secrets.token_hex(4),
+                    name="Milk",
+                    qty=2,
+                    price=1500
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            res = self.client.post(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            self.assertEqual(json.loads(res.data)["msg"],
+                             "Sales order submitted successfully")

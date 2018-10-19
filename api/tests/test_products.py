@@ -29,10 +29,16 @@ class TestProducts(TestCase):
 
     def test_add_product_route(self):
         """Tests add product route"""
-        response = self.client.post("/api/v1/products", data=dict(
-            name="Flour",
-            price=7000
-        ))
+        response = self.client.post(
+            "/api/v1/products",
+            data=dict(
+                name="Flour",
+                price=7000
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
         self.assertEqual(
             json.loads(response.data)["msg"], "Product added successfully")
 
@@ -55,7 +61,12 @@ class TestProducts(TestCase):
 
     def test_get_all_products_route(self):
         """Tests get all products route"""
-        res = self.client.get("/api/v1/products")
+        res = self.client.get(
+            "/api/v1/products",
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
 
     def test_get_single_product(self):
@@ -66,5 +77,22 @@ class TestProducts(TestCase):
 
     def test_get_single_product_route(self):
         """Tests get single product route"""
-        res = self.client.get("/api/v1/products/{}".format(self.product_id))
-        self.assertEqual(json.loads(res.data)["msg"], "Product not found")
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products",
+                data=dict(
+                    name="iPhone",
+                    price=900000
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            product_id = json.loads(response.data)["id"]
+            res = self.client.get(
+                "/api/v1/products/{}".format(product_id),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            self.assertEqual(json.loads(res.data)["name"], "iPhone")

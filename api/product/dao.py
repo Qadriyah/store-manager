@@ -27,8 +27,13 @@ class ProductController:
             self.status_code = 409
         else:
             #  Create product
-            self.product_list.append(
-                Product(id=secrets.token_hex(4), name=request_data["name"], price=request_data["price"]))
+            new_product = Product(
+                id=secrets.token_hex(4),
+                name=request_data["name"],
+                price=request_data["price"]
+            )
+            self.product_list.append(new_product)
+            response.update({"id": str(new_product.id)})
             response.update({"msg": "Product added successfully"})
             self.status_code = 200
 
