@@ -5,6 +5,7 @@ python:
 env:
   global:
     - APP_ENV=testing
+    - JWT_SECRET_KEY="mukungumayanja"
 
 #  command to install dependences
 install:
