@@ -29,6 +29,31 @@ class ValidateUserInput:
         if request_data["password"] != request_data["password2"]:
             errors.update({"password": "Passwords do not match"})
 
+        if not request_data["user_type"]:
+            errors.update({"user_type": "User type is required"})
+
+        return {
+            "errors": errors,
+            "is_true": is_empty(errors)
+        }
+
+    def validate_login_input(self, request_data):
+        """
+        Validates input data from the login form
+
+        Args:
+            request_data(object): request Object that holds form data
+
+        Retruns:
+            dict: {"errors", True} for no errors {"", False} if errors present
+        """
+        errors = {}
+        if not request_data["username"]:
+            errors.update({"username": "Username is required"})
+
+        if not request_data["password"]:
+            errors.update({"password": "Password is required"})
+
         return {
             "errors": errors,
             "is_true": is_empty(errors)

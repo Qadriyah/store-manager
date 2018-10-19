@@ -3,11 +3,11 @@ from flask import request, jsonify
 #  import product blueprint
 from . import product
 #  import product controller
-from . import dao
+from . import controllers
 #  import validations
 from api.validations import validate_product
 
-controller = dao.ProductController()
+controller = controllers.ProductController()
 validator = validate_product.ValidateProduct()
 
 

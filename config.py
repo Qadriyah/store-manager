@@ -9,6 +9,7 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY: "mukunguB"
+    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 
 
 class DevelopmentConfig(Config):

@@ -2,7 +2,7 @@ import secrets
 import json
 import unittest
 
-from api.sales import dao
+from api.sales import controllers
 from api.models.cart import Cart
 from api.models.sale import Sale
 from api import app
@@ -11,7 +11,7 @@ from api import app
 class TestSales(unittest.TestCase):
 
     def setUp(self):
-        self.controller = dao.SalesController()
+        self.controller = controllers.SalesController()
         self.client = app.test_client()
         self.cart_item = {
             "pid": secrets.token_hex(4),

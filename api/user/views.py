@@ -19,3 +19,14 @@ def register_user():
             return jsonify(result["errors"]), 400
 
         return controller.register_user(request.form)
+
+
+@user.route("/login", methods=["POST"])
+def login_user():
+
+    if request.method == "POST":
+        result = validator.validate_login_input(request.form)
+        if not result["is_true"]:
+            return jsonify(result["errors"]), 400
+
+        return controller.login_user(request.form)

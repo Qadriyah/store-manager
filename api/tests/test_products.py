@@ -7,13 +7,13 @@ from datetime import datetime
 from api import app
 from config import app_settings
 from api.models.product import Product
-from api.product import dao
+from api.product import controllers
 
 
 class TestProducts(TestCase):
     def setUp(self):
         app.config.from_object(app_settings[os.environ.get("APP_ENV")])
-        self.controller = dao.ProductController()
+        self.controller = controllers.ProductController()
         self.product_id = secrets.token_hex(4)
         self.controller.product_list = [
             Product(id=secrets.token_hex(4), name="Sugar", price=4500),
