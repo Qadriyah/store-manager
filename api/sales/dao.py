@@ -7,11 +7,11 @@ from api.models.cart import Cart
 
 
 class SalesController:
-    sales_records = []
-    cart = []
 
     def __init__(self):
         self.status_code = 200
+        self.sales_records = []
+        self.cart = []
 
     def add_to_cart(self, request_data):
         """
@@ -43,7 +43,7 @@ class SalesController:
             list: A list of products
         """
         response = {}
-        if len(self.cart) == 0:
+        if self.is_table_empty(self.cart):
             response.update({"msg": "Empty cart"})
             self.status_code = 404
         else:

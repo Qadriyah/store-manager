@@ -11,7 +11,7 @@ class ValidateProduct:
             request_data(object): request Object that holds form data
 
         Retruns:
-            dict: {"errors", True} if there were any errors {"", False} if there were no errors
+            dict: {"errors", True} for no errors {"", False} if errors present
         """
         errors = {}
         try:
@@ -36,5 +36,3 @@ class ValidateProduct:
             "errors": errors,
             "is_true": is_empty(errors)
         }
-                
-

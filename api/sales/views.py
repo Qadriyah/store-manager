@@ -1,8 +1,8 @@
 from flask import request, jsonify
 
-#  import product blueprint
+#  import sales blueprint
 from . import sales
-#  import product controller
+#  import sales controller
 from . import dao
 #  import validator
 from api.validations import validate_product
