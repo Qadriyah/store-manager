@@ -6,6 +6,7 @@ from api.sales import controllers
 from api.models.cart import Cart
 from api.models.sale import Sale
 from api import app
+from .test_tokens import *
 
 
 class TestSales(unittest.TestCase):
@@ -75,7 +76,8 @@ class TestSales(unittest.TestCase):
                 price=1500
             ),
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": attendant_token
             }
         )
         self.assertEqual(res.data.decode(), "Success")
@@ -85,7 +87,8 @@ class TestSales(unittest.TestCase):
         res = self.client.get(
             "/api/v1/sales/cart/items",
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": attendant_token
             }
         )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
@@ -109,7 +112,8 @@ class TestSales(unittest.TestCase):
         res = self.client.get(
             "/api/v1/sales",
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": admin_token
             }
         )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
@@ -126,13 +130,15 @@ class TestSales(unittest.TestCase):
                     price=1500
                 ),
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": attendant_token
                 }
             )
             res = self.client.post(
                 "/api/v1/sales",
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded", 
+                    "Authorization": attendant_token
                 }
             )
             self.assertEqual(json.loads(res.data)["msg"],

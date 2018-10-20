@@ -8,6 +8,7 @@ from api import app
 from config import app_settings
 from api.models.product import Product
 from api.product import controllers
+from .test_tokens import *
 
 
 class TestProducts(TestCase):
@@ -36,7 +37,8 @@ class TestProducts(TestCase):
                 price=7000
             ),
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": admin_token
             }
         )
         self.assertEqual(
@@ -64,7 +66,8 @@ class TestProducts(TestCase):
         res = self.client.get(
             "/api/v1/products",
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": admin_token
             }
         )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
@@ -85,14 +88,16 @@ class TestProducts(TestCase):
                     price=900000
                 ),
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": admin_token
                 }
             )
             product_id = json.loads(response.data)["id"]
             res = self.client.get(
                 "/api/v1/products/{}".format(product_id),
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": attendant_token
                 }
             )
             self.assertEqual(json.loads(res.data)["name"], "iPhone")

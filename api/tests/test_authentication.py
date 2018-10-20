@@ -9,6 +9,7 @@ from config import app_settings
 from api.models.user import User
 from api.user import user, controllers
 from api.validations import validate_user
+from .test_tokens import admin_token
 
 
 class TestAuthentication(TestCase):
@@ -57,7 +58,8 @@ class TestAuthentication(TestCase):
                     roles="attendant"
                 ),
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": admin_token
                 }
             )
             self.assertEqual(
@@ -88,7 +90,8 @@ class TestAuthentication(TestCase):
                 "/api/v1/user",
                 data=self.user_input,
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": admin_token
                 }
             )
             res = self.client.post(
