@@ -5,7 +5,7 @@ def is_empty(value):
         value(object): can be a dict or a str
 
     Returns:
-        bool: True for empty, False otherwise
+        bool: False for empty, True otherwise
     """
     none = value == None or value is None
     dict_len = type(value) == dict and len(value) == 0

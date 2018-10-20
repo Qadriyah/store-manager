@@ -15,23 +15,7 @@ window.onload = () => {
 
   const open = document.getElementById('open');
   const close = document.getElementById('close');
-  if (open && close) {
-    open.addEventListener('click', event => {
-      openDrawer({
-        style: 'width: 150px; position: absolute; top: 10px; z-index: 1;',
-        open: 'none',
-        close: 'block'
-      });
-    });
-
-    close.addEventListener('click', event => {
-      openDrawer({
-        style: 'width: 0;',
-        open: 'block',
-        close: 'none'
-      });
-    });
-  }
+  toggle_button(open, close);
 };
 
 window.addEventListener('resize', () => {
@@ -57,4 +41,24 @@ openDrawer = options => {
   document.getElementById('drawer').style = options.style;
   document.getElementById('open').style.display = options.open;
   document.getElementById('close').style.display = options.close;
+};
+
+toggle_button = (open, close) => {
+  if (open && close) {
+    open.addEventListener('click', event => {
+      openDrawer({
+        style: 'width: 150px; position: fixed; top: 50px; z-index: 1;',
+        open: 'none',
+        close: 'block'
+      });
+    });
+
+    close.addEventListener('click', event => {
+      openDrawer({
+        style: 'width: 0;',
+        open: 'block',
+        close: 'none'
+      });
+    });
+  }
 };
