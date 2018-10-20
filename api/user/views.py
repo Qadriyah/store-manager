@@ -30,8 +30,6 @@ def login_user():
 
     if request.method == "POST":
         result = validator.validate_login_input(request.form)
-        print(result)
-        return "good"
         if not result["is_true"]:
             return jsonify(result["errors"]), 400
 

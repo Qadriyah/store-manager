@@ -20,11 +20,8 @@ class ValidateUserInput:
         if not request_data["username"]:
             errors.update({"username": "Username is required"})
 
-        if not request_data["password"]:
+        if not request_data["password"] and not request_data["password2"]:
             errors.update({"password": "Password is required"})
-
-        if not request_data["password2"]:
-            errors.update({"password2": "Confirm Password is required"})
 
         if request_data["password"] != request_data["password2"]:
             errors.update({"password": "Passwords do not match"})

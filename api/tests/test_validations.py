@@ -25,3 +25,13 @@ class TestValidations(TestCase):
             self.product)["is_true"], True)
         self.assertEqual(
             len(self.validator.validate_input_data(self.product)["errors"]), 0)
+
+    def test_number_fields(self):
+        """Tests that the values in the number fields are integers"""
+        cart_item = dict(
+            name="Milk",
+            price=1500,
+            qty=2
+        )
+        self.assertEqual(self.validator.validate_number_fields(
+            cart_item)["is_true"], True)

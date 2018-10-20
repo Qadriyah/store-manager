@@ -21,6 +21,10 @@ def add_to_cart():
         result = validator.validate_input_data(request.form)
         if not result["is_true"]:
             return jsonify(result["errors"]), 400
+
+        errors = validator.validate_number_fields(request.form)
+        if not errors["is_true"]:
+            return jsonify(errors["errors"]), 400
         return controller.add_to_cart(request.form)
 
 
