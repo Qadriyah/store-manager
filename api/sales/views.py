@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 #  import sales blueprint
 from . import sales
@@ -6,12 +7,14 @@ from . import sales
 from . import controllers
 #  import validator
 from api.validations import validate_product
+from api.utils.jwt_helper import attendant_required, admin_required
 
 controller = controllers.SalesController()
 validator = validate_product.ValidateProduct()
 
 
 @sales.route("/sales/cart", methods=["POST"])
+@attendant_required
 def add_to_cart():
 
     if request.method == "POST":
@@ -22,6 +25,7 @@ def add_to_cart():
 
 
 @sales.route("/sales/cart/items", methods=["GET"])
+@attendant_required
 def get_cart_items():
 
     if request.method == "GET":
@@ -29,6 +33,7 @@ def get_cart_items():
 
 
 @sales.route("/sales", methods=["POST"])
+@attendant_required
 def add_sales_record():
 
     if request.method == "POST":
@@ -36,6 +41,7 @@ def add_sales_record():
 
 
 @sales.route("/sales", methods=["GET"])
+@admin_required
 def get_all_sales_record():
 
     if request.method == "GET":
@@ -43,6 +49,7 @@ def get_all_sales_record():
 
 
 @sales.route("/sales/<sales_id>", methods=["GET"])
+@jwt_required
 def get_single_sales_record(sales_id):
 
     if request.method == "GET":

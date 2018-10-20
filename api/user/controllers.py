@@ -1,13 +1,18 @@
 import secrets
 import datetime
 from flask import jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity, get_jwt_claims
+)
 
 from api import app
 from api.models.user import User
 from api.sales.controllers import SalesController
 from api import bcrypt
 from api import jwt
+from api.utils.jwt_helper import (
+    add_claims_to_access_token, user_identity_lookup
+)
 
 
 class AuthController:
@@ -39,7 +44,7 @@ class AuthController:
                 name=request_data["name"],
                 username=request_data["username"],
                 password=password_hash,
-                user_type="admin"
+                roles=request_data["roles"]
             )
             self.users.append(new_user)
             response.update({"user": "User registered successfully"})
@@ -76,23 +81,26 @@ class AuthController:
         """
         response = {}
         #  Check if user exists
-        result = self.is_user_registered(request_data["username"])
-        if not result:
+        user = self.is_user_registered(request_data["username"])
+        if not user:
             response.update({"errors": "Wrong username or password"})
             self.status_code = 401
         else:
             #  Check if password provided matches one in the database
             if bcrypt.check_password_hash(
-                    result.password, request_data["password"]):
-                #  Create jwt payload
-                jwt_payload = {
-                    "id": result.id,
-                    "name": result.name,
-                    "username": result.username
-                }
+                    user.password, request_data["password"]):
+                #  jwt payload
+                ''' jwt_payload = {
+                    "id": user.id,
+                    "name": user.name,
+                    "username": user.username,
+                    "roles": user.roles
+                } '''
                 #  Create token
                 token = create_access_token(
-                    jwt_payload, expires_delta=datetime.timedelta(days=7))
+                    identity=user,
+                    expires_delta=datetime.timedelta(days=7)
+                )
                 response.update({
                     "success": True,
                     "token": "Bearer {}".format(token)

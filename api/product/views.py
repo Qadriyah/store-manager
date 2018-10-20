@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 #  import product blueprint
 from . import product
@@ -6,12 +7,14 @@ from . import product
 from . import controllers
 #  import validations
 from api.validations import validate_product
+from api.utils.jwt_helper import admin_required
 
 controller = controllers.ProductController()
 validator = validate_product.ValidateProduct()
 
 
 @product.route("/products", methods=["POST"])
+@admin_required
 def add_product():
     """Add product route"""
 
@@ -23,6 +26,7 @@ def add_product():
 
 
 @product.route("/products", methods=["GET"])
+@jwt_required
 def get_all_products():
     """Get all products route"""
 
@@ -31,6 +35,7 @@ def get_all_products():
 
 
 @product.route("/products/<product_id>", methods=["GET"])
+@jwt_required
 def get_single_product(product_id):
     """Get a single product route"""
 

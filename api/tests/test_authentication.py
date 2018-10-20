@@ -3,7 +3,6 @@ import secrets
 import json
 from unittest import TestCase
 from datetime import datetime
-from flask import url_for
 
 from api import app
 from config import app_settings
@@ -23,7 +22,7 @@ class TestAuthentication(TestCase):
             username="Baker",
             password="mukungu",
             password2="mukungu",
-            user_type="admin"
+            roles="admin"
         )
 
     def test_validate_user_input(self):
@@ -55,7 +54,7 @@ class TestAuthentication(TestCase):
                     username="Qadriyah",
                     password="mayanja",
                     password2="mayanja",
-                    user_type="attendant"
+                    roles="attendant"
                 ),
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded"

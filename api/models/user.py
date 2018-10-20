@@ -8,8 +8,8 @@ class User:
         self.name = kwargs['name']
         self.username = kwargs['username']
         self.password = kwargs['password']
-        self.user_type = kwargs["user_type"]
+        self.roles = kwargs["roles"]
         self.created_at = str(datetime.today().strftime("%d/%m/%Y"))
 
     def __repr__(self):
-        return "<User(id={}, name={}, username={}, user_type={})>".format(self.id, self.name, self.username, self.user_type)
+        return "<User(id={}, name={}, username={}, roles={})>".format(self.id, self.name, self.username, self.roles)

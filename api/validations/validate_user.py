@@ -29,8 +29,8 @@ class ValidateUserInput:
         if request_data["password"] != request_data["password2"]:
             errors.update({"password": "Passwords do not match"})
 
-        if not request_data["user_type"]:
-            errors.update({"user_type": "User type is required"})
+        if not request_data["roles"]:
+            errors.update({"roles": "User role is required"})
 
         return {
             "errors": errors,
