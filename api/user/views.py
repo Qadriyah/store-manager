@@ -19,9 +19,12 @@ def register_user():
 
     if request.method == "POST":
         result = validator.validate_input_data(request.form)
-
         if not result["is_true"]:
-            return jsonify(result["errors"]), 400
+            return jsonify(result["errors"]), 401
+
+        errors = validator.validate_login_input(request.form)
+        if not errors["is_true"]:
+            return jsonify(errors["errors"]), 401
         return controller.register_user(request.form)
 
 
@@ -31,6 +34,5 @@ def login_user():
     if request.method == "POST":
         result = validator.validate_login_input(request.form)
         if not result["is_true"]:
-            return jsonify(result["errors"]), 400
-
+            return jsonify(result["errors"]), 401
         return controller.login_user(request.form)
