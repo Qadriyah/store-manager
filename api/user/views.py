@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 from flask_jwt_extended import jwt_required, get_jwt_identity, current_user
 
 #  import user blueprint
@@ -8,6 +8,7 @@ from . import controllers
 #  import data validator
 from api.validations.validate_user import ValidateUserInput
 from api.utils.jwt_helper import admin_required, user_loader_callback
+from api import app
 
 validator = ValidateUserInput()
 controller = controllers.AuthController()
@@ -36,3 +37,10 @@ def login_user():
         if not result["is_true"]:
             return jsonify(result["errors"]), 400
         return controller.login_user(request.form)
+
+
+@app.route("/", methods=["GET"])
+def welcome_page():
+    return render_template(
+        "welcome.html"
+    )
