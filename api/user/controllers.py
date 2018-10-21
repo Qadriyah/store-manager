@@ -8,6 +8,7 @@ from flask_jwt_extended import (
 from api import app
 from api.models.user import User
 from api.sales.controllers import SalesController
+from api.models.database import users
 from api import bcrypt
 from api import jwt
 from api.utils.jwt_helper import (
@@ -19,7 +20,6 @@ class AuthController:
 
     def __init__(self):
         self.status_code = 200
-        self.users = []
 
     def register_user(self, request_data):
         """
@@ -46,7 +46,7 @@ class AuthController:
                 password=password_hash,
                 roles=request_data["roles"]
             )
-            self.users.append(new_user)
+            users.append(new_user)
             response.update({"user": "User registered successfully"})
             self.status_code = 200
 
@@ -62,10 +62,10 @@ class AuthController:
         Returns:
             user(User): User if found, None otherwise
         """
-        if SalesController().is_table_empty(self.users):
+        if SalesController().is_table_empty(users):
             return None
 
-        for user in self.users:
+        for user in users:
             if user.username == username:
                 return user
 
@@ -89,13 +89,6 @@ class AuthController:
             #  Check if password provided matches one in the database
             if bcrypt.check_password_hash(
                     user.password, request_data["password"]):
-                #  jwt payload
-                ''' jwt_payload = {
-                    "id": user.id,
-                    "name": user.name,
-                    "username": user.username,
-                    "roles": user.roles
-                } '''
                 #  Create token
                 token = create_access_token(
                     identity=user,

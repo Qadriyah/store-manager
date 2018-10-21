@@ -1,12 +1,11 @@
-import secrets
 import json
 import unittest
 
 from api.sales import controllers
 from api.models.cart import Cart
 from api.models.sale import Sale
+from api.models.database import cart
 from api import app
-from .test_tokens import *
 
 
 class TestSales(unittest.TestCase):
@@ -15,28 +14,23 @@ class TestSales(unittest.TestCase):
         self.controller = controllers.SalesController()
         self.client = app.test_client()
         self.cart_item = {
-            "pid": secrets.token_hex(4),
-            "name": "Milk",
-            "qty": 2,
-            "price": 1500
+            "pid": "7bad398f",
+            "name": "bread",
+            "qty": 1,
+            "price": 2700
         }
-        self.product_id = secrets.token_hex(4)
-        self.controller.cart = [
-            Cart(pid=secrets.token_hex(4), name="Sugar", qty=2, price=4500),
-            Cart(pid=secrets.token_hex(4), name="Milk", qty=4, price=1500),
-            Cart(pid=self.product_id, name="Rice", qty=1, price=17000)
-        ]
-        self.controller.sales_records = [
-            Sale(
-                id=secrets.token_hex(4),
-                user_id=1,
-                order_number=secrets.token_hex(8),
-                product_id=secrets.token_hex(4),
-                qty=2,
-                price=1500,
-                product_name="Bread"
-            )
-        ]
+        #  Login to get the access token
+        response = self.client.post(
+            "/api/v1/login",
+            data=dict(
+                username="attendant",
+                password="attendant"
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
+        self.access_token = json.loads(response.data)["token"]
 
     def tearDown(self):
         pass
@@ -54,30 +48,40 @@ class TestSales(unittest.TestCase):
 
     def test_is_product_in_cart(self):
         """Tests that the product is already in the shopping cart"""
-        self.assertTrue(self.controller.is_product_in_cart("Sugar"))
+        #  Add item to the shopping cart
+        with app.app_context():
+            self.client.post(
+                "/api/v1/sales/cart",
+                data=dict(
+                    pid="055ad1fd",
+                    name="Milk",
+                    qty=2,
+                    price=1500
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertTrue(self.controller.is_product_in_cart("Milk"))
 
     def test_update_qty_in_cart(self):
         """Tests that the quantity of an item in the cart is incremented"""
-        res = self.controller.update_qty_in_cart(self.product_id, 5)
+        res = self.controller.update_qty_in_cart("539c3032", 5)
         self.assertEqual(res, 1)
 
     def test_is_cart_empty(self):
         """Tests that the shopping cart is not empty"""
-        self.assertFalse(self.controller.is_table_empty(self.controller.cart))
+        self.assertFalse(self.controller.is_table_empty(cart))
 
     def test_add_to_cart_route(self):
         """Tests that the route adds an item to the cart"""
         res = self.client.post(
             "/api/v1/sales/cart",
-            data=dict(
-                pid=secrets.token_hex(4),
-                name="Milk",
-                qty=2,
-                price=1500
-            ),
+            data=self.cart_item,
             headers={
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": attendant_token
+                "Authorization": self.access_token
             }
         )
         self.assertEqual(res.data.decode(), "Success")
@@ -88,7 +92,7 @@ class TestSales(unittest.TestCase):
             "/api/v1/sales/cart/items",
             headers={
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": attendant_token
+                "Authorization": self.access_token
             }
         )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
@@ -109,36 +113,52 @@ class TestSales(unittest.TestCase):
 
     def test_get_all_sales_records_route(self):
         """Tests that the route retrieves all sales records"""
-        res = self.client.get(
-            "/api/v1/sales",
-            headers={
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": admin_token
-            }
-        )
-        self.assertGreater(len(json.loads(res.data)["items"]), 0)
+        with app.app_context():
+            #  Login as admin to get the access token
+            response = self.client.post(
+                "/api/v1/login",
+                data=dict(
+                    username="admin",
+                    password="admin"
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            access_token = json.loads(response.data)["token"]
+            #  Get all sales records
+            res = self.client.get(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": access_token
+                }
+            )
+            self.assertGreater(len(json.loads(res.data)["items"]), 0)
 
     def test_add_sales_record_route(self):
         """Tests that the route adds a sales record to the database"""
         with app.app_context():
+            #  Add item to the shopping cart
             self.client.post(
                 "/api/v1/sales/cart",
                 data=dict(
-                    pid=secrets.token_hex(4),
+                    pid="055ad1fd",
                     name="Milk",
                     qty=2,
                     price=1500
                 ),
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": attendant_token
+                    "Authorization": self.access_token
                 }
             )
+            #  Add a sales record
             res = self.client.post(
                 "/api/v1/sales",
                 headers={
-                    "Content-Type": "application/x-www-form-urlencoded", 
-                    "Authorization": attendant_token
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
                 }
             )
             self.assertEqual(json.loads(res.data)["msg"],

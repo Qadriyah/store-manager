@@ -4,14 +4,13 @@ from flask import jsonify
 from api import app
 from api.models.sale import Sale
 from api.models.cart import Cart
+from api.models.database import sales_records, cart
 
 
 class SalesController:
 
     def __init__(self):
         self.status_code = 200
-        self.sales_records = []
-        self.cart = []
 
     def add_to_cart(self, request_data):
         """
@@ -31,7 +30,7 @@ class SalesController:
                 name=request_data["name"],
                 qty=request_data["qty"],
                 price=request_data["price"])
-            self.cart.append(new_cart_item)
+            cart.append(new_cart_item)
 
         return "Success"
 
@@ -43,7 +42,7 @@ class SalesController:
             list: A list of products
         """
         response = {}
-        if self.is_table_empty(self.cart):
+        if self.is_table_empty(cart):
             response.update({"msg": "Empty cart"})
             self.status_code = 404
         else:
@@ -54,7 +53,7 @@ class SalesController:
                     qty=product.qty,
                     price=product.price,
                     total=int(product.qty) * int(product.price))
-                for product in self.cart
+                for product in cart
             ]
             response.update({"items": items})
             self.status_code = 200
@@ -71,13 +70,13 @@ class SalesController:
             tuple: With a response message and a status code
         """
         response = {}
-        if self.is_table_empty(self.cart):
+        if self.is_table_empty(cart):
             response.update({"cart": "Empty cart"})
             self.status_code = 404
             return jsonify(response), self.status_code
 
         order_number = secrets.token_hex(8)
-        for product in self.cart:
+        for product in cart:
             new_sale = Sale(
                 id=secrets.token_hex(4),
                 user_id=1,
@@ -87,7 +86,7 @@ class SalesController:
                 price=product.price,
                 product_name=product.name
             )
-            self.sales_records.append(new_sale)
+            sales_records.append(new_sale)
         #  clear the shopping cart
         self.clear_cart()
 
@@ -107,10 +106,10 @@ class SalesController:
             bool: True if found, False otherwise
         """
         found = False
-        if self.is_table_empty(self.cart):
+        if self.is_table_empty(cart):
             return found
 
-        for product in self.cart:
+        for product in cart:
             if product.name == product_name:
                 found = True
                 break
@@ -127,7 +126,7 @@ class SalesController:
         Returns:
             int: 1
         """
-        for product in self.cart:
+        for product in cart:
             if product.product_id == product_id:
                 temp = int(product.qty)
                 temp += int(qty)
@@ -148,7 +147,7 @@ class SalesController:
 
     def clear_cart(self):
         """Removes items from the shopping cart"""
-        self.cart.clear()
+        cart.clear()
 
     def get_all_sales_records(self):
         """
@@ -158,7 +157,7 @@ class SalesController:
             tuple: With all sales records and a status code
         """
         response = {}
-        if self.is_table_empty(self.sales_records):
+        if self.is_table_empty(sales_records):
             response.update({"sales": "No sales"})
             self.status_code = 404
         else:
@@ -173,7 +172,7 @@ class SalesController:
                     price=sales_item.price,
                     created_at=sales_item.created_at,
                     total=int(sales_item.price) * int(sales_item.qty))
-                for sales_item in self.sales_records
+                for sales_item in sales_records
             ]
             response.update({"items": items})
             self.status_code = 200
@@ -192,7 +191,7 @@ class SalesController:
         """
         response = {}
         found = False
-        for sales_item in self.sales_records:
+        for sales_item in sales_records:
             if sales_item.id == sales_id:
                 response.update({
                     "id": sales_item.id,

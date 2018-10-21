@@ -1,5 +1,4 @@
 import os
-import secrets
 import json
 from unittest import TestCase
 from datetime import datetime
@@ -8,41 +7,47 @@ from api import app
 from config import app_settings
 from api.models.product import Product
 from api.product import controllers
-from .test_tokens import *
 
 
 class TestProducts(TestCase):
     def setUp(self):
         app.config.from_object(app_settings[os.environ.get("APP_ENV")])
         self.controller = controllers.ProductController()
-        self.product_id = secrets.token_hex(4)
-        self.controller.product_list = [
-            Product(id=secrets.token_hex(4), name="Sugar", price=4500),
-            Product(id=secrets.token_hex(4), name="Milk", price=3000),
-            Product(id=secrets.token_hex(4), name="Bread", price=2700),
-            Product(id=self.product_id, name="Flour", price=7000)
-        ]
+        self.client = app.test_client()
         self.new_product = {
             "name": "Rice",
             "price": 17000
         }
-        self.client = app.test_client()
+        #  Login to get the access token
+        response = self.client.post(
+            "/api/v1/login",
+            data=dict(
+                username="admin",
+                password="admin"
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
+        self.access_token = json.loads(response.data)["token"]
 
     def test_add_product_route(self):
         """Tests add product route"""
-        response = self.client.post(
-            "/api/v1/products",
-            data=dict(
-                name="Flour",
-                price=7000
-            ),
-            headers={
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": admin_token
-            }
-        )
-        self.assertEqual(
-            json.loads(response.data)["msg"], "Product added successfully")
+        with app.app_context():
+            #  Add a new product
+            response = self.client.post(
+                "/api/v1/products",
+                data=dict(
+                    name="Flour",
+                    price=7000
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(
+                json.loads(response.data)["msg"], "Product added successfully")
 
     def test_is_product_exists(self):
         """Tests if a product exists in the database"""
@@ -67,7 +72,7 @@ class TestProducts(TestCase):
             "/api/v1/products",
             headers={
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": admin_token
+                "Authorization": self.access_token
             }
         )
         self.assertGreater(len(json.loads(res.data)["items"]), 0)
@@ -75,29 +80,17 @@ class TestProducts(TestCase):
     def test_get_single_product(self):
         """Tests if a single product is fetched from the database"""
         with app.app_context():
-            res = self.controller.get_single_product(self.product_id)
-            self.assertEqual(json.loads(res[0].data)["name"], "Flour")
+            res = self.controller.get_single_product("055ad1fd")
+            self.assertEqual(json.loads(res[0].data)["name"], "Milk")
 
     def test_get_single_product_route(self):
         """Tests get single product route"""
         with app.app_context():
-            response = self.client.post(
-                "/api/v1/products",
-                data=dict(
-                    name="iPhone",
-                    price=900000
-                ),
-                headers={
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": admin_token
-                }
-            )
-            product_id = json.loads(response.data)["id"]
             res = self.client.get(
-                "/api/v1/products/{}".format(product_id),
+                "/api/v1/products/{}".format("7bad398f"),
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": attendant_token
+                    "Authorization": self.access_token
                 }
             )
-            self.assertEqual(json.loads(res.data)["name"], "iPhone")
+            self.assertEqual(json.loads(res.data)["name"], "Bread")

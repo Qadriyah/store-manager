@@ -16,7 +16,6 @@ validator = validate_product.ValidateProduct()
 @sales.route("/sales/cart", methods=["POST"])
 @attendant_required
 def add_to_cart():
-
     if request.method == "POST":
         result = validator.validate_input_data(request.form)
         if not result["is_true"]:

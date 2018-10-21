@@ -3,12 +3,12 @@ from flask import jsonify
 
 from api import app
 from api.models.product import Product
+from api.models.database import product_list
 
 
 class ProductController:
     def __init__(self):
         self.status_code = 200
-        self.product_list = []
 
     def add_product(self, request_data):
         """
@@ -32,7 +32,7 @@ class ProductController:
                 name=request_data["name"],
                 price=request_data["price"]
             )
-            self.product_list.append(new_product)
+            product_list.append(new_product)
             response.update({"id": str(new_product.id)})
             response.update({"msg": "Product added successfully"})
             self.status_code = 200
@@ -47,7 +47,7 @@ class ProductController:
             list: A list of products
         """
         response = {}
-        if len(self.product_list) == 0:
+        if len(product_list) == 0:
             response.update({"msg": "There are no products"})
             self.status_code = 404
         else:
@@ -56,7 +56,7 @@ class ProductController:
                     id=product.id,
                     name=product.name,
                     price=product.price,
-                    created_at=product.created_at) for product in self.product_list
+                    created_at=product.created_at) for product in product_list
             ]
             response.update({"items": items})
             self.status_code = 200
@@ -74,7 +74,7 @@ class ProductController:
         """
         response = {}
         found = False
-        for product in self.product_list:
+        for product in product_list:
             if product.id == product_id:
                 response.update({
                     "id": product.id,
@@ -103,10 +103,10 @@ class ProductController:
             bool: True if exists, False otherwise
         """
         found = False
-        if len(self.product_list) == 0:
+        if len(product_list) == 0:
             return found
 
-        for product in self.product_list:
+        for product in product_list:
             if product.name == product_name:
                 found = True
                 break

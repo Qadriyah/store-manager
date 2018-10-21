@@ -13,18 +13,18 @@ validator = ValidateUserInput()
 controller = controllers.AuthController()
 
 
-@user.route("/user", methods=["POST"])
+@user.route("/register", methods=["POST"])
 @admin_required
 def register_user():
 
     if request.method == "POST":
         result = validator.validate_input_data(request.form)
         if not result["is_true"]:
-            return jsonify(result["errors"]), 401
+            return jsonify(result["errors"]), 400
 
         errors = validator.validate_login_input(request.form)
         if not errors["is_true"]:
-            return jsonify(errors["errors"]), 401
+            return jsonify(errors["errors"]), 400
         return controller.register_user(request.form)
 
 
@@ -34,5 +34,5 @@ def login_user():
     if request.method == "POST":
         result = validator.validate_login_input(request.form)
         if not result["is_true"]:
-            return jsonify(result["errors"]), 401
+            return jsonify(result["errors"]), 400
         return controller.login_user(request.form)
