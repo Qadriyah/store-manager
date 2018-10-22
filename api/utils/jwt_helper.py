@@ -10,7 +10,8 @@ from api.models.user import User
 
 def admin_required(fn):
     """
-    Ensures that a user has a role of admin in the access token
+    Ensures that JWT is present in the request and that a user 
+    has a role of admin in the access token
     """
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -24,7 +25,8 @@ def admin_required(fn):
 
 def attendant_required(fn):
     """
-    Ensures that a user has a role of attendant in the access token
+    Ensures that JWT is present in the request and that a user 
+    has a role of attendant in the access token
     """
     @wraps(fn)
     def wrapper(*args, **kwargs):
