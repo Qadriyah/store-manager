@@ -211,7 +211,15 @@ class TestProducts(TestCase):
         """Tests that the attendant cannot edit a product"""
         pass
 
-    @skip("Not implemented yet")
     def test_attendant_cannot_delete_product(self):
         """Tests that the attendant cannot delete a product"""
-        pass
+        with app.app_context():
+            res = self.client.get(
+                "/api/v1/products/delete/{}".format("055ad1fd"),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token_
+                }
+            )
+            self.assertEqual(json.loads(res.data)[
+                             "msg"], "Admin previlidges required")
