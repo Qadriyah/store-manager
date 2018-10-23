@@ -188,10 +188,23 @@ class TestProducts(TestCase):
             self.assertEqual(json.loads(res.data)[
                              "msg"], "Product deleted successfully")
 
-    @skip("Not implemented yet")
     def test_attendant_cannot_add_product(self):
         """Tests that the attendant cannot add a product"""
-        pass
+        with app.app_context():
+            #  Add a new product
+            response = self.client.post(
+                "/api/v1/products",
+                data=dict(
+                    name="Laptop Bag",
+                    price=150000
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token_
+                }
+            )
+            self.assertEqual(
+                json.loads(response.data)["msg"], "Admin previlidges required")
 
     @skip("Not implemented yet")
     def test_attendant_cannot_edit_product(self):
