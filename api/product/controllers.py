@@ -56,6 +56,8 @@ class ProductController:
                     id=product.id,
                     name=product.name,
                     price=product.price,
+                    quantity=product.quantity,
+                    min_quantity=product.min_quantity,
                     created_at=product.created_at) for product in product_list
             ]
             response.update({"items": items})
@@ -80,6 +82,8 @@ class ProductController:
                     "id": product.id,
                     "name": product.name,
                     "price": product.price,
+                    "quantity": product.quantity,
+                    "min_quantity": product.min_quantity,
                     "created_at": product.created_at
                 })
                 found = True
@@ -111,3 +115,31 @@ class ProductController:
                 found = True
                 break
         return found
+
+    def add_stock(self, request_data):
+        """
+        Updates the product quantity
+
+        Args:
+            product_id(str): Unique identifier for the product
+            quantity(int): Number of items to be added
+
+        Returns:
+
+        """
+        response = {}
+        found = False
+        for product in product_list:
+            if product.id == request_data["product_id"]:
+                temp = int(product.quantity)
+                temp += int(request_data["quantity"])
+                product.quantity = str(temp)
+                found = True
+                break
+        if not found:
+            response.update({"msg": "No product was selected"})
+            self.status_code = 404
+        else:
+            response.update({"msg": "Stock added successfully"})
+            self.status_code = 200
+        return jsonify(response), self.status_code

@@ -84,7 +84,7 @@ class TestProducts(TestCase):
             self.assertEqual(json.loads(res[0].data)["name"], "Milk")
 
     def test_get_single_product_route(self):
-        """Tests get single product route"""
+        """Tests that the route gets single product"""
         with app.app_context():
             res = self.client.get(
                 "/api/v1/products/{}".format("7bad398f"),
@@ -95,10 +95,33 @@ class TestProducts(TestCase):
             )
             self.assertEqual(json.loads(res.data)["name"], "Bread")
 
-    @skip("Not implemeted yet")
     def test_add_stock(self):
         """Tests that the admin can add a stock item"""
-        pass
+        with app.app_context():
+            new_stock = dict(
+                product_id="539c3032",
+                quantity=200
+            )
+            res = self.controller.add_stock(new_stock)
+            self.assertEqual(json.loads(res[0].data)[
+                "msg"], "Stock added successfully")
+
+    def test_add_stock_route(self):
+        """Tests that the route updates the product stock level"""
+        with app.app_context():
+            res = self.client.post(
+                "/api/v1/products/stock",
+                data=dict(
+                    product_id="055ad1fd",
+                    quantity=500
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(json.loads(res.data)[
+                             "msg"], "Stock added successfully")
 
     @skip("Not implemented yet")
     def test_edit_product(self):

@@ -7,10 +7,12 @@ from . import product
 from . import controllers
 #  import validations
 from api.validations import validate_product
+from api.validations import validate_stock
 from api.utils.jwt_helper import admin_required
 
 controller = controllers.ProductController()
 validator = validate_product.ValidateProduct()
+stock_validator = validate_stock.ValidateStockInput()
 
 
 @product.route("/products", methods=["POST"])
@@ -46,3 +48,16 @@ def get_single_product(product_id):
 
     if request.method == "GET":
         return controller.get_single_product(product_id)
+
+
+@product.route("/products/stock", methods=["POST"])
+@admin_required
+def add_stock():
+    """Updates the stock level for a given product"""
+
+    if request.method == "POST":
+        result = stock_validator.validate_input_data(request.form)
+        if not result["is_true"]:
+            return jsonify(result["errors"]), 400
+
+        return controller.add_stock(request.form)

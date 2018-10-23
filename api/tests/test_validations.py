@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from api.validations import is_empty, validate_product
+from api.validations import is_empty, validate_product, validate_stock
 
 
 class TestValidations(TestCase):
@@ -11,6 +11,7 @@ class TestValidations(TestCase):
             "price": 4500
         }
         self.validator = validate_product.ValidateProduct()
+        self.stock_validator = validate_stock.ValidateStockInput()
 
     def tearDown(self):
         pass
@@ -35,3 +36,12 @@ class TestValidations(TestCase):
         )
         self.assertEqual(self.validator.validate_number_fields(
             cart_item)["is_true"], True)
+
+    def test_new_stock_input_data(self):
+        """Tests that the input fields are not empty"""
+        new_stock = dict(
+            product_id="539c3032",
+            quantity=100
+        )
+        self.assertTrue(
+            self.stock_validator.validate_input_data(new_stock)["is_true"])
