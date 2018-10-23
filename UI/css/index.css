@@ -47,12 +47,11 @@ body {
 }
 
 .side-menu {
-  float: left;
   height: 100vh;
   width: 150px;
   background-color: rgba(199, 197, 201);
   overflow: hidden;
-  padding-top: 30px;
+  padding-top: 50px;
   transition: 0.5s;
   position: fixed;
 }

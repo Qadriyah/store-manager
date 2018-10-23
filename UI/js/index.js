@@ -13,31 +13,52 @@ window.onload = () => {
     });
   }
 
-  openDrawer = () => {
-    document.getElementById('drawer').style =
-      'width: 150px; position: absolute; top: 10px; z-index: 1;';
-    document.getElementById('open').style.display = 'none';
-    document.getElementById('close').style.display = 'block';
-  };
+  const open = document.getElementById('open');
+  const close = document.getElementById('close');
+  toggle_button(open, close);
+};
 
-  closeDrawer = () => {
-    document.getElementById('drawer').style = 'width: 0;';
-    document.getElementById('close').style.display = 'none';
-    document.getElementById('open').style.display = 'block';
-  };
-
-  window.addEventListener('resize', () => {
-    const drawer = document.getElementById('drawer');
-    if (drawer) {
-      if (this.window.innerWidth > 615) {
-        document.getElementById('drawer').style = 'width: 150px;';
-        document.getElementById('close').style.display = 'none';
-        document.getElementById('open').style.display = 'none';
-      } else {
-        document.getElementById('drawer').style = 'width: 0;';
-        document.getElementById('open').style.display = 'block';
-        document.getElementById('close').style.display = 'none';
-      }
+window.addEventListener('resize', () => {
+  const drawer = document.getElementById('drawer');
+  if (drawer) {
+    if (this.window.innerWidth > 615) {
+      openDrawer({
+        style: 'width: 150px;',
+        open: 'none',
+        close: 'none'
+      });
+    } else {
+      openDrawer({
+        style: 'width: 0;',
+        open: 'block',
+        close: 'none'
+      });
     }
-  });
+  }
+});
+
+openDrawer = options => {
+  document.getElementById('drawer').style = options.style;
+  document.getElementById('open').style.display = options.open;
+  document.getElementById('close').style.display = options.close;
+};
+
+toggle_button = (open, close) => {
+  if (open && close) {
+    open.addEventListener('click', event => {
+      openDrawer({
+        style: 'width: 150px; position: fixed; top: 50px; z-index: 1;',
+        open: 'none',
+        close: 'block'
+      });
+    });
+
+    close.addEventListener('click', event => {
+      openDrawer({
+        style: 'width: 0;',
+        open: 'block',
+        close: 'none'
+      });
+    });
+  }
 };
