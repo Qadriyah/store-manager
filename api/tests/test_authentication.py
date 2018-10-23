@@ -133,5 +133,3 @@ class TestAuthentication(TestCase):
             )
             self.assertEqual(
                 json.loads(res.data)["msg"], "Admin previlidges required")
-
-    

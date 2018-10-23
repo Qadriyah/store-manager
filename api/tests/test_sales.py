@@ -163,3 +163,29 @@ class TestSales(unittest.TestCase):
             )
             self.assertEqual(json.loads(res.data)["msg"],
                              "Sales order submitted successfully")
+
+    def test_admin_cannot_add_to_cart(self):
+        """Tests that the admin cannot add items to the shopping cart"""
+        with app.app_context():
+            #  Login as admin to get the access token
+            response = self.client.post(
+                "/api/v1/login",
+                data=dict(
+                    username="admin",
+                    password="admin"
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            access_token_ = json.loads(response.data)["token"]
+            #  Add item to the cart
+            res = self.client.post(
+                "/api/v1/sales/cart",
+                data=self.cart_item,
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": access_token_
+                }
+            )
+            self.assertEqual(json.loads(res.data)["msg"], "Attendants only")

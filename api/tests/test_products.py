@@ -1,6 +1,6 @@
 import os
 import json
-from unittest import TestCase
+from unittest import TestCase, skip
 from datetime import datetime
 
 from api import app
@@ -18,7 +18,7 @@ class TestProducts(TestCase):
             "name": "Rice",
             "price": 17000
         }
-        #  Login to get the access token
+        #  Login as admin to get the access token
         response = self.client.post(
             "/api/v1/login",
             data=dict(
@@ -94,3 +94,33 @@ class TestProducts(TestCase):
                 }
             )
             self.assertEqual(json.loads(res.data)["name"], "Bread")
+
+    @skip("Not implemeted yet")
+    def test_add_stock(self):
+        """Tests that the admin can add a stock item"""
+        pass
+
+    @skip("Not implemented yet")
+    def test_edit_product(self):
+        """Tests that the admin can edit a product"""
+        pass
+
+    @skip("Not implemented yet")
+    def test_delete_product(self):
+        """Tests that the admin can delete a product"""
+        pass
+
+    @skip("Not implemented yet")
+    def test_attendant_cannot_add_product(self):
+        """Tests that the attendant cannot add a product"""
+        pass
+
+    @skip("Not implemented yet")
+    def test_attendant_cannot_edit_product(self):
+        """Tests that the attendant cannot edit a product"""
+        pass
+
+    @skip("Not implemented yet")
+    def test_attendant_cannot_delete_product(self):
+        """Tests that the attendant cannot delete a product"""
+        pass
