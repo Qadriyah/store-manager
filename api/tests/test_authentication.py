@@ -31,6 +31,18 @@ class TestAuthentication(TestCase):
             password2="testing",
             roles="attendant"
         )
+        #  Login as attendant to get the access token
+        response = self.client.post(
+            "/api/v1/login",
+            data=dict(
+                username="attendant",
+                password="attendant"
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
+        self.access_token_ = json.loads(response.data)["token"]
 
     def test_validate_user_input(self):
         """Tests that input fields are not empty"""
@@ -107,3 +119,19 @@ class TestAuthentication(TestCase):
                 }
             )
             self.assertTrue(json.loads(res.data)["success"])
+
+    def test_attendant_cannot_add_account(self):
+        """Tests that the attendant cannot add a new user account"""
+        with app.app_context():
+            res = self.client.post(
+                "/api/v1/register",
+                data=self.user2,
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token_
+                }
+            )
+            self.assertEqual(
+                json.loads(res.data)["msg"], "Admin previlidges required")
+
+    
