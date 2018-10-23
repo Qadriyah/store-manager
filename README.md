@@ -30,6 +30,7 @@ The project has no tests yet
 - HTML - The markup language
 - CSS - Used to describe how html elements are displayed
 - Javascript - The only true language for the web
+- Python Flask - Framework used for the API endpoints
 
 ## Links
 
