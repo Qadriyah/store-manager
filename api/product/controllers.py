@@ -125,7 +125,7 @@ class ProductController:
             quantity(int): Number of items to be added
 
         Returns:
-
+            tuple: With a response message and a status code
         """
         response = {}
         found = False
@@ -142,4 +142,30 @@ class ProductController:
         else:
             response.update({"msg": "Stock added successfully"})
             self.status_code = 200
+        return jsonify(response), self.status_code
+
+    def delete_product(self, product_id):
+        """
+        Deletes a product from the product list
+
+        Args:
+            product_id(str): Unique product identifier
+
+        Returns:
+            tuple: With a response message and a status code
+        """
+        response = {}
+        deleted = False
+        for product in product_list:
+            if product.id == product_id:
+                product_list.remove(product)
+                deleted = True
+                break
+        if deleted:
+            response.update({"msg": "Product deleted successfully"})
+            self.status_code = 200
+        else:
+            response.update({"msg": "Product not found"})
+            self.status_code = 404
+
         return jsonify(response), self.status_code

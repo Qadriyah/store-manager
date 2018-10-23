@@ -44,7 +44,7 @@ def get_all_products():
 @product.route("/products/<product_id>", methods=["GET"])
 @jwt_required
 def get_single_product(product_id):
-    """Get a single product route"""
+    """Get a single product"""
 
     if request.method == "GET":
         return controller.get_single_product(product_id)
@@ -61,3 +61,12 @@ def add_stock():
             return jsonify(result["errors"]), 400
 
         return controller.add_stock(request.form)
+
+
+@product.route("/products/delete/<product_id>", methods=["GET"])
+@admin_required
+def delete_product(product_id):
+    """Deletes a product with a given product_id"""
+
+    if request.method == "GET":
+        return controller.delete_product(product_id)

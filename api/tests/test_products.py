@@ -30,6 +30,18 @@ class TestProducts(TestCase):
             }
         )
         self.access_token = json.loads(response.data)["token"]
+        #  Login as sales attendant
+        res = self.client.post(
+            "/api/v1/login",
+            data=dict(
+                username="attendant",
+                password="attendant"
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )
+        self.access_token_ = json.loads(res.data)["token"]
 
     def test_add_product_route(self):
         """Tests add product route"""
@@ -128,10 +140,53 @@ class TestProducts(TestCase):
         """Tests that the admin can edit a product"""
         pass
 
-    @skip("Not implemented yet")
     def test_delete_product(self):
         """Tests that the admin can delete a product"""
-        pass
+        with app.app_context():
+            #  Add a new product
+            response = self.client.post(
+                "/api/v1/products",
+                data=dict(
+                    name="External Hard Disk",
+                    price=300000
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            product_id = json.loads(response.data)["id"]
+            #  Delete added product
+            res = self.controller.delete_product(product_id)
+            self.assertEqual(json.loads(res[0].data)[
+                             "msg"], "Product deleted successfully")
+
+    def test_delete_product_route(self):
+        """Tests that the route deletes a product from the list"""
+        with app.app_context():
+            #  Add a new product
+            response = self.client.post(
+                "/api/v1/products",
+                data=dict(
+                    name="External Hard Disk",
+                    price=300000
+                ),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            product_id = json.loads(response.data)["id"]
+            #  Delete added product
+            res = self.client.get(
+                "/api/v1/products/delete/{}".format(product_id),
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(json.loads(res.data)[
+                             "msg"], "Product deleted successfully")
 
     @skip("Not implemented yet")
     def test_attendant_cannot_add_product(self):
