@@ -1,7 +1,7 @@
-from api.models.user import User
-from api.models.product import Product
-from api.models.cart import Cart
-from api.models.sale import Sale
+from models.user import User
+from models.product import Product
+from models.cart import Cart
+from models.sale import Sale
 
 
 cart = [

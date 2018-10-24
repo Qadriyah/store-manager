@@ -6,9 +6,9 @@ from flask_jwt_extended import (
 )
 
 from api import app
-from api.models.user import User
+from models.user import User
 from api.sales.controllers import SalesController
-from api.models.database import users
+from models.database import users
 from api import bcrypt
 from api import jwt
 from api.utils.jwt_helper import (

@@ -2,9 +2,9 @@ import secrets
 from flask import jsonify
 
 from api import app
-from api.models.sale import Sale
-from api.models.cart import Cart
-from api.models.database import sales_records, cart
+from models.sale import Sale
+from models.cart import Cart
+from models.database import sales_records, cart
 
 
 class SalesController:
