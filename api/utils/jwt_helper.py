@@ -18,7 +18,7 @@ def admin_required(fn):
         verify_jwt_in_request()
         user_data = get_jwt_claims()
         if user_data["roles"] != "admin":
-            return jsonify({"msg": "Admin previlidges required"}), 401
+            return jsonify({"msg": "Admin previlidges required"}), 403
         return fn(*args, **kwargs)
     return wrapper
 
@@ -33,7 +33,7 @@ def attendant_required(fn):
         verify_jwt_in_request()
         user_data = get_jwt_claims()
         if user_data["roles"] != "attendant":
-            return jsonify({"msg": "Attendants only"}), 401
+            return jsonify({"msg": "Attendants only"}), 403
         return fn(*args, **kwargs)
     return wrapper
 

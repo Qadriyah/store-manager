@@ -121,8 +121,7 @@ class ProductController:
         Updates the product quantity
 
         Args:
-            product_id(str): Unique identifier for the product
-            quantity(int): Number of items to be added
+            request_data(object): Hold form data
 
         Returns:
             tuple: With a response message and a status code
@@ -163,6 +162,34 @@ class ProductController:
                 break
         if deleted:
             response.update({"msg": "Product deleted successfully"})
+            self.status_code = 200
+        else:
+            response.update({"msg": "Product not found"})
+            self.status_code = 404
+
+        return jsonify(response), self.status_code
+
+    def edit_product(self, request_data):
+        """
+        Modifies the product details
+
+        Args:
+            request_data(object): Hold form data
+
+        Returns:
+            tuple: With a response message and a status code
+        """
+        response = {}
+        modified = False
+        for product in product_list:
+            if product.id == request_data["product_id"]:
+                product.name = request_data["name"]
+                product.price = request_data["price"]
+                product.min_quantity = request_data["min_qty"]
+                modified = True
+                break
+        if modified:
+            response.update({"msg": "Product updated successfully"})
             self.status_code = 200
         else:
             response.update({"msg": "Product not found"})

@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from api.validations import is_empty, validate_product, validate_stock
 
@@ -45,3 +45,18 @@ class TestValidations(TestCase):
         )
         self.assertTrue(
             self.stock_validator.validate_input_data(new_stock)["is_true"])
+
+    @skip("Not yet implemented")
+    def test_non_integer_values(self):
+        """Tests that the quantity and price fiedls contain non interger values"""
+        pass
+
+    @skip("Not yet implemented")
+    def test_new_product_empty_form_fields(self):
+        """Tests that the form fields are empty"""
+        pass
+
+    @skip("Not yet implemented")
+    def test_new_stock_empty_form_fields(self):
+        """Tests that the form fields are empty"""
+        pass

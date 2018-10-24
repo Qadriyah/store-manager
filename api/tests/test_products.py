@@ -135,10 +135,38 @@ class TestProducts(TestCase):
             self.assertEqual(json.loads(res.data)[
                              "msg"], "Stock added successfully")
 
-    @skip("Not implemented yet")
     def test_edit_product(self):
         """Tests that the admin can edit a product"""
-        pass
+        with app.app_context():
+            product_changes = dict(
+                product_id="539c3032",
+                name="Sugar",
+                price=7000,
+                min_qty=10
+            )
+            res = self.controller.edit_product(product_changes)
+            self.assertEqual(json.loads(res[0].data)[
+                "msg"], "Product updated successfully")
+
+    def test_edit_product_route(self):
+        """Tests that the route modifies the product details"""
+        with app.app_context():
+            product_changes = dict(
+                product_id="539c3032",
+                name="Sugar",
+                price=5000,
+                min_qty=7
+            )
+            res = self.client.post(
+                "/api/v1/products/edit/{}".format("539c3032"), 
+                data=product_changes,
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(json.loads(res.data)[
+                "msg"], "Product updated successfully")
 
     def test_delete_product(self):
         """Tests that the admin can delete a product"""
@@ -178,7 +206,7 @@ class TestProducts(TestCase):
             )
             product_id = json.loads(response.data)["id"]
             #  Delete added product
-            res = self.client.get(
+            res = self.client.delete(
                 "/api/v1/products/delete/{}".format(product_id),
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -214,7 +242,7 @@ class TestProducts(TestCase):
     def test_attendant_cannot_delete_product(self):
         """Tests that the attendant cannot delete a product"""
         with app.app_context():
-            res = self.client.get(
+            res = self.client.delete(
                 "/api/v1/products/delete/{}".format("055ad1fd"),
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",

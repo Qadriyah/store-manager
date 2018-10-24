@@ -63,10 +63,30 @@ def add_stock():
         return controller.add_stock(request.form)
 
 
-@product.route("/products/delete/<product_id>", methods=["GET"])
+@product.route("/products/delete/<product_id>", methods=["DELETE"])
 @admin_required
 def delete_product(product_id):
     """Deletes a product with a given product_id"""
 
-    if request.method == "GET":
+    if request.method == "DELETE":
         return controller.delete_product(product_id)
+
+
+@product.route("/products/edit/<product_id>", methods=["POST", "GET"])
+@admin_required
+def edit_product(product_id):
+    """Modifies the product details"""
+
+    if request.method == "GET":
+        return controller.get_single_product(product_id)
+
+    if request.method == "POST":
+        result = validator.validate_number_fields(request.form)
+        errors = validator.validate_input_data(request.form)
+        if not result["is_true"]:
+            return jsonify(result["errors"]), 400
+
+        if not errors["is_true"]:
+            return jsonify(errors["errors"]), 400
+
+        return controller.edit_product(request.form)
