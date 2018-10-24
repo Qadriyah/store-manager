@@ -13,17 +13,45 @@ These instrauctions will get you a copy of the project up and runnig on your loc
 You need `git` to get started.
 Download and install a copy of [ git ](https://git-scm.com/downloads) for your operating system
 
-### Installation
+## Installation
 
-Run the following command from the terminal to install the project on your local machine
+Run the following commands from the terminal to install the project on your local machine
 
 ```
-git clone https://github.com/Qadriyah/store-manager.git
+* git clone https://github.com/Qadriyah/store-manager.git
+* pip install -r requirements.txt
+```
+
+### Production ready code for the UI
+
+```
+git checkout gh-pages
+```
+
+### Production ready code for the API endpoints
+
+```
+git checkout api-v1
 ```
 
 ## Runing the tests
 
-The project has no tests yet
+The following command runs all tests of the API. the -p switch supresses any warnings
+
+```
+pytest -p no:warnings
+```
+
+## Running selective tests
+
+Tests are separated into different modules, the following commands run tests selectively
+
+```
+pytest test/test_authentication.py -p no:warnings
+pytest test/test_products.py -p no:warnings
+pytest test/test_sales.py -p no:warnings
+pytest test/test_validations.py -p no:warnings
+```
 
 ## Built With
 
