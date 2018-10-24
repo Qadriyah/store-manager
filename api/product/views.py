@@ -80,7 +80,7 @@ def edit_product(product_id):
     if request.method == "GET":
         return controller.get_single_product(product_id)
 
-    if request.method == "POST":
+    else:
         result = validator.validate_number_fields(request.form)
         errors = validator.validate_input_data(request.form)
         if not result["is_true"]:
