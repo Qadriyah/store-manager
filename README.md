@@ -18,8 +18,13 @@ Download and install a copy of [ git ](https://git-scm.com/downloads) for your o
 Run the following commands from the terminal to install the project on your local machine
 
 ```
-* git clone https://github.com/Qadriyah/store-manager.git
-* pip install -r requirements.txt
+git clone https://github.com/Qadriyah/store-manager.git
+
+virtualenv env
+
+env\scripts\activate
+
+pip install -r requirements.txt
 ```
 
 ### Production ready code for the UI
@@ -52,6 +57,24 @@ pytest test/test_products.py -p no:warnings
 pytest test/test_sales.py -p no:warnings
 pytest test/test_validations.py -p no:warnings
 ```
+
+## List of endpoint
+
+| Method | Route                               | Description             |
+| ------ | ----------------------------------- | ----------------------- |
+| POST   | /api/v1/products                    | Add product             |
+| GET    | /api/v1/products                    | Get all products        |
+| GET    | /api/v1/products/<productId>        | Get product by Id       |
+| POST   | /api/v1/sales/cart                  | Add to shopping cart    |
+| GET    | /api/v1/sales/cart/items            | Get all cart items      |
+| POST   | /api/v1/sales                       | Record sales order      |
+| GET    | /api/v1/sales                       | Get all sales orders    |
+| GET    | /api/v1/sales/<salesId>             | Get sales order by Id   |
+| POST   | /api/v1/register                    | Register user           |
+| POST   | /api/v1/login                       | Login user              |
+| POST   | /api/v1/products/stock              | Add stock               |
+| DELETE | /api/v1/products/delete/<productId> | Delete specific product |
+| POST   | /api/v1/products/edit/<productId>   | Edit specific product   |
 
 ## Built With
 
