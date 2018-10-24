@@ -7,8 +7,8 @@
 /api/__pycache__
 /api/product/__pycache__
 /api/sales/__pycache__
-/api/models/__pycache__
-/api/tests/__pycache__
+/models/__pycache__
+/tests/__pycache__
 /api/validations/__pycache__
 /api/user/__pycache__
 /api/utils/__pycache__
