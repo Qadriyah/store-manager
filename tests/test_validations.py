@@ -46,10 +46,15 @@ class TestValidations(TestCase):
         self.assertTrue(
             self.stock_validator.validate_input_data(new_stock)["is_true"])
 
-    @skip("Not yet implemented")
     def test_non_integer_values(self):
-        """Tests that the quantity and price fiedls contain non interger values"""
-        pass
+        """Tests that the quantity and price fields contain non interger values"""
+        cart_item = dict(
+            name="Milk",
+            price="1500P",
+            qty="2Q"
+        )
+        self.assertEqual(self.validator.validate_number_fields(
+            cart_item)["errors"]["value"], "Only numbers allowed for both price and quantity")
 
     @skip("Not yet implemented")
     def test_new_product_empty_form_fields(self):

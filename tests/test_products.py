@@ -5,7 +5,7 @@ from datetime import datetime
 
 from api import app
 from config import app_settings
-from api.models.product import Product
+from models.product import Product
 from api.product import controllers
 
 

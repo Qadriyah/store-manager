@@ -6,7 +6,7 @@ from datetime import datetime
 
 from api import app
 from config import app_settings
-from api.models.user import User
+from models.user import User
 from api.user import user, controllers
 from api.validations import validate_user
 

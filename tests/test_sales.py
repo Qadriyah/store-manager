@@ -2,9 +2,9 @@ import json
 import unittest
 
 from api.sales import controllers
-from api.models.cart import Cart
-from api.models.sale import Sale
-from api.models.database import cart
+from models.cart import Cart
+from models.sale import Sale
+from models.database import cart
 from api import app
 
 
