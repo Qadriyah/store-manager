@@ -158,7 +158,7 @@ class TestProducts(TestCase):
                 min_qty=7
             )
             res = self.client.post(
-                "/api/v1/products/edit/{}".format("539c3032"), 
+                "/api/v1/products/edit",
                 data=product_changes,
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -244,7 +244,7 @@ class TestProducts(TestCase):
                 min_qty=25
             )
             res = self.client.post(
-                "/api/v1/products/edit/{}".format("539c3032"), 
+                "/api/v1/products/edit",
                 data=product_changes,
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -253,7 +253,6 @@ class TestProducts(TestCase):
             )
             self.assertEqual(json.loads(res.data)[
                 "msg"], "Admin previlidges required")
-        
 
     def test_attendant_cannot_delete_product(self):
         """Tests that the attendant cannot delete a product"""
