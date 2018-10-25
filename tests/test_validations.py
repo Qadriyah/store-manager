@@ -56,12 +56,26 @@ class TestValidations(TestCase):
         self.assertEqual(self.validator.validate_number_fields(
             cart_item)["errors"]["value"], "Only numbers allowed for both price and quantity")
 
-    @skip("Not yet implemented")
     def test_new_product_empty_form_fields(self):
         """Tests that the form fields are empty"""
-        pass
+        new_product = dict(
+            name="",
+            price=""
+        )
+        self.assertEqual(
+            self.validator.validate_input_data(new_product)["is_true"],
+            False
+        )
+        self.assertGreater(
+            len(self.validator.validate_input_data(new_product)["errors"]), 0)
 
-    @skip("Not yet implemented")
     def test_new_stock_empty_form_fields(self):
         """Tests that the form fields are empty"""
-        pass
+        new_stock = dict(
+            product_id="",
+            quantity=""
+        )
+        self.assertFalse(
+            self.stock_validator.validate_input_data(new_stock)["is_true"])
+        self.assertGreater(
+            len(self.stock_validator.validate_input_data(new_stock)["errors"]), 0)
