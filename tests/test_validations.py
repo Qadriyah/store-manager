@@ -1,4 +1,4 @@
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from api.validations import is_empty, validate_product, validate_stock
 

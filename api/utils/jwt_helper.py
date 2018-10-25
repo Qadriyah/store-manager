@@ -1,5 +1,5 @@
 from flask_jwt_extended import (
-    verify_jwt_in_request, get_jwt_identity, get_jwt_claims
+    verify_jwt_in_request, get_jwt_claims
 )
 from flask import jsonify
 from functools import wraps

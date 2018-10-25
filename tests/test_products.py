@@ -1,6 +1,6 @@
 import os
 import json
-from unittest import TestCase, skip
+from unittest import TestCase
 from datetime import datetime
 
 from api import app

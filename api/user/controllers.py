@@ -2,18 +2,13 @@ import secrets
 import datetime
 from flask import jsonify
 from flask_jwt_extended import (
-    create_access_token, jwt_required, get_jwt_identity, get_jwt_claims
+    create_access_token, get_jwt_identity, get_jwt_claims
 )
 
-from api import app
 from models.user import User
 from api.sales.controllers import SalesController
 from models.database import users
 from api import bcrypt
-from api import jwt
-from api.utils.jwt_helper import (
-    add_claims_to_access_token, user_identity_lookup
-)
 
 
 class AuthController:
