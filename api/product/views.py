@@ -72,15 +72,12 @@ def delete_product(product_id):
         return controller.delete_product(product_id)
 
 
-@product.route("/products/edit/<product_id>", methods=["POST", "GET"])
+@product.route("/products/edit", methods=["POST"])
 @admin_required
-def edit_product(product_id):
+def edit_product():
     """Modifies the product details"""
 
-    if request.method == "GET":
-        return controller.get_single_product(product_id)
-
-    else:
+    if request.method == "POST":
         result = validator.validate_number_fields(request.form)
         errors = validator.validate_input_data(request.form)
         if not result["is_true"]:

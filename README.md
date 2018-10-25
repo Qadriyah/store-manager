@@ -60,21 +60,21 @@ pytest test/test_validations.py -p no:warnings
 
 ## List of endpoint
 
-| Method | Route                                   | Description             |
-| ------ | -------------------------------------   | ----------------------- |
-| POST   | /api/v1/products                        | Add product             |
-| GET    | /api/v1/products                        | Get all products        |
-| GET    | /api/v1/products/&ltproductId&gt`       | Get product by Id       |
-| POST   | /api/v1/sales/cart                      | Add to shopping cart    |
-| GET    | /api/v1/sales/cart/items                | Get all cart items      |
-| POST   | /api/v1/sales                           | Record sales order      |
-| GET    | /api/v1/sales                           | Get all sales orders    |
-| GET    | /api/v1/sales/&ltsalesId&gt             | Get sales order by Id   |
-| POST   | /api/v1/register                        | Register user           |
-| POST   | /api/v1/login                           | Login user              |
-| POST   | /api/v1/products/stock                  | Add stock               |
-| DELETE | /api/v1/products/delete/&ltproductId&gt | Delete specific product |
-| POST   | /api/v1/products/edit/&ltproductId&gt   | Edit specific product   |
+| Method | Route                                     | Description             |
+| ------ | -------------------------------------     | ----------------------- |
+| POST   | /api/v1/products                          | Add product             |
+| GET    | /api/v1/products                          | Get all products        |
+| GET    | /api/v1/products/&lt;productId&gt;        | Get product by Id       |
+| POST   | /api/v1/sales/cart                        | Add to shopping cart    |
+| GET    | /api/v1/sales/cart/items                  | Get all cart items      |
+| POST   | /api/v1/sales                             | Record sales order      |
+| GET    | /api/v1/sales                             | Get all sales orders    |
+| GET    | /api/v1/sales/&lt;salesId&gt;             | Get sales order by Id   |
+| POST   | /api/v1/register                          | Register user           |
+| POST   | /api/v1/login                             | Login user              |
+| POST   | /api/v1/products/stock                    | Add stock               |
+| DELETE | /api/v1/products/delete/&lt;productId&gt; | Delete specific product |
+| POST   | /api/v1/products/edit                     | Edit product details    |
 
 ## Built With
 
