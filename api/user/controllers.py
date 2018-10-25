@@ -95,7 +95,7 @@ class AuthController:
                 })
                 self.status_code = 200
             else:
-                response.update({"error": "Wrong email or password"})
+                response.update({"errors": "Wrong usrname or password"})
                 self.status_code = 401
 
         return jsonify(response), self.status_code

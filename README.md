@@ -86,6 +86,7 @@ pytest test/test_validations.py -p no:warnings
 ## Links
 
 - [gh-pages](https://qadriyah.github.io/store-manager/UI/)
+- [herouk](https://pos-api-v1.herokuapp.com/)
 - [No documentation yet]()
 
 ## Usage

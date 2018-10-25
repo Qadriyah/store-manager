@@ -1,5 +1,5 @@
 from flask import request, jsonify, render_template
-from flask_jwt_extended import jwt_required, get_jwt_identity, current_user
+from flasgger import swag_from
 
 #  import user blueprint
 from . import user
@@ -7,18 +7,29 @@ from . import user
 from . import controllers
 #  import data validator
 from api.validations.validate_user import ValidateUserInput
-from api.utils.jwt_helper import admin_required, user_loader_callback
+from api.utils.jwt_helper import admin_required
 from api import app
+from api import swagger
 
 validator = ValidateUserInput()
 controller = controllers.AuthController()
 
 
 @user.route("/register", methods=["POST"])
+@swag_from("../apidoc/user/register.yml")
 @admin_required
 def register_user():
 
     if request.method == "POST":
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        password2 = request.form.get("password2")
+        roles = request.form.get("roles")
+
+        if not name or not username or not password or not password2 or not roles:
+            return jsonify({"errors": "Server Erroe"}), 500
+
         errors = validator.validate_login_input(request.form)
         if not errors["is_true"]:
             return jsonify(errors["errors"]), 400
@@ -30,12 +41,16 @@ def register_user():
 
 
 @user.route("/login", methods=["POST"])
+@swag_from("../apidoc/user/login_user.yml")
 def login_user():
 
     if request.method == "POST":
+        if not request.form.get("username") or not request.form.get("password"):
+            return jsonify({"errors": "Server error"}), 500
+
         result = validator.validate_login_input(request.form)
         if not result["is_true"]:
-            return jsonify(result["errors"]), 400
+            return jsonify(result["errors"]), 401
         return controller.login_user(request.form)
 
 
