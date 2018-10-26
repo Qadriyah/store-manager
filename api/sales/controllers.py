@@ -5,7 +5,7 @@ from flask_jwt_extended import current_user
 from api import app
 from models.sale import Sale
 from models.cart import Cart
-from models.database import sales_records, cart
+from models.database import sales_records, cart, product_list
 
 
 class SalesController:
@@ -23,6 +23,9 @@ class SalesController:
         Returns:
             str: Message
         """
+        if self.is_product_out_of_stock:
+            return "Item is out of stock"
+
         if self.is_product_in_cart(request_data["name"]):
             self.update_qty_in_cart(request_data["pid"], request_data["qty"])
         else:
@@ -92,6 +95,8 @@ class SalesController:
                 product_name=product.name
             )
             sales_records.append(new_sale)
+            #  Reduce stock
+            self.reduce_stock(product.product_id, product.qty)
         #  clear the shopping cart
         self.clear_cart()
 
@@ -216,3 +221,39 @@ class SalesController:
         response.update({"msg": "Sales record not found"})
         self.status_code = 404
         return jsonify(response), self.status_code
+
+    def reduce_stock(self, product_id, quantity):
+        """
+        Reduces product quantity
+
+        Args:
+            product_id(str): Unique product identifier
+            quantity(int): Quantity sold
+
+        Returns:
+            int: 1
+        """
+        for product in product_list:
+            if product.id == product_id:
+                temp = int(product.quantity)
+                temp -= int(quantity)
+                product.quantity = temp
+                break
+        return 1
+
+    def is_product_out_of_stock(self, product_id):
+        """
+        Checks if an item is out of stock
+
+        Args:
+            product_id(str): Unique product identifier
+
+        Returns:
+            bool: True for out of stock, False otherwise
+        """
+        out_of_stock = False
+        for product in product_list:
+            if product.id == product_id and product.quantity == 0:
+                out_of_stock = True
+                break
+        return out_of_stock
