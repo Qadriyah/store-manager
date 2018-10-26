@@ -23,8 +23,8 @@ class SalesController:
         Returns:
             str: Message
         """
-        if self.is_product_out_of_stock:
-            return "Item is out of stock"
+        ''' if self.is_product_out_of_stock:
+            return "Item is out of stock" '''
 
         if self.is_product_in_cart(request_data["name"]):
             self.update_qty_in_cart(request_data["pid"], request_data["qty"])
