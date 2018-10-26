@@ -1,0 +1,18 @@
+|
+
+  Creates a sales record using items in the shopping cart
+
+---
+produces:
+  - application/json
+parameters:
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+responses:
+  200:
+    description: A message
+    example: { 'msg': 'Order created successfully' }

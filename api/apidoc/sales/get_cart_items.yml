@@ -1,6 +1,6 @@
 |
 
-  Adds a new product entry into the database
+  Retrieves all items in the shopping cart
 
 ---
 produces:

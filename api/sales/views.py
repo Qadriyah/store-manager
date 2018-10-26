@@ -40,6 +40,7 @@ def get_cart_items():
 
 @sales.route("/sales", methods=["POST"])
 @attendant_required
+@swag_from("../apidoc/sales/add_sales_order.yml")
 def add_sales_record():
 
     if request.method == "POST":
@@ -48,6 +49,7 @@ def add_sales_record():
 
 @sales.route("/sales", methods=["GET"])
 @admin_required
+@swag_from("../apidoc/sales/get_sales_records.yml")
 def get_all_sales_record():
 
     if request.method == "GET":
@@ -56,6 +58,7 @@ def get_all_sales_record():
 
 @sales.route("/sales/<sales_id>", methods=["GET"])
 @jwt_required
+@swag_from("../apidoc/sales/get_single_sales_record.yml")
 def get_single_sales_record(sales_id):
 
     if request.method == "GET":

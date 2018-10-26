@@ -1,0 +1,29 @@
+|
+
+  Retrieves a list of all sales records
+
+---
+produces:
+  - application/json
+parameters:
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+responses:
+  200:
+    description: A list of all sales records
+    example:
+      {
+        'created_at': '26/10/2018',
+        'id': '78ae5678',
+        'order_number': 'bf6c24726e0c015d',
+        'price': 4500,
+        'product_id': '11eb785d',
+        'product_name': 'iPhone',
+        'qty': 2,
+        'total': 9000,
+        'user_id': '2de858c1',
+      }
