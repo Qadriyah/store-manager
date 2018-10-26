@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
+from flasgger import swag_from
 
 #  import product blueprint
 from . import product
@@ -34,6 +35,7 @@ def add_product():
 
 @product.route("/products", methods=["GET"])
 @jwt_required
+@swag_from("../apidoc/product/get_products.yml")
 def get_all_products():
     """Get all products route"""
 
@@ -43,6 +45,7 @@ def get_all_products():
 
 @product.route("/products/<product_id>", methods=["GET"])
 @jwt_required
+@swag_from("../apidoc/product/get_single_product.yml")
 def get_single_product(product_id):
     """Get a single product"""
 
