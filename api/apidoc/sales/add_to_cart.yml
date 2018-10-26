@@ -1,0 +1,66 @@
+|
+
+  Adds an item to the shopping cart
+
+---
+produces:
+  - application/json
+parameters:
+  - in: formData
+    name: pid
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: name
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: price
+    schema:
+      type: integer
+    required: true
+  - in: formData
+    name: qty
+    schema:
+      type: integer
+    required: true
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+definitions:
+  Sale:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 055ad1fd
+      user_id:
+        type: string
+        example: 2067fe34
+      order_number:
+        type: string
+        example: de0c1292738aff11
+      product_id:
+        type: string
+        example: 7bad398f
+      price:
+        type: integer
+        example: 5000000
+      qty:
+        type: integer
+        example: 3
+      product_name:
+        type: string
+        example: iPhone X
+      created_at:
+        type: string
+        example: 25/10/2018
+responses:
+  200:
+    description: A response message
+    example: { 'msg': 'success' }

@@ -1,5 +1,6 @@
 import secrets
 from flask import jsonify
+from flask_jwt_extended import current_user
 
 from api import app
 from models.sale import Sale
@@ -79,7 +80,7 @@ class SalesController:
         for product in cart:
             new_sale = Sale(
                 id=secrets.token_hex(4),
-                user_id=1,
+                user_id=current_user.id,
                 order_number=order_number,
                 product_id=product.product_id,
                 qty=product.qty,

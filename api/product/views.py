@@ -18,6 +18,7 @@ stock_validator = validate_stock.ValidateStockInput()
 
 @product.route("/products", methods=["POST"])
 @admin_required
+@swag_from("../apidoc/product/add_product.yml")
 def add_product():
     """Add product route"""
 
@@ -55,6 +56,7 @@ def get_single_product(product_id):
 
 @product.route("/products/stock", methods=["POST"])
 @admin_required
+@swag_from("../apidoc/product/add_stock.yml")
 def add_stock():
     """Updates the stock level for a given product"""
 

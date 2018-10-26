@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
+from flasgger import swag_from
 
 #  import sales blueprint
 from . import sales
@@ -15,6 +16,7 @@ validator = validate_product.ValidateProduct()
 
 @sales.route("/sales/cart", methods=["POST"])
 @attendant_required
+@swag_from("../apidoc/sales/add_to_cart.yml")
 def add_to_cart():
     if request.method == "POST":
         result = validator.validate_input_data(request.form)
@@ -29,6 +31,7 @@ def add_to_cart():
 
 @sales.route("/sales/cart/items", methods=["GET"])
 @attendant_required
+@swag_from("../apidoc/sales/get_cart_items.yml")
 def get_cart_items():
 
     if request.method == "GET":
