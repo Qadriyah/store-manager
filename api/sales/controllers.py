@@ -77,10 +77,14 @@ class SalesController:
             return jsonify(response), self.status_code
 
         order_number = secrets.token_hex(8)
+        user_id = "2067fe34"
+        if current_user:
+            user_id = current_user.id
+
         for product in cart:
             new_sale = Sale(
                 id=secrets.token_hex(4),
-                user_id=current_user.id,
+                user_id=user_id,
                 order_number=order_number,
                 product_id=product.product_id,
                 qty=product.qty,
