@@ -56,8 +56,6 @@ class ProductController:
                     id=product.id,
                     name=product.name,
                     price=product.price,
-                    quantity=product.quantity,
-                    min_quantity=product.min_quantity,
                     created_at=product.created_at) for product in product_list
             ]
             response.update({"items": items})
@@ -82,8 +80,6 @@ class ProductController:
                     "id": product.id,
                     "name": product.name,
                     "price": product.price,
-                    "quantity": product.quantity,
-                    "min_quantity": product.min_quantity,
                     "created_at": product.created_at
                 })
                 found = True
@@ -185,7 +181,6 @@ class ProductController:
             if product.id == request_data["product_id"]:
                 product.name = request_data["name"]
                 product.price = request_data["price"]
-                product.min_quantity = request_data["min_qty"]
                 modified = True
                 break
         if modified:

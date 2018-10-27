@@ -1,10 +1,17 @@
 class Cart:
 
     def __init__(self, **kwargs):
-        self.product_id = kwargs['pid']
-        self.name = kwargs['name']
-        self.qty = kwargs["qty"]
+        self.id = kwargs["id"]
+        self.product_id = kwargs["product_id"]
+        self.product_name = kwargs["product_name"]
+        self.quantity = kwargs["quantity"]
         self.price = kwargs['price']
 
     def __repr__(self):
-        return "<Cart(product_id={}, name={}, qty={}, price={})>".format(self.product_id, self.name, self.qty, self.price)
+        return "<Cart(id={}, product_id={}, product_name={}, quantity={}, price={})>".format(
+            self.id,
+            self.product_id,
+            self.product_name,
+            self.quantity,
+            self.price
+        )

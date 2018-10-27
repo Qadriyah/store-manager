@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_jwt_extended import current_user
 
 from api import app
-from models.sale import Sale
+from models.sale import SalesOrder
 from models.cart import Cart
 from models.database import sales_records, cart, product_list
 
@@ -58,10 +58,10 @@ class SalesController:
             items = [
                 dict(
                     id=product.product_id,
-                    name=product.name,
-                    qty=product.qty,
+                    name=product.product_name,
+                    qty=product.quantity,
                     price=product.price,
-                    total=int(product.qty) * int(product.price))
+                    total=int(product.quantity) * int(product.price))
                 for product in cart
             ]
             response.update({"items": items})
@@ -85,19 +85,16 @@ class SalesController:
             return jsonify(response), self.status_code
 
         order_number = secrets.token_hex(8)
-        user_id = "2067fe34"
+        user_id = 2
         if current_user:
             user_id = current_user.id
 
         for product in cart:
-            new_sale = Sale(
-                id=secrets.token_hex(4),
+            new_sale = SalesOrder(
+                id=product.product_id,
                 user_id=user_id,
                 order_number=order_number,
-                product_id=product.product_id,
-                qty=product.qty,
-                price=product.price,
-                product_name=product.name
+                created_at=""
             )
             sales_records.append(new_sale)
             #  Reduce stock
@@ -125,7 +122,7 @@ class SalesController:
             return found
 
         for product in cart:
-            if product.name == product_name:
+            if product.product_name == product_name:
                 found = True
                 break
         return found
@@ -181,12 +178,7 @@ class SalesController:
                     id=sales_item.id,
                     user_id=sales_item.user_id,
                     order_number=sales_item.order_number,
-                    product_id=sales_item.product_id,
-                    qty=sales_item.qty,
-                    product_name=sales_item.product_name,
-                    price=sales_item.price,
-                    created_at=sales_item.created_at,
-                    total=int(sales_item.price) * int(sales_item.qty))
+                    created_at=sales_item.created_at)
                 for sales_item in sales_records
             ]
             response.update({"items": items})
@@ -211,10 +203,6 @@ class SalesController:
                 response.update({
                     "id": sales_item.id,
                     "user_id": sales_item.user_id,
-                    "name": sales_item.product_name,
-                    "price": sales_item.price,
-                    "qty": sales_item.qty,
-                    "total": int(sales_item.price) * int(sales_item.qty),
                     "created_at": sales_item.created_at
                 })
                 found = True
@@ -262,3 +250,17 @@ class SalesController:
                 out_of_stock = True
                 break
         return out_of_stock
+
+    def generate_order_number(self, value):
+        """
+        Generates the order number with leading zeros
+
+        Args:
+            value(int): Sales order ID
+
+        Returns:
+            str: Representation of the order number
+        """
+        response = "0" * (5 - len(str(value)))
+        response = "SO-{}{}".format(response, str(value))
+        return response

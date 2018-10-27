@@ -2,6 +2,9 @@
 /myenviron
 /.vscode
 
+#  Keys
+/config/db_dev.py
+
 # msc
 /__pycache__
 /api/__pycache__
@@ -12,3 +15,4 @@
 /api/validations/__pycache__
 /api/user/__pycache__
 /api/utils/__pycache__
+/config/__pycache__

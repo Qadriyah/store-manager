@@ -1,4 +1,5 @@
 import os
+import secrets
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -8,7 +9,7 @@ class Config(object):
     DEBUG = True
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY: "mukunguB"
+    SECRET_KEY: secrets.token_hex(16)
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 
 
@@ -29,7 +30,7 @@ class ProductionConfig(Config):
 
 
 app_settings = {
-    "development": "config.DevelopmentConfig",
-    "testing": "config.TestingConfig",
-    "production": "config.ProductionConfig"
+    "development": "config.config.DevelopmentConfig",
+    "testing": "config.config.TestingConfig",
+    "production": "config.config.ProductionConfig"
 }
