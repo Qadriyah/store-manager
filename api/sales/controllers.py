@@ -23,11 +23,14 @@ class SalesController:
         Returns:
             str: Message
         """
-        ''' if self.is_product_out_of_stock:
-            return "Item is out of stock" '''
+        response = {}
+        if self.is_product_out_of_stock(request_data["pid"]):
+            return jsonify({"msg": "Item is out of stock"}), 401
 
         if self.is_product_in_cart(request_data["name"]):
             self.update_qty_in_cart(request_data["pid"], request_data["qty"])
+            response.update({"msg": "Success"})
+            self.status_code = 200
         else:
             new_cart_item = Cart(
                 pid=request_data["pid"],
@@ -35,8 +38,10 @@ class SalesController:
                 qty=request_data["qty"],
                 price=request_data["price"])
             cart.append(new_cart_item)
+            response.update({"msg": "Success"})
+            self.status_code = 200
 
-        return "Success"
+        return jsonify(response), 200
 
     def get_cart_items(self):
         """
@@ -253,7 +258,7 @@ class SalesController:
         """
         out_of_stock = False
         for product in product_list:
-            if product.id == product_id and product.quantity == 0:
+            if product.id == product_id and product.quantity <= 0:
                 out_of_stock = True
                 break
         return out_of_stock

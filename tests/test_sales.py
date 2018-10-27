@@ -15,7 +15,7 @@ class TestSales(unittest.TestCase):
         self.client = app.test_client()
         self.cart_item = {
             "pid": "7bad398f",
-            "name": "bread",
+            "name": "Bread",
             "qty": 1,
             "price": 2700
         }
@@ -37,8 +37,9 @@ class TestSales(unittest.TestCase):
 
     def test_add_to_cart(self):
         """Tests that an item is added to the shopping cart"""
-        self.assertEqual(self.controller.add_to_cart(
-            self.cart_item), "Success")
+        with app.app_context():
+            res = self.controller.add_to_cart(self.cart_item)
+            self.assertEqual(json.loads(res[0].data)["msg"], "Success")
 
     def test_get_cart_items(self):
         """Tests that items are retrieved from the cart"""
@@ -84,7 +85,7 @@ class TestSales(unittest.TestCase):
                 "Authorization": self.access_token
             }
         )
-        self.assertEqual(res.data.decode(), "Success")
+        self.assertEqual(json.loads(res.data)["msg"], "Success")
 
     def test_get_cart_items_route(self):
         """Tests that the route gets items from the shopping cart"""
