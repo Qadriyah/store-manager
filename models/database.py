@@ -2,6 +2,8 @@ from models.user import User
 from models.product import Product
 from models.cart import Cart
 from models.sale import SalesOrder
+from models.inventory import Inventory
+from models.line_item import LineItem
 
 
 cart = [
@@ -10,17 +12,63 @@ cart = [
 ]
 
 product_list = [
-    Product(id=1, name="Sugar", price=4500, created_at=""),
-    Product(id=2, name="Milk", price=1500, created_at=""),
-    Product(id=3, name="Bread", price=2700, created_at="")
+    Product(id=1, name="Sugar", price=4500, created_at="2018-10-07"),
+    Product(id=2, name="Milk", price=1500, created_at="2018-10-07"),
+    Product(id=3, name="Bread", price=2700, created_at="2018-10-07")
+]
+
+inventories = [
+    Inventory(
+        id=1,
+        product_id=1,
+        quantity=50,
+        min_quantity=10,
+        created_at="2018-10-26",
+        updated_at="2018-10-26"
+    ),
+    Inventory(
+        id=2,
+        product_id=2,
+        quantity=90,
+        min_quantity=10,
+        created_at="2018-10-26",
+        updated_at="2018-10-26"
+    ),
+    Inventory(
+        id=3,
+        product_id=3,
+        quantity=150,
+        min_quantity=10,
+        created_at="2018-10-26",
+        updated_at="2018-10-26"
+    )
 ]
 
 sales_records = [
     SalesOrder(
         id=1,
         user_id=2,
-        order_number="de0c1292738aff11",
-        created_at=""
+        order_number="SO-00001",
+        created_at="2018-10-26"
+    )
+]
+
+line_items = [
+    LineItem(
+        id=1,
+        product_id=1,
+        sales_id=1,
+        product_name="Sugar",
+        quantity=2,
+        price=4500
+    ),
+    LineItem(
+        id=2,
+        product_id=2,
+        sales_id=1,
+        product_name="Milk",
+        quantity=6,
+        price=2700
     )
 ]
 

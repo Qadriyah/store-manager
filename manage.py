@@ -2,10 +2,11 @@ import time
 
 from models import database_objects
 from api import manager
+from models import database
 
 
 db_object = database_objects.DatabaseObjects()
-tables = ["users", "cart", "inventory", "line_items", "products", "salesorder"]
+tables = ["users", "products", "inventory",  "cart", "salesorder", "line_items"]
 
 
 @manager.command
@@ -40,6 +41,15 @@ def delete_tables():
         db_object.delete_database_tables(table)
         time.sleep(1)
     print("[+] Tables deleted successfully")
+
+
+@manager.command
+def add_sample_data():
+    for table in tables:
+        print("[+] Inserting data in table {}...".format(table))
+        db_object.add_sample_data(table)
+        time.sleep(1)
+    print("[+] Data inserted successfully")
 
 
 if __name__ == "__main__":

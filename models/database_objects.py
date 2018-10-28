@@ -1,4 +1,4 @@
-from models import connection
+from models import connection, database
 
 
 class DatabaseObjects:
@@ -107,3 +107,53 @@ class DatabaseObjects:
             DROP TABLE IF EXISTS {} CASCADE
             """.format(table_name)
         )
+
+    def add_sample_data(self, table):
+        """Adds sample data to postgres database"""
+        if table == "users":
+            for user in database.users:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(name, username, password, roles) 
+                        VALUES('{}', '{}', '{}', '{}')
+                    """.format(table, user.name, user.username, user.password.decode(), user.roles)
+                )
+        if table == "cart":
+            for product in database.cart:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(product_id, product_name, quantity, price) 
+                        VALUES({}, '{}', {}, {})
+                    """.format(table, product.product_id, product.product_name, product.quantity, product.price)
+                )
+        if table == "inventory":
+            for product in database.inventories:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(product_id, quantity, min_quantity, created_at) 
+                        VALUES({}, {}, {}, '{}'::DATE)
+                    """.format(table, product.product_id, product.quantity, product.min_quantity, product.created_at)
+                )
+        if table == "line_items":
+            for product in database.line_items:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(product_id, sales_id, product_name, quantity, price) 
+                        VALUES({}, {}, '{}', {}, {})
+                    """.format(table, product.product_id, product.sales_id, product.product_name, product.quantity, product.price)
+                )
+        if table == "products":
+            for product in database.product_list:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(name, price) VALUES('{}', {})
+                    """.format(table, product.name, product.price)
+                )
+        if table == "salesorder":
+            for record in database.sales_records:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(user_id, order_number, created_at) 
+                        VALUES({}, '{}', '{}'::DATE)
+                    """.format(table, record.user_id, record.order_number, record.created_at)
+                )
