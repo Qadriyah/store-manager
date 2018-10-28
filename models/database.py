@@ -75,7 +75,7 @@ line_items = [
 users = [
     User(
         id="e9e83c44",
-        name="Baker Sekitoleko",
+        fullname="Baker Sekitoleko",
         username="admin",
         password=b'$2b$15$rMjCuBxFGbikgDVgFXkFcu6z8BMrHdUDf7hCr7KAjEef8KIlFTeKa',
         roles="admin",
@@ -83,7 +83,7 @@ users = [
     ),
     User(
         id="2067fe34",
-        name="Aijuka Miria",
+        fullname="Aijuka Miria",
         username="attendant",
         password=b'$2b$15$k9wOjtI8Sgs7hYb93usUEOzW6ugBdqwNEvsfCXuJI2rV9cbCd5En.',
         roles="attendant",

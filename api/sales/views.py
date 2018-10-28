@@ -7,11 +7,10 @@ from . import sales
 #  import sales controller
 from . import controllers
 #  import validator
-from api.validations import validate_product
+
 from api.utils.jwt_helper import attendant_required, admin_required
 
 controller = controllers.SalesController()
-validator = validate_product.ValidateProduct()
 
 
 @sales.route("/sales/cart", methods=["POST"])
@@ -19,14 +18,7 @@ validator = validate_product.ValidateProduct()
 @swag_from("../apidoc/sales/add_to_cart.yml")
 def add_to_cart():
     if request.method == "POST":
-        result = validator.validate_input_data(request.form)
-        errors = validator.validate_number_fields(request.form)
-        if not result["is_true"]:
-            return jsonify(result["errors"]), 400
-
-        if not errors["is_true"]:
-            return jsonify(errors["errors"]), 400
-        return controller.add_to_cart(request.form)
+        pass
 
 
 @sales.route("/sales/cart/items", methods=["GET"])

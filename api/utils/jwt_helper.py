@@ -51,7 +51,7 @@ def add_claims_to_access_token(user):
     """
     return {
         "id": user.id,
-        "name": user.name,
+        "fullname": user.fullname,
         "username": user.username,
         "roles": user.roles
     }
@@ -79,7 +79,7 @@ def user_loader_callback(identity):
 
     return User(
         id=claims["id"],
-        name=claims["name"],
+        fullname=claims["fullname"],
         username=identity,
         password="",
         roles=claims["roles"]
