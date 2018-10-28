@@ -82,5 +82,6 @@ def user_loader_callback(identity):
         fullname=claims["fullname"],
         username=identity,
         password="",
-        roles=claims["roles"]
+        roles=claims["roles"],
+        created_at=""
     )

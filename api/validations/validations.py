@@ -161,6 +161,6 @@ class ValidateInputData:
         password2 = self.validate_text_fields(data.get("password2"))
         roles = self.validate_text_fields(data.get("roles"))
         if not fullname or not username or\
-         not password or not password2 or not roles:
+                not password or not password2 or not roles:
             return False
         return True

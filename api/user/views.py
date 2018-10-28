@@ -38,7 +38,7 @@ def register_user():
 def login_user():
 
     if request.method == "POST":
-        pass
+        return controller.login_user(request.form)
 
 
 @app.route("/", methods=["GET"])

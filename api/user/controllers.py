@@ -1,14 +1,10 @@
+import datetime
 from flask import jsonify
-from flask_jwt_extended import (
-    create_access_token, get_jwt_identity, get_jwt_claims
-)
+from flask_jwt_extended import create_access_token, current_user
 
 from models.user import User
-from api.sales.controllers import SalesController
-from models.database import users
 from api import bcrypt
 from models.connection import Connection
-from datetime import datetime
 
 
 class AuthController:
@@ -29,7 +25,7 @@ class AuthController:
             tuple: With a response message and a status code
         """
         response = {}
-        if self.__is_user_registered(request_data["username"]):
+        if self.get_user(request_data["username"], self.cursor):
             response.update({"user": "User already exists"})
             self.status_code = 401
         else:
@@ -51,7 +47,8 @@ class AuthController:
 
         return jsonify(response), self.status_code
 
-    def __is_user_registered(self, username):
+    @classmethod
+    def get_user(cls, username, cursor):
         """
         Checks if user already exists
 
@@ -63,16 +60,23 @@ class AuthController:
         """
         try:
             query = """
-            SELECT id, fullname, username, password, roles \
+            SELECT id, fullname, username, password, roles, created_at \
             FROM users WHERE username = '{}'
             """.format(username)
-            self.cursor.execute(query)
-            result = self.cursor.fetchone()
+            cursor.execute(query)
+            result = cursor.fetchone()
 
         except Exception as error:
             print(error)
             return "Database error"
-        return result
+        return User(
+            id=result["id"],
+            fullname=result["fullname"],
+            username=result["username"],
+            password=result["password"],
+            roles=result["roles"],
+            created_at=result["created_at"]
+        )
 
     def login_user(self, request_data):
         """
@@ -86,15 +90,14 @@ class AuthController:
         """
         response = {}
         #  Check if user exists
-        user = self.__is_user_registered(request_data["username"])
-        print(user)
+        user = self.get_user(request_data["username"], self.cursor)
         if not user:
-            response.update({"errors": "Wrong username or password"})
+            response.update({"errors": "Wrong username"})
             self.status_code = 401
         else:
             #  Check if password provided matches one in the database
             if bcrypt.check_password_hash(
-                    "user.password", request_data["password"]):
+                    user.password, request_data["password"]):
                 #  Create token
                 token = create_access_token(
                     identity=user,
