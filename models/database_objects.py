@@ -22,15 +22,32 @@ class DatabaseObjects:
             """
         )
 
+    def create_category_table(self):
+        """Creates the category table"""
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS category(
+                id SERIAL PRIMARY KEY, 
+                category_name VARCHAR (255) NOT NULL, 
+                price = INTEGER NOT NULL, 
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+        )
+
     def create_product_table(self):
         """Creates the product table"""
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS products(
                 id SERIAL PRIMARY KEY, 
-                name VARCHAR (255) NOT NULL, 
-                price INTEGER NOT NULL, 
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                category_id INTEGER NOT NULL,
+                name VARCHAR (255) NOT NULL,  
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                CONSTRAINT product_category_fkey FOREIGN KEY (category_id) 
+                    REFERENCES category (id) 
+                    ON DELETE CASCADE 
+                    ON UPDATE CASCADE
             );
             """
         )
@@ -43,8 +60,8 @@ class DatabaseObjects:
                 id SERIAL PRIMARY KEY, 
                 product_id INTEGER NOT NULL, 
                 quantity INTEGER DEFAULT 0, 
-                min_quantity INTEGER DEFAULT 10, 
-                created_at DATE NOT NULL, 
+                stock_level INTEGER DEFAULT 0, 
+                min_quantity INTEGER DEFAULT 10,  
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
                 CONSTRAINT inventory_products_fkey FOREIGN KEY (product_id) 
                     REFERENCES products (id) 
@@ -130,9 +147,8 @@ class DatabaseObjects:
             for product in database.inventories:
                 self.cursor.execute(
                     """
-                    INSERT INTO {}(product_id, quantity, min_quantity, created_at) 
-                        VALUES({}, {}, {}, '{}'::DATE)
-                    """.format(table, product.product_id, product.quantity, product.min_quantity, product.created_at)
+                    INSERT INTO {}(product_id, quantity, stock_level, min_quantity, created_at) VALUES({}, {}, {}, {})
+                    """.format(table, product.product_id, product.quantity, product.stock_level, product.min_quantity)
                 )
         if table == "line_items":
             for product in database.line_items:
@@ -146,8 +162,8 @@ class DatabaseObjects:
             for product in database.product_list:
                 self.cursor.execute(
                     """
-                    INSERT INTO {}(name, price) VALUES('{}', {})
-                    """.format(table, product.name, product.price)
+                    INSERT INTO {}(category_id, product_name) VALUES({}, '{}')
+                    """.format(table, product.category_id, product.product_name)
                 )
         if table == "salesorder":
             for record in database.sales_records:
@@ -156,4 +172,12 @@ class DatabaseObjects:
                     INSERT INTO {}(user_id, order_number, created_at) 
                         VALUES({}, '{}', '{}'::DATE)
                     """.format(table, record.user_id, record.order_number, record.created_at)
+                )
+        if table == "category":
+            for category in database.categories:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(category_name, price) \
+                    VALUES('{}', {})
+                    """.format(table, category.category_name, category.price)
                 )

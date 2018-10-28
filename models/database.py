@@ -4,6 +4,7 @@ from models.cart import Cart
 from models.sale import SalesOrder
 from models.inventory import Inventory
 from models.line_item import LineItem
+from models.category import Category
 
 
 cart = [
@@ -12,9 +13,17 @@ cart = [
 ]
 
 product_list = [
-    Product(id=1, name="Sugar", price=4500, created_at="2018-10-07"),
-    Product(id=2, name="Milk", price=1500, created_at="2018-10-07"),
-    Product(id=3, name="Bread", price=2700, created_at="2018-10-07")
+    Product(id=1, category_id=1, product_name="Sugar", created_at="2018-10-07"),
+    Product(id=2, category_id=2, product_name="Milk", created_at="2018-10-07"),
+    Product(id=3, category_id=3, product_name="Bread", created_at="2018-10-07")
+]
+
+categories = [
+    Category(id=1, category_name="1Kg Pack",
+             price=4500, created_at="2018-10-07"),
+    Category(id=2, category_name="500ml", price=1500, created_at="2018-10-07"),
+    Category(id=3, category_name="1Kg Salt",
+             price=4500, created_at="2018-10-07")
 ]
 
 inventories = [
@@ -22,24 +31,24 @@ inventories = [
         id=1,
         product_id=1,
         quantity=50,
+        stock_level=50,
         min_quantity=10,
-        created_at="2018-10-26",
         updated_at="2018-10-26"
     ),
     Inventory(
         id=2,
         product_id=2,
         quantity=90,
+        stock_level=90,
         min_quantity=10,
-        created_at="2018-10-26",
         updated_at="2018-10-26"
     ),
     Inventory(
         id=3,
         product_id=3,
         quantity=150,
+        stock_level=150,
         min_quantity=10,
-        created_at="2018-10-26",
         updated_at="2018-10-26"
     )
 ]
