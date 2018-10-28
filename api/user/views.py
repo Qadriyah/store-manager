@@ -38,6 +38,13 @@ def register_user():
 def login_user():
 
     if request.method == "POST":
+        errors = {}
+        username = validator.validate_text_fields(request.form["username"])
+        password = validator.validate_text_fields(request.form["password"])
+        if not username or not password:
+            errors.update({"msg": "Wrong username or password"})
+            return jsonify(errors), 401
+
         return controller.login_user(request.form)
 
 
