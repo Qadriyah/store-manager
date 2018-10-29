@@ -26,7 +26,7 @@ class AuthController:
         """
         response = {}
         if self.get_user(request_data["username"], self.cursor):
-            response.update({"user": "User already exists"})
+            response.update({"msg": "User already exists"})
             self.status_code = 401
         else:
             #  Hash password
@@ -42,7 +42,7 @@ class AuthController:
                 request_data["roles"]
             )
             self.cursor.execute(query)
-            response.update({"user": "User registered successfully"})
+            response.update({"msg": "User registered successfully"})
             self.status_code = 200
 
         return jsonify(response), self.status_code
@@ -65,6 +65,8 @@ class AuthController:
             """.format(username)
             cursor.execute(query)
             result = cursor.fetchone()
+            if not result:
+                return None
 
         except Exception as error:
             print(error)

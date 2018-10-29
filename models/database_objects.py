@@ -29,7 +29,7 @@ class DatabaseObjects:
             CREATE TABLE IF NOT EXISTS category(
                 id SERIAL PRIMARY KEY, 
                 category_name VARCHAR (255) NOT NULL, 
-                price = INTEGER NOT NULL, 
+                price INTEGER NOT NULL, 
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """
@@ -42,7 +42,7 @@ class DatabaseObjects:
             CREATE TABLE IF NOT EXISTS products(
                 id SERIAL PRIMARY KEY, 
                 category_id INTEGER NOT NULL,
-                name VARCHAR (255) NOT NULL,  
+                product_name VARCHAR (255) NOT NULL,  
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
                 CONSTRAINT product_category_fkey FOREIGN KEY (category_id) 
                     REFERENCES category (id) 
@@ -147,7 +147,7 @@ class DatabaseObjects:
             for product in database.inventories:
                 self.cursor.execute(
                     """
-                    INSERT INTO {}(product_id, quantity, stock_level, min_quantity, created_at) VALUES({}, {}, {}, {})
+                    INSERT INTO {}(product_id, quantity, stock_level, min_quantity) VALUES({}, {}, {}, {})
                     """.format(table, product.product_id, product.quantity, product.stock_level, product.min_quantity)
                 )
         if table == "line_items":

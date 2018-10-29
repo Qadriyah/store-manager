@@ -6,7 +6,8 @@ from models import database
 
 
 db_object = database_objects.DatabaseObjects()
-tables = ["users", "products", "inventory",  "cart", "salesorder", "line_items"]
+tables = ["users", "category", "products",
+          "inventory",  "cart", "salesorder", "line_items"]
 
 
 @manager.command
@@ -14,6 +15,9 @@ def create_tables():
     """Creates database tables"""
     print("[+] Creating users table...")
     db_object.create_user_table()
+    time.sleep(1)
+    print("[+] Creating category table...")
+    db_object.create_category_table()
     time.sleep(1)
     print("[+] Creating products table...")
     db_object.create_product_table()
