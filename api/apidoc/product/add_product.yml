@@ -1,0 +1,28 @@
+|
+
+  Adds a new product entry into the database
+
+---
+produces:
+  - application/json
+parameters:
+  - in: formData
+    name: name
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: price
+    schema:
+      type: integer
+    required: true
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+responses:
+  200:
+    description: A response message
+    example: { 'id': '055ad1fd', 'msg': 'Product added successfully' }

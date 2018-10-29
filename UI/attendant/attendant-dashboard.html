@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/index.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="header">
+        <a href="#">
+            <img src="../media/logo1.png" alt="" class="logo">
+        </a>
+    </div>
+    <div class="container">
+        <div class="side-menu" id="drawer">
+            <a href="attendant-dashboard.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-cart-plus"></i> POS
+                </div>
+            </a>
+            <a href="product-lists.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-list-alt"></i> Product
+                </div>
+            </a>
+            <a href="stock.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-hdd"></i> Stock
+                </div>
+            </a>
+            <a href="sales-records.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-archive"></i> Sales
+                </div>
+            </a>
+            <a href="../index.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </a>
+        </div>
+        <div class="sub-menu-container">
+            <div class="sub-menu">
+                <div class="sub-menu-item">
+                    <a href="product-lists.html">Product Lists</a>
+                </div>
+                <div class="sub-menu-item">
+                    <a href="sales-records.html">Sales Report</a>
+                </div>
+                <div class="sub-menu-item">
+                    <a href="profile.html">Profile</a>
+                </div>
+            </div>
+            <div class="active-user">
+                <i class="fas fa-user-circle"></i> Baker Sekitoleko
+            </div>
+            <div class="toggle-open" id="open">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="toggle-close" id="close">
+                <i class="fas fa-window-close"></i>
+            </div>
+        </div>
+        <div class="content">
+            <div class="cart">
+                <h2>Point of Sale</h2>
+                <form action="#">
+                    <select name="product" id="product">
+                        <option value="selected">Select Product...</option>
+                        <option value="1">Sugar</option>
+                        <option value="2">Milk</option>
+                        <option value="3">Rice</option>
+                        <option value="4">Flour</option>
+                        <option value="5">Bread</option>
+                    </select>
+                    <input type="text" name="qty" id="qty" placeholder="Qty...">
+                    <input type="submit" name="submit" value="Ok" class="btn-sm">
+                </form>
+                <table class="cart-items">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="align-center">Qty</th>
+                            <th class="align-right">Unit Price</th>
+                            <th class="align-right">Line Total</th>
+                            <th class="align-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Rice</td>
+                            <td class="align-center">5</td>
+                            <td class="align-right">10,000</td>
+                            <td class="align-right">50,000</td>
+                            <td class="align-center">
+                                <i class="fas fa-trash-alt trash tooltip">
+                                    <span class="tooltiptext">Delete</span>
+                                </i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sugar</td>
+                            <td class="align-center">1</td>
+                            <td class="align-right">6,000</td>
+                            <td class="align-right">6,000</td>
+                            <td class="align-center">
+                                <i class="fas fa-trash-alt trash tooltip">
+                                    <span class="tooltiptext">Delete</span>
+                                </i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Bread</td>
+                            <td class="align-center">1</td>
+                            <td class="align-right">4,500</td>
+                            <td class="align-right">4,500</td>
+                            <td class="align-center">
+                                <i class="fas fa-trash-alt trash tooltip">
+                                    <span class="tooltiptext">Delete</span>
+                                </i>
+                            </td>
+                        </tr>
+                        <tr class="totals">
+                            <td colspan="3" class="align-right">Total</td>
+                            <td class="align-right">65,000</td>
+                            <td class="align-center">
+                                <i class="fas fa-check-circle tooltip">
+                                    <span class="tooltiptext">Create</span>
+                                </i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+|
+
+  Updates product quantity
+
+---
+produces:
+  - application/json
+parameters:
+  - in: formData
+    name: product_id
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: quantity
+    schema:
+      type: integer
+    required: true
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+responses:
+  200:
+    description: A response message
+    example: { 'msg': 'Stock added successfully' }

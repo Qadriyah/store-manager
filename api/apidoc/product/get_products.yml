@@ -1,0 +1,52 @@
+|
+
+  Retrieves a list of all products from the database
+
+---
+produces:
+  - application/json
+parameters:
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+definitions:
+  Product:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 055ad1fd
+      name:
+        type: string
+        example: iPhone
+      price:
+        type: integer
+        example: 1500000
+      quantity:
+        type: integer
+        example: 300
+      minimum_quantity:
+        type: integer
+        example: 50
+      created_at:
+        type: string
+        example: 25/10/2018
+responses:
+  200:
+    description: A list of all products
+    schema:
+      $ref: '#/definitions/Product'
+    example:
+      [
+        {
+          'id': '055ad1fd',
+          'name': 'iPhone',
+          'price': 1500000,
+          'quantity': 200,
+          'min_quantity': 30,
+          'created_at': '26/10/2018',
+        },
+      ]

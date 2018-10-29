@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin | Stock</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/index.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="header">
+        <a href="#">
+            <img src="../media/logo1.png" alt="" class="logo">
+        </a>
+    </div>
+    <div class="container">
+        <div class="side-menu" id="drawer">
+            <a href="attendant-dashboard.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-cart-plus"></i> POS
+                </div>
+            </a>
+            <a href="product-lists.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-list-alt"></i> Product
+                </div>
+            </a>
+            <a href="stock.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-hdd"></i> Stock
+                </div>
+            </a>
+            <a href="sales-records.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-archive"></i> Sales
+                </div>
+            </a>
+            <a href="../index.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </a>
+        </div>
+        <div class="sub-menu-container">
+            <div class="sub-menu">
+                <div class="sub-menu-item">
+                    <a href="product-lists.html">Product Lists</a>
+                </div>
+                <div class="sub-menu-item">
+                    <a href="sales-records.html">Sales Report</a>
+                </div>
+                <div class="sub-menu-item">
+                    <a href="profile.html">Profile</a>
+                </div>
+            </div>
+            <div class="active-user">
+                <i class="fas fa-user-circle"></i> Baker Sekitoleko
+            </div>
+            <div class="toggle-open" id="open">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="toggle-close" id="close">
+                <i class="fas fa-window-close"></i>
+            </div>
+        </div>
+        <div class="content">
+            <div class="cart">
+                <h2>Stock Levels</h2>
+                <table class="cart-items striped-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th class="align-center">Quantity</th>
+                            <th class="align-center">Min Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Sugar</td>
+                            <td class="align-center">100</td>
+                            <td class="align-center">10</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Milk</td>
+                            <td class="align-center">400</td>
+                            <td class="align-center">25</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Bread</td>
+                            <td class="align-center">50</td>
+                            <td class="align-center">5</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Flour</td>
+                            <td class="align-center">150</td>
+                            <td class="align-center">10</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Rice</td>
+                            <td class="align-center">90</td>
+                            <td class="align-center">15</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

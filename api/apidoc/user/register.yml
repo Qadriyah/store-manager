@@ -1,0 +1,86 @@
+|
+
+  Register requires that the admin should enter the
+  - Name 
+  - Username
+  - Password
+  - Confirm Password
+  - Roles
+  to register a new store attendant
+
+---
+produces:
+  - application/json
+parameters:
+  - in: formData
+    name: name
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: username
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: password
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: password2
+    schema:
+      type: string
+    required: true
+  - in: formData
+    name: roles
+    schema:
+      type: string
+    required: true
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 539c3032
+      name:
+        type: string
+        example: admin
+      username:
+        type: string
+        example: admin
+      roles:
+        type: string
+        example: admin
+      created_at:
+        type: string
+        example: 25/10/2018
+responses:
+  200:
+    description: An object containing a success message
+    schema:
+      properties:
+        success:
+          type: string
+          example: User registered successfully
+  400:
+    description: An object containing error messages
+    schema:
+      properties:
+        errors:
+          type: string
+          example: All fields are required
+  500:
+    description: An object containing error messages
+    schema:
+      properties:
+        errors:
+          type: string
+          example: Internal server error

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/index.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="header">
+        <a href="#">
+            <img src="../media/logo1.png" alt="" class="logo">
+        </a>
+    </div>
+    <div class="container">
+        <div class="side-menu" id="drawer">
+            <a href="attendant-dashboard.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-cart-plus"></i> POS
+                </div>
+            </a>
+            <a href="product-lists.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-list-alt"></i> Product
+                </div>
+            </a>
+            <a href="stock.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-hdd"></i> Stock
+                </div>
+            </a>
+            <a href="sales-records.html">
+                <div class="side-menu-item">
+                    <i class="fas fa-archive"></i> Sales
+                </div>
+            </a>
+            <a href="#">
+                <div class="side-menu-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </a>
+        </div>
+        <div class="sub-menu-container">
+            <div class="sub-menu">
+                <div class="sub-menu-item">
+                    <a href="product-lists.html">Product Lists</a>
+                </div>
+                <div class="sub-menu-item">
+                    <a href="sales-records.html">Sales Report</a>
+                </div>
+                <div class="sub-menu-item">
+                    <a href="profile.html">Profile</a>
+                </div>
+            </div>
+            <div class="active-user">
+                <i class="fas fa-user-circle"></i> Baker Sekitoleko
+            </div>
+            <div class="toggle-open" id="open">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="toggle-close" id="close">
+                <i class="fas fa-window-close"></i>
+            </div>
+        </div>
+        <div class="content">
+            <div class="product-list">
+                <h2>Product Lists</h2>
+                <form action="#">
+                    <select name="product" id="product">
+                        <option value="selected">All Products...</option>
+                        <option value="1">Sugar</option>
+                        <option value="2">Milk</option>
+                        <option value="3">Rice</option>
+                        <option value="4">Flour</option>
+                        <option value="5">Bread</option>
+                    </select>
+                    <input type="submit" name="submit" value="Ok" class="btn-sm">
+                </form>
+                <table class="cart-items striped-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th class="align-right">Sales Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="tooltip-one">Rice
+                                <span class="tooltipdesc product-qty">
+                                    <div>Quantity: </div>
+                                    <div>10</div>
+                                    <div>Min Quantity: </div>
+                                    <div>5</div>
+                                </span>
+                            </td>
+                            <td class="align-right">10,000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td class="tooltip-one">Sugar
+                                <span class="tooltipdesc product-qty">
+                                    <div>Quantity: </div>
+                                    <div>100</div>
+                                    <div>Min Quantity: </div>
+                                    <div>10</div>
+                                </span>
+                            </td>
+                            <td class="align-right">6,000</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td class="tooltip-one">Bread
+                                <span class="tooltipdesc product-qty">
+                                    <div>Quantity: </div>
+                                    <div>70</div>
+                                    <div>Min Quantity: </div>
+                                    <div>3</div>
+                                </span>
+                            </td>
+                            <td class="align-right">4,500</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td class="tooltip-one">Milk
+                                <span class="tooltipdesc product-qty">
+                                    <div>Quantity: </div>
+                                    <div>90</div>
+                                    <div>Min Quantity: </div>
+                                    <div>15</div>
+                                </span>
+                            </td>
+                            <td class="align-right">3,000</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td class="tooltip-one">Flour
+                                <span class="tooltipdesc product-qty">
+                                    <div>Quantity: </div>
+                                    <div>200</div>
+                                    <div>Min Quantity: </div>
+                                    <div>20</div>
+                                </span>
+                            </td>
+                            <td class="align-right">7,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

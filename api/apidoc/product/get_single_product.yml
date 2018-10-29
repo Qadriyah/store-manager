@@ -1,0 +1,31 @@
+|
+
+  Retrieves a single product using the product Id
+
+---
+produces:
+  - application/json
+parameters:
+  - in: path
+    name: product_id
+    schema:
+      type: integer
+    required: true
+  - in: header
+    name: Content-Type
+    required: true
+  - in: header
+    name: Authorization
+    required: true
+responses:
+  200:
+    description: Single product details
+    example:
+      {
+        "id": "055ad1fd", 
+        "name": "iPhone", 
+        "price": 1500000,
+        "quantity": 200,
+        "min_quantity": 30, 
+        "created_at": "26/10/2018"
+      }
