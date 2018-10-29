@@ -3,7 +3,6 @@ import json
 from unittest import TestCase, skip
 
 from api import app
-from config.config import app_settings
 from models.user import User
 from api.user import controllers
 from api.validations import validations
@@ -13,7 +12,6 @@ from models import connection
 class TestAuthentication(TestCase):
     def setUp(self):
         conn = connection.Connection()
-        #  app.config.from_object(app_settings[os.environ.get("APP_ENV")])
         self.controller = controllers.AuthController()
         self.client = app.test_client()
         self.validator = validations.ValidateInputData()
@@ -149,3 +147,13 @@ class TestAuthentication(TestCase):
         self.assertEqual(json.loads(response.data)[
                          "msg"], "Admin previlidges required")
         self.assertEqual(response.status_code, 403)
+
+    def test_get_user_method(self):
+        """Tests that a user is fetched from the database"""
+        res = self.controller.get_user("Aretha", self.cursor)
+        self.assertIsInstance(res, User)
+
+    def test_get_user_failure(self):
+        """Tests that a user was not found in the database"""
+        res = self.controller.get_user("Ben", self.cursor)
+        self.assertIsNone(res)
