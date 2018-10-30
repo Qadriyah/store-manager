@@ -136,7 +136,27 @@ class ProductController:
         Returns:
             tuple: With a response object and a status code
         """
-        pass
+        response = {}
+        try:
+            query = """
+            SELECT \
+                category.category_name, \
+                category.price, \
+                products.product_name, \
+                products.id \
+            FROM category \
+            INNER JOIN products ON category.id = products.category_id \
+            WHERE products.id = {}
+            """.format(product_id)
+            self.cursor.execute(query)
+            response = self.cursor.fetchone()
+            if not response:
+                response = {}
+                response.update({"msg": "Product does not exist"})
+                self.status_code = 404
+        except Exception as error:
+            return jsonify({"msg": "Database error {}".format(error)}), 500
+        return jsonify(response), 200
 
     def add_stock(self, request_data):
         """

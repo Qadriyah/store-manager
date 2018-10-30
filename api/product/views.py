@@ -47,7 +47,7 @@ def get_single_product(product_id):
     """Get a single product"""
 
     if request.method == "GET":
-        pass
+        return controller.get_single_product(product_id)
 
 
 @product.route("/products/stock", methods=["POST"])
