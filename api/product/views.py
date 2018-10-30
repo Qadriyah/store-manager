@@ -76,7 +76,7 @@ def delete_product(product_id):
     """Deletes a product with a given product_id"""
 
     if request.method == "DELETE":
-        pass
+        return controller.delete_product(product_id)
 
 
 @product.route("/products/edit", methods=["POST"])

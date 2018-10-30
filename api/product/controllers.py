@@ -1,4 +1,3 @@
-import secrets
 from flask import jsonify
 
 from api import app, connection
@@ -61,8 +60,9 @@ class ProductController:
             object: query result if exists, None otherwise
         """
         query = """
-        SELECT product_name FROM products WHERE product_name = '{}' AND category_id = {}
-        """.format(product_name, category_id)
+        SELECT product_name FROM products WHERE product_name = '{}' \
+        AND category_id = {} AND status = '{}'
+        """.format(product_name, category_id, "Active")
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         if not result:
@@ -130,8 +130,8 @@ class ProductController:
                 products.id \
             FROM category \
             INNER JOIN products ON category.id = products.category_id \
-            ORDER BY products.product_name ASC
-            """
+            WHERE products.status = '{}' ORDER BY products.product_name ASC
+            """.format("Active")
             self.cursor.execute(query)
             response = self.cursor.fetchall()
         except Exception:
@@ -228,8 +228,8 @@ class ProductController:
                     WHERE category.id = products.category_id) category_name \
             FROM products \
             INNER JOIN inventory ON products.id = inventory.product_id \
-            ORDER BY products.product_name ASC
-            """
+            WHERE products.status = '{}' ORDER BY products.product_name ASC
+            """.format("Active")
             self.cursor.execute(query)
             response = self.cursor.fetchall()
             if not response:
@@ -251,9 +251,22 @@ class ProductController:
         Returns:
             tuple: With a response message and a status code
         """
-        pass
+        response = {}
 
-    def edit_product(self, request_data):
+        try:
+            query = """
+            UPDATE products SET status = '{}' WHERE id = {}
+            """.format("Deleted", product_id)
+            self.cursor.execute(query)
+            response.update({"msg": "product deleted successfullt"})
+            self.status_code = 200
+
+        except Exception:
+            response.update({"msg": "Database error"})
+            self.status_code = 500
+        return jsonify(response), self.status_code
+
+    def edit_product(self, data):
         """
         Modifies the product details
 
@@ -263,4 +276,3 @@ class ProductController:
         Returns:
             tuple: With a response message and a status code
         """
-        pass

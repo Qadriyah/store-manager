@@ -44,7 +44,8 @@ class DatabaseObjects:
                 category_name VARCHAR (255) NOT NULL, 
                 price INTEGER NOT NULL, 
                 created_at DATE DEFAULT CURRENT_DATE, 
-                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                status VARCHAR (10) DEFAULT 'Active'
             );
             """
         )
