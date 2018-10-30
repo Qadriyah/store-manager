@@ -104,7 +104,27 @@ class ProductController:
         Returns:
             list: A list of products
         """
-        pass
+        response = {}
+        if not connection.is_table_empty("category"):
+            response.update({"msg": "No products to display"})
+            self.status_code = 404
+        try:
+            query = """
+            SELECT \
+                category.category_name, \
+                category.price, \
+                products.product_name, \
+                products.id \
+            FROM category \
+            INNER JOIN products ON category.id = products.category_id \
+            ORDER BY products.product_name ASC
+            """
+            self.cursor.execute(query)
+            response = self.cursor.fetchall()
+        except Exception:
+            return jsonify({"msg": "Database error"}), 500
+
+        return jsonify(response), 200
 
     def get_single_product(self, product_id):
         """

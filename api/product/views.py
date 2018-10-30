@@ -37,7 +37,7 @@ def get_all_products():
     """Get all products route"""
 
     if request.method == "GET":
-        pass
+        return controller.get_all_products()
 
 
 @product.route("/products/<product_id>", methods=["GET"])

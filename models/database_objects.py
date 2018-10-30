@@ -187,7 +187,7 @@ class DatabaseObjects:
             bool: True if empty, False otherwise
         """
         query = """
-        SELECT product_name FROM {}
+        SELECT * FROM {}
         """.format(table_name)
         self.cursor.execute(query)
         result = self.cursor.fetchall()
