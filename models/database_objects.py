@@ -43,7 +43,7 @@ class DatabaseObjects:
                 id SERIAL PRIMARY KEY, 
                 category_name VARCHAR (255) NOT NULL, 
                 price INTEGER NOT NULL, 
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                created_at DATE DEFAULT CURRENT_DATE, 
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """

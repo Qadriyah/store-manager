@@ -23,6 +23,13 @@ def add_product():
         return controller.add_product(request.form)
 
 
+@product.route("/products/category", methods=["POST"])
+@admin_required
+def add_category():
+    if request.method == "POST":
+        return controller.add_category(request.form)
+
+
 @product.route("/products", methods=["GET"])
 @jwt_required
 @swag_from("../apidoc/product/get_products.yml")

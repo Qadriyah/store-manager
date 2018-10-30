@@ -36,8 +36,8 @@ class ProductController:
                     data.get("product_name")
                 )
                 self.cursor.execute(query)
-            except Exception as error:
-                print(error)
+            except Exception:
+                print("Database error")
             result = connection.is_item_exist(
                 "products", data.get("product_name"), "product_name")
             response.update({
@@ -69,7 +69,33 @@ class ProductController:
         return result
 
     def add_category(self, data):
-        pass
+        """
+        creates a product category 
+
+        Args:
+            data(object): Hold form data
+        """
+        response = {}
+        if connection.is_item_exist("category", data.get("category_name"), "category_name"):
+            response.update({"msg": "Category already exists"})
+            self.status_code = 401
+        else:
+            try:
+                query = """
+                INSERT INTO category(category_name, price, created_at) \
+                VALUES('{}', {}, '{}'::DATE)
+                """.format(
+                    data.get("category_name"),
+                    data.get("price"),
+                    data.get("created_at")
+                )
+                self.cursor.execute(query)
+                response.update({"msg": "Category added successfully"})
+                self.status_code = 200
+            except Exception as error:
+                response.update({"msg": "Database error {}".format(error)})
+                self.status_code = 500
+        return jsonify(response), self.status_code
 
     def get_all_products(self):
         """
