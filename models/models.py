@@ -88,6 +88,7 @@ class Product:
         self.product_name = kwargs.get('product_name')
         self.created_at = kwargs.get("created_at")
         self.modified_at = kwargs.get("modified_at")
+        self.status = "Active"
 
     def __repr__(self):
         return "<Product(id={}, category_id={}, product_name={}, created_at={}, modified_at={})>".format(

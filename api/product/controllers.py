@@ -38,10 +38,11 @@ class ProductController:
                 self.cursor.execute(query)
             except Exception:
                 print("Database error")
-            result = connection.is_item_exist(
-                "products", data.get("product_name"), "product_name")
+            #  Create an entry in the inventory
+            product_id = self.get_current_product_id()
+            self.add_stock(product_id.get("id"))
             response.update({
-                "id": result.get("id"),
+                "id": product_id.get("id"),
                 "msg": "Product added successfully"
             })
             self.status_code = 200
@@ -67,6 +68,18 @@ class ProductController:
         if not result:
             return None
         return result
+
+    def get_current_product_id(self):
+        response = {}
+        try:
+            query = """
+            SELECT id FROM products ORDER BY id DESC
+            """
+            self.cursor.execute(query)
+            response = self.cursor.fetchone()
+        except Exception:
+            print("Database error")
+        return response
 
     def add_category(self, data):
         """
@@ -158,17 +171,21 @@ class ProductController:
             return jsonify({"msg": "Database error {}".format(error)}), 500
         return jsonify(response), 200
 
-    def add_stock(self, request_data):
+    def add_stock(self, product_id):
         """
         Updates the product quantity
 
         Args:
             request_data(object): Hold form data
-
-        Returns:
-            tuple: With a response message and a status code
         """
-        pass
+        response = {}
+        try:
+            query = """
+            INSERT INTO inventory(product_id) VALUES({})
+            """.format(product_id)
+            self.cursor.execute(query)
+        except Exception:
+            response.update({"msg": "Database error"}), 500
 
     def delete_product(self, product_id):
         """
