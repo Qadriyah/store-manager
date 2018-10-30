@@ -30,7 +30,7 @@ def get_all_products():
     """Get all products route"""
 
     if request.method == "GET":
-        return controller.get_all_products()
+        pass
 
 
 @product.route("/products/<product_id>", methods=["GET"])
@@ -40,7 +40,7 @@ def get_single_product(product_id):
     """Get a single product"""
 
     if request.method == "GET":
-        return controller.get_single_product(product_id)
+        pass
 
 
 @product.route("/products/stock", methods=["POST"])
@@ -51,7 +51,7 @@ def add_stock():
 
     if request.method == "POST":
 
-        return controller.add_stock(request.form)
+        pass
 
 
 @product.route("/products/delete/<product_id>", methods=["DELETE"])
@@ -60,7 +60,7 @@ def delete_product(product_id):
     """Deletes a product with a given product_id"""
 
     if request.method == "DELETE":
-        return controller.delete_product(product_id)
+        pass
 
 
 @product.route("/products/edit", methods=["POST"])
@@ -70,4 +70,4 @@ def edit_product():
 
     if request.method == "POST":
 
-        return controller.edit_product(request.form)
+        pass

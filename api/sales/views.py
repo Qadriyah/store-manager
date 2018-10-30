@@ -27,7 +27,7 @@ def add_to_cart():
 def get_cart_items():
 
     if request.method == "GET":
-        return controller.get_cart_items()
+        pass
 
 
 @sales.route("/sales", methods=["POST"])
@@ -36,8 +36,7 @@ def get_cart_items():
 def add_sales_record():
 
     if request.method == "POST":
-        return controller.add_sales_record()
-
+        pass
 
 @sales.route("/sales", methods=["GET"])
 @admin_required
@@ -45,7 +44,7 @@ def add_sales_record():
 def get_all_sales_record():
 
     if request.method == "GET":
-        return controller.get_all_sales_records()
+        pass
 
 
 @sales.route("/sales/<sales_id>", methods=["GET"])
@@ -54,4 +53,4 @@ def get_all_sales_record():
 def get_single_sales_record(sales_id):
 
     if request.method == "GET":
-        return controller.get_single_sales_record(sales_id)
+        pass

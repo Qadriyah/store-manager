@@ -1,22 +1,21 @@
 import os
 import json
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from api import app
 from models.user import User
+from models.database_objects import DatabaseObjects
 from api.user import controllers
-from api.validations import validations
-from models import connection
+from config.config import app_settings
 
 
 class TestAuthentication(TestCase):
     def setUp(self):
-        conn = connection.Connection()
+        app.config.from_object(app_settings[os.environ.get("APP_ENV")])
+        self.db_objects = DatabaseObjects()
         self.controller = controllers.AuthController()
         self.client = app.test_client()
-        self.validator = validations.ValidateInputData()
-        self.cursor = conn.connect()
-        #  Login as attendant to get the access token
+        #  Login as admin to get the access token
         response = self.client.post(
             "/api/v1/login",
             data=dict(
@@ -30,15 +29,15 @@ class TestAuthentication(TestCase):
         self.access_token = json.loads(response.data)["token"]
 
     def tearDown(self):
-        pass
+        self.db_objects.delete_database_tables()
 
     def test_user_login(self):
         """Tests that a user logins in successfully"""
         res = self.client.post(
             "/api/v1/login",
             data=dict(
-                username="attendant",
-                password="attendant"
+                username="admin",
+                password="admin"
             ),
             headers={
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -53,7 +52,7 @@ class TestAuthentication(TestCase):
             "/api/v1/login",
             data=dict(
                 username="Qadriyah",
-                password="attendant"
+                password="admin"
             ),
             headers={
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -67,7 +66,7 @@ class TestAuthentication(TestCase):
         res = self.client.post(
             "/api/v1/login",
             data=dict(
-                username="attendant",
+                username="admin",
                 password="mukungu"
             ),
             headers={
@@ -77,7 +76,6 @@ class TestAuthentication(TestCase):
         self.assertEqual(json.loads(res.data)["errors"], "Wrong password")
         self.assertEqual(res.status_code, 401)
 
-    @skip("Persistent data")
     def test_register_user(self):
         """Tests that a user is registered successfully"""
         res = self.client.post(
@@ -104,7 +102,7 @@ class TestAuthentication(TestCase):
             "/api/v1/register",
             data=dict(
                 fullname="Aretha Kebirungi",
-                username="Aretha",
+                username="admin",
                 password="programmer",
                 password2="programmer",
                 roles="attendant"
@@ -119,10 +117,24 @@ class TestAuthentication(TestCase):
 
     def test_attendant_cannot_register_user(self):
         """Tests that the attendant cannot register a new user"""
+        self.client.post(
+            "/api/v1/register",
+            data=dict(
+                fullname="Henry Bulemi",
+                username="Henry",
+                password="attendant",
+                password2="attendant",
+                roles="attendant"
+            ),
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": self.access_token
+            }
+        )
         res = self.client.post(
             "/api/v1/login",
             data=dict(
-                username="attendant",
+                username="Henry",
                 password="attendant"
             ),
             headers={
@@ -130,6 +142,7 @@ class TestAuthentication(TestCase):
             }
         )
         access_token_ = json.loads(res.data)["token"]
+
         response = self.client.post(
             "/api/v1/register",
             data=dict(
@@ -150,10 +163,10 @@ class TestAuthentication(TestCase):
 
     def test_get_user_method(self):
         """Tests that a user is fetched from the database"""
-        res = self.controller.get_user("Aretha", self.cursor)
+        res = self.controller.get_user("admin", self.db_objects.cursor)
         self.assertIsInstance(res, User)
 
     def test_get_user_failure(self):
         """Tests that a user was not found in the database"""
-        res = self.controller.get_user("Ben", self.cursor)
+        res = self.controller.get_user("Ben", self.db_objects.cursor)
         self.assertIsNone(res)

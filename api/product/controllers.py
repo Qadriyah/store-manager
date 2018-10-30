@@ -3,14 +3,13 @@ from flask import jsonify
 
 from api import app
 from models.product import Product
-from models.database import product_list
 
 
 class ProductController:
     def __init__(self):
         self.status_code = 200
 
-    def add_product(self, request_data):
+    ''' def add_product(self, request_data):
         """
         Creates a new product in the database
 
@@ -191,3 +190,4 @@ class ProductController:
             self.status_code = 404
 
         return jsonify(response), self.status_code
+ '''

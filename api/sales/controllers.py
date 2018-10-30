@@ -5,7 +5,6 @@ from flask_jwt_extended import current_user
 from api import app
 from models.sale import SalesOrder
 from models.cart import Cart
-from models.database import sales_records, cart, product_list
 
 
 class SalesController:
@@ -13,7 +12,7 @@ class SalesController:
     def __init__(self):
         self.status_code = 200
 
-    def add_to_cart(self, request_data):
+    ''' def add_to_cart(self, request_data):
         """
         Add products to the shopping cart
 
@@ -264,3 +263,4 @@ class SalesController:
         response = "0" * (5 - len(str(value)))
         response = "SO-{}{}".format(response, str(value))
         return response
+ '''
