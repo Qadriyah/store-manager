@@ -1,15 +1,16 @@
 import secrets
 from flask import jsonify
 
-from api import app
+from api import app, connection
 from models.models import Product
 
 
 class ProductController:
     def __init__(self):
         self.status_code = 200
+        self.cursor = connection.cursor
 
-    ''' def add_product(self, request_data):
+    def add_product(self, data):
         """
         Creates a new product in the database
 
@@ -21,22 +22,54 @@ class ProductController:
         """
         response = {}
         #  Check if product already exists
-        if self.is_product_exists(request_data["name"]):
+        if self.is_product_exists(data.get("product_name"), data.get("category_id")):
             response.update({"product": "Product already exists"})
             self.status_code = 409
         else:
-            #  Create product
-            new_product = Product(
-                id=secrets.token_hex(4),
-                name=request_data["name"],
-                price=request_data["price"]
-            )
-            product_list.append(new_product)
-            response.update({"id": str(new_product.id)})
-            response.update({"msg": "Product added successfully"})
+            try:
+                #  Create product
+                query = """
+                INSERT INTO products(category_id, product_name) \
+                VALUES({}, '{}')
+                """.format(
+                    data.get("category_id"),
+                    data.get("product_name")
+                )
+                self.cursor.execute(query)
+            except Exception as error:
+                print(error)
+            result = connection.is_item_exist(
+                "products", data.get("product_name"), "product_name")
+            response.update({
+                "id": result.get("id"),
+                "msg": "Product added successfully"
+            })
             self.status_code = 200
 
         return jsonify(response), self.status_code
+
+    def is_product_exists(self, product_name, category_id):
+        """
+        Checks if the product exists in the database
+
+        Args:
+            product_name(str): Name of the product to be checked
+            category_id(int): unique identifier of the product category
+
+        Returns:
+            object: query result if exists, None otherwise
+        """
+        query = """
+        SELECT product_name FROM products WHERE product_name = '{}' AND category_id = {}
+        """.format(product_name, category_id)
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if not result:
+            return None
+        return result
+
+    def add_category(self, data):
+        pass
 
     def get_all_products(self):
         """
@@ -45,21 +78,7 @@ class ProductController:
         Returns:
             list: A list of products
         """
-        response = {}
-        if len(product_list) == 0:
-            response.update({"msg": "There are no products"})
-            self.status_code = 404
-        else:
-            items = [
-                dict(
-                    id=product.id,
-                    name=product.name,
-                    price=product.price,
-                    created_at=product.created_at) for product in product_list
-            ]
-            response.update({"items": items})
-            self.status_code = 200
-        return jsonify(response), self.status_code
+        pass
 
     def get_single_product(self, product_id):
         """
@@ -71,45 +90,7 @@ class ProductController:
         Returns:
             tuple: With a response object and a status code
         """
-        response = {}
-        found = False
-        for product in product_list:
-            if product.id == product_id:
-                response.update({
-                    "id": product.id,
-                    "name": product.name,
-                    "price": product.price,
-                    "created_at": product.created_at
-                })
-                found = True
-                break
-        if found:
-            self.status_code = 200
-            return jsonify(response), self.status_code
-
-        response.update({"msg": "Product not found"})
-        self.status_code = 404
-        return jsonify(response), self.status_code
-
-    def is_product_exists(self, product_name):
-        """
-        Checks if product already exists
-
-        Args:
-            product_name(str): Name of the product
-
-        Returns:
-            bool: True if exists, False otherwise
-        """
-        found = False
-        if len(product_list) == 0:
-            return found
-
-        for product in product_list:
-            if product.name == product_name:
-                found = True
-                break
-        return found
+        pass
 
     def add_stock(self, request_data):
         """
@@ -121,22 +102,7 @@ class ProductController:
         Returns:
             tuple: With a response message and a status code
         """
-        response = {}
-        found = False
-        for product in product_list:
-            if product.id == request_data["product_id"]:
-                temp = int(product.quantity)
-                temp += int(request_data["quantity"])
-                product.quantity = str(temp)
-                found = True
-                break
-        if not found:
-            response.update({"msg": "No product was selected"})
-            self.status_code = 404
-        else:
-            response.update({"msg": "Stock added successfully"})
-            self.status_code = 200
-        return jsonify(response), self.status_code
+        pass
 
     def delete_product(self, product_id):
         """
@@ -148,21 +114,7 @@ class ProductController:
         Returns:
             tuple: With a response message and a status code
         """
-        response = {}
-        deleted = False
-        for product in product_list:
-            if product.id == product_id:
-                product_list.remove(product)
-                deleted = True
-                break
-        if deleted:
-            response.update({"msg": "Product deleted successfully"})
-            self.status_code = 200
-        else:
-            response.update({"msg": "Product not found"})
-            self.status_code = 404
-
-        return jsonify(response), self.status_code
+        pass
 
     def edit_product(self, request_data):
         """
@@ -174,20 +126,4 @@ class ProductController:
         Returns:
             tuple: With a response message and a status code
         """
-        response = {}
-        modified = False
-        for product in product_list:
-            if product.id == request_data["product_id"]:
-                product.name = request_data["name"]
-                product.price = request_data["price"]
-                modified = True
-                break
-        if modified:
-            response.update({"msg": "Product updated successfully"})
-            self.status_code = 200
-        else:
-            response.update({"msg": "Product not found"})
-            self.status_code = 404
-
-        return jsonify(response), self.status_code
- '''
+        pass

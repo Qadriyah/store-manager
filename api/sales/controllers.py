@@ -1,8 +1,7 @@
-import secrets
 from flask import jsonify
 from flask_jwt_extended import current_user
 
-from api import app
+from api import app, connection
 from models.models import SalesOrder, Cart
 
 
@@ -144,21 +143,6 @@ class SalesController:
                 break
         return 1
 
-    def is_table_empty(self, table):
-        """
-        Checks if a relation is empty
-
-        Returns:
-            bool: True if empty, False otherwise
-        """
-        if len(table) == 0:
-            return True
-        return False
-
-    def clear_cart(self):
-        """Removes items from the shopping cart"""
-        cart.clear()
-
     def get_all_sales_records(self):
         """
         Retrieves all sales records from the database
@@ -243,11 +227,9 @@ class SalesController:
             bool: True for out of stock, False otherwise
         """
         out_of_stock = False
-        for product in product_list:
-            if product.id == product_id and product.quantity <= 0:
-                out_of_stock = True
-                break
-        return out_of_stock
+        query = """
+        SELECT 
+        """
 
     def generate_order_number(self, value):
         """
@@ -262,4 +244,5 @@ class SalesController:
         response = "0" * (5 - len(str(value)))
         response = "SO-{}{}".format(response, str(value))
         return response
+
  '''

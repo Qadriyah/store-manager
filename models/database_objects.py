@@ -16,7 +16,7 @@ class DatabaseObjects:
         self.create_shopping_cart_table()
         self.create_sales_table()
         self.create_line_items_table()
-        if not self.is_admin_account_exist():
+        if not self.is_item_exist("users", "admin", "username"):
             self.add_admin_account()
 
     def create_user_table(self):
@@ -57,7 +57,7 @@ class DatabaseObjects:
                 id SERIAL PRIMARY KEY, 
                 category_id INTEGER NOT NULL,
                 product_name VARCHAR (255) NOT NULL,  
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                created_at DATE DEFAULT CURRENT_DATE, 
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 CONSTRAINT product_category_fkey FOREIGN KEY (category_id) 
                     REFERENCES category (id) 
@@ -156,18 +156,53 @@ class DatabaseObjects:
         )
         self.cursor.execute(query)
 
-    def is_admin_account_exist(self):
+    def is_item_exist(self, table_name, item_name, field_name):
         """
-        Checks if the default admin account exists
+        Checks if an item exists in the relation
+
+        Args:
+            table_name(str): The target table
+            item_name(str): Item to be searched for
 
         Returns:
-            bool: True if exists, False otherwise
+            object: Item searched for if found, None otherwise
         """
         query = """
-        SELECT fullname FROM users WHERE username = '{}'
-        """.format("admin")
+        SELECT * FROM {} WHERE {} = '{}'
+        """.format(table_name, field_name, item_name)
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         if not result:
-            return False
-        return True
+            return None
+        return result
+
+    def is_table_empty(self, table_name):
+        """
+        Checks if a relation is empty
+
+        Args:
+            table_name(str): Name of table to be checked
+
+        Returns:
+            bool: True if empty, False otherwise
+        """
+        query = """
+        SELECT product_name FROM {}
+        """.format(table_name)
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        if not result:
+            return None
+        return result
+
+    def clear_table(self, table_name):
+        """
+        Removes items from the shopping cart
+
+        Args:
+            table_name(str): Name of the table to be cleared
+        """
+        query = """
+        DELETE FROM {}
+        """.format(table_name)
+        self.cursor.execute(query)

@@ -5,7 +5,7 @@ from flask import jsonify
 from functools import wraps
 
 from api import jwt
-from models.user import User
+from models.models import User
 
 
 def admin_required(fn):

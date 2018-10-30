@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token, current_user
 
 from models.models import User
 from api import bcrypt, connection
+from models.connection import Connection
 
 
 class AuthController:
