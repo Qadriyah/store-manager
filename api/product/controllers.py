@@ -2,7 +2,7 @@ import secrets
 from flask import jsonify
 
 from api import app
-from models.product import Product
+from models.models import Product
 
 
 class ProductController:

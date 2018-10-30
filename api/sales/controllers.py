@@ -3,8 +3,7 @@ from flask import jsonify
 from flask_jwt_extended import current_user
 
 from api import app
-from models.sale import SalesOrder
-from models.cart import Cart
+from models.models import SalesOrder, Cart
 
 
 class SalesController:

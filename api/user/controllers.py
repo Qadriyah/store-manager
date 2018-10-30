@@ -2,17 +2,15 @@ import datetime
 from flask import jsonify
 from flask_jwt_extended import create_access_token, current_user
 
-from models.user import User
-from api import bcrypt
-from models.connection import Connection
+from models.models import User
+from api import bcrypt, connection
 
 
 class AuthController:
 
     def __init__(self):
-        conn = Connection()
         self.status_code = 200
-        self.cursor = conn.connect()
+        self.cursor = connection.cursor
 
     def register_user(self, request_data):
         """

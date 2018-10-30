@@ -3,7 +3,7 @@ import json
 from unittest import TestCase
 
 from api import app
-from models.user import User
+from models.models import User
 from models.database_objects import DatabaseObjects
 from api.user import controllers
 from config.config import app_settings

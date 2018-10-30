@@ -16,7 +16,8 @@ class DatabaseObjects:
         self.create_shopping_cart_table()
         self.create_sales_table()
         self.create_line_items_table()
-        self.add_admin_account()
+        if not self.is_admin_account_exist():
+            self.add_admin_account()
 
     def create_user_table(self):
         """Creates a user table"""
@@ -146,6 +147,27 @@ class DatabaseObjects:
         """Adds the default admin to the database"""
         query = """
         INSERT INTO users(fullname, username, password, roles) \
-        VALUES('Baker Sekitoleko', 'admin', '$2b$15$rMjCuBxFGbikgDVgFXkFcu6z8BMrHdUDf7hCr7KAjEef8KIlFTeKa', 'admin')
-        """
+        VALUES('{}', '{}', '{}', '{}')
+        """.format(
+            "Baker Sekitoleko",
+            "admin",
+            "$2b$15$rMjCuBxFGbikgDVgFXkFcu6z8BMrHdUDf7hCr7KAjEef8KIlFTeKa",
+            "admin"
+        )
         self.cursor.execute(query)
+
+    def is_admin_account_exist(self):
+        """
+        Checks if the default admin account exists
+
+        Returns:
+            bool: True if exists, False otherwise
+        """
+        query = """
+        SELECT fullname FROM users WHERE username = '{}'
+        """.format("admin")
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if not result:
+            return False
+        return True
