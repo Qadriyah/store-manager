@@ -198,12 +198,46 @@ class ProductController:
         response = {}
         try:
             query = """
-            UPDATE inventory SET stock_level = {} WHERE product_id = {}
-            """.format(data.get("quantity"), data.get("product_id"))
+            UPDATE inventory SET quantity = quantity + {}, \
+            stock_level = stock_level + {} WHERE product_id = {}
+            """.format(
+                data.get("quantity"),
+                data.get("quantity"),
+                data.get("product_id")
+            )
             self.cursor.execute(query)
             response.update({"msg": "Stock updated successfully"})
-        except Exception:
-            response.update({"msg": "Database error"})
+        except Exception as error:
+            response.update({"msg": "Database error {}".format(error)})
+            self.status_code = 500
+        return jsonify(response), 200
+
+    def get_stock(self):
+        """
+        Retrieves stock levels
+        """
+        response = {}
+        try:
+            query = """
+            SELECT \
+                products.product_name, \
+                inventory.quantity, \
+                inventory.stock_level, \
+                inventory.min_quantity, \
+                (SELECT category.category_name FROM category \
+                    WHERE category.id = products.category_id) category_name \
+            FROM products \
+            INNER JOIN inventory ON products.id = inventory.product_id \
+            ORDER BY products.product_name ASC
+            """
+            self.cursor.execute(query)
+            response = self.cursor.fetchall()
+            if not response:
+                response = {}
+                response.update({"msg": "No records to display"})
+                self.status_code = 404
+        except Exception as error:
+            response.update({"msg": "Database error {}".format(error)})
             self.status_code = 500
         return jsonify(response), 200
 

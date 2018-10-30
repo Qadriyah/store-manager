@@ -60,6 +60,16 @@ def add_stock():
         return controller.update_stock_level(request.form)
 
 
+@product.route("/products/stock", methods=["GET"])
+@admin_required
+@swag_from("../apidoc/product/add_stock.yml")
+def get_stock():
+    """Gets a list of stock levels"""
+
+    if request.method == "GET":
+        return controller.get_stock()
+
+
 @product.route("/products/delete/<product_id>", methods=["DELETE"])
 @admin_required
 def delete_product(product_id):
