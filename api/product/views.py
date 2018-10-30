@@ -57,8 +57,7 @@ def add_stock():
     """Updates the stock level for a given product"""
 
     if request.method == "POST":
-
-        pass
+        return controller.update_stock_level(request.form)
 
 
 @product.route("/products/delete/<product_id>", methods=["DELETE"])

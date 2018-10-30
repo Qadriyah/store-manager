@@ -59,7 +59,7 @@ class DatabaseObjects:
                 product_name VARCHAR (255) NOT NULL,  
                 created_at DATE DEFAULT CURRENT_DATE, 
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                status VARCHAR (10) DEFAULT "Active"
+                status VARCHAR (10) DEFAULT "Active",
                 CONSTRAINT product_category_fkey FOREIGN KEY (category_id) 
                     REFERENCES category (id) 
                     ON DELETE CASCADE 

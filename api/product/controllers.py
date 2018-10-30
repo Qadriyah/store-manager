@@ -187,6 +187,26 @@ class ProductController:
         except Exception:
             response.update({"msg": "Database error"}), 500
 
+    def update_stock_level(self, data):
+        """
+        Updates the stock level in case stock is running low
+
+        Args:
+            product_id(int): Product to be updated
+            quantity(int): Number of units to be added
+        """
+        response = {}
+        try:
+            query = """
+            UPDATE inventory SET stock_level = {} WHERE product_id = {}
+            """.format(data.get("quantity"), data.get("product_id"))
+            self.cursor.execute(query)
+            response.update({"msg": "Stock updated successfully"})
+        except Exception:
+            response.update({"msg": "Database error"})
+            self.status_code = 500
+        return jsonify(response), 200
+
     def delete_product(self, product_id):
         """
         Deletes a product from the product list
