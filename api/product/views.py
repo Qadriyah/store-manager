@@ -79,11 +79,10 @@ def delete_product(product_id):
         return controller.delete_product(product_id)
 
 
-@product.route("/products/edit", methods=["POST"])
+@product.route("/products/edit/<product_id>", methods=["POST"])
 @admin_required
-def edit_product():
+def edit_product(product_id):
     """Modifies the product details"""
 
     if request.method == "POST":
-
-        pass
+        return controller.edit_product(product_id, request.form)

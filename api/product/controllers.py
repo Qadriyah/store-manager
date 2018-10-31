@@ -1,3 +1,4 @@
+import json
 from flask import jsonify
 
 from api import app, connection
@@ -167,9 +168,9 @@ class ProductController:
                 response = {}
                 response.update({"msg": "Product does not exist"})
                 self.status_code = 404
-        except Exception as error:
-            return jsonify({"msg": "Database error {}".format(error)}), 500
-        return jsonify(response), 200
+        except Exception:
+            return jsonify({"msg": "Database error"}), 500
+        return jsonify(response), self.status_code
 
     def add_stock(self, product_id):
         """
@@ -252,7 +253,9 @@ class ProductController:
             tuple: With a response message and a status code
         """
         response = {}
-
+        product_exists = self.get_single_product(product_id)
+        if product_exists[1] == 404:
+            return product_exists
         try:
             query = """
             UPDATE products SET status = '{}' WHERE id = {}
@@ -266,7 +269,7 @@ class ProductController:
             self.status_code = 500
         return jsonify(response), self.status_code
 
-    def edit_product(self, data):
+    def edit_product(self, product_id, data):
         """
         Modifies the product details
 
@@ -276,3 +279,27 @@ class ProductController:
         Returns:
             tuple: With a response message and a status code
         """
+        response = {}
+        product_exists = self.get_single_product(product_id)
+        if product_exists[1] == 404:
+            return product_exists
+        try:
+            query = """
+            UPDATE products SET \
+                category_id = {}, \
+                product_name = '{}', \
+                modified_at = '{}' \
+            WHERE id = {}
+            """.format(
+                data.get("category_id"),
+                data.get("product_name"),
+                "NOW()",
+                product_id
+            )
+            self.cursor.execute(query)
+            response.update({"msg": "Product details updated successfully"})
+            self.status_code = 200
+        except Exception as error:
+            response.update({"msg": "Databse error {}".format(error)})
+            self.status_code = 500
+        return jsonify(response), self.status_code
