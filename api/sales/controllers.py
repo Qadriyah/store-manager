@@ -284,5 +284,32 @@ class SalesController:
         response = "SO-{}{}".format(response, str(value))
         return response
 
-    
+    def get_single_sales_record(self, sales_id):
+        """
+        Retrieves a single sales records using the sales_id
 
+        Args:
+            sales_id(str): Sales record unique identifier
+
+        Returns:
+            tuple: With a single sales record and a status code
+        """
+        response = {}
+        try:
+            query = """
+            SELECT * FROM salesorder WHERE id = {}
+            """.format(sales_id)
+            self.cursor.execute(query)
+            sales_orders = self.cursor.fetchone()
+            response.update({
+                "order_number": self.generate_order_number(sales_orders.get("id")),
+                "order_date": sales_orders.get("created_at"),
+                "items": self.get_line_items(sales_orders.get("id"))
+            })
+            self.status_code = 200
+            if not response:
+                response.update({"msg": "Sales record not found"})
+                self.status_code = 404
+        except Exception as error:
+            print("Database error {}".format(error))
+        return jsonify(response), self.status_code
