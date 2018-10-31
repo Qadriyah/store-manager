@@ -99,6 +99,13 @@ def get_product_categories():
 
 @product.route("/products/category/delete/<category_id>", methods=["DELETE"])
 @admin_required
-def edit_product_category(category_id):
+def delete_product_category(category_id):
     if request.method == "DELETE":
         return controller.delete_product_category(category_id)
+
+
+@product.route("/products/category/edit/<category_id>", methods=["POST"])
+@admin_required
+def edit_product_category(category_id):
+    if request.method == "POST":
+        return controller.edit_product_category(category_id, request.form)

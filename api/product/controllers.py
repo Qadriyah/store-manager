@@ -347,3 +347,30 @@ class ProductController:
             response.update({"msg": "Database error"})
             self.status_code = 500
         return jsonify(response), self.status_code
+
+    def edit_product_category(self, category_id, data):
+        """
+        Edits product category details
+        """
+        response = {}
+        if not connection.is_item_exist("category", category_id, "id"):
+            return jsonify({"msg": "Category does not exist"}), 404
+
+        try:
+            query = """
+            UPDATE category SET \
+                category_name = '{}', price = {}, modified_at = '{}'::TIMESTAMP \
+            WHERE id = {}
+            """.format(
+                data.get("category_name"),
+                data.get("price"),
+                "NOW()",
+                category_id
+            )
+            self.cursor.execute(query)
+            response.update({"msg": "Product category updated successfully"})
+            self.status_code = 200
+        except Exception:
+            response.update({"msg": "Database error"})
+            self.status_code = 500
+        return jsonify(response), self.status_code
