@@ -6,7 +6,6 @@ from flasgger import swag_from
 from . import sales
 #  import sales controller
 from . import controllers
-from models.models import Cart
 
 from api.utils.jwt_helper import attendant_required, admin_required
 
@@ -39,6 +38,14 @@ def add_sales_record():
         cart_items = controller.get_cart_items()
         return controller.add_sales_record(
             cart_items[0], request.form.get("sales_date"))
+
+
+@sales.route("/sales/cart/delete/<cid>/<pid>/<qty>", methods=["DELETE"])
+@attendant_required
+def delete_cart_item(cid, pid, qty):
+
+    if request.method == "DELETE":
+        return controller.delete_cart_item(cid, pid, qty)
 
 
 @sales.route("/sales", methods=["GET"])

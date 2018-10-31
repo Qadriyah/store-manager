@@ -28,7 +28,8 @@ class SalesController:
         if connection.is_item_exist("cart", data.get("product_name"), "product_name"):
             self.update_qty_in_cart(
                 data.get("product_id"), data.get("quantity"))
-            self.reduce_stock(data.get("product_id"), data.get("quantity"))
+            self.modify_stock(data.get("product_id"),
+                              data.get("quantity"), "reduce")
             return self.get_cart_items()
         else:
             try:
@@ -42,8 +43,9 @@ class SalesController:
                     data.get("price")
                 )
                 self.cursor.execute(query)
-                self.reduce_stock(data.get("product_id"), data.get("quantity"))
-                response = self.get_cart_items()
+                self.modify_stock(data.get("product_id"),
+                                  data.get("quantity"), "reduce")
+                response = self.get_cart_items()[0].data
                 self.status_code = 200
             except Exception:
                 response.update({"msg": "Database error"})
@@ -91,7 +93,7 @@ class SalesController:
         except Exception:
             print("Database error")
 
-    def reduce_stock(self, product_id, quantity):
+    def modify_stock(self, product_id, quantity, operation):
         """
         Reduces product quantity
 
@@ -100,13 +102,24 @@ class SalesController:
             quantity(int): Quantity sold
         """
         try:
-            query = """
-            UPDATE inventory SET stock_level = stock_level - {} WHERE product_id = {}
+            query1 = """
+            UPDATE inventory \
+            SET stock_level = stock_level - {} WHERE product_id = {}
             """.format(
                 quantity,
                 product_id
             )
-            self.cursor.execute(query)
+            query2 = """
+            UPDATE inventory \
+            SET stock_level = stock_level + {} WHERE product_id = {}
+            """.format(
+                quantity,
+                product_id
+            )
+            if operation == "raise":
+                self.cursor.execute(query2)
+            if operation == "reduce":
+                self.cursor.execute(query1)
         except Exception:
             print("Database error")
 
@@ -217,10 +230,22 @@ class SalesController:
         except Exception as error:
             print("Database error {}".format(error))
 
+    def delete_cart_item(self, cart_id, product_id, quantity):
+        response = {}
+        try:
+            query = """
+            DELETE FROM cart WHERE id = {}
+            """.format(cart_id)
+            self.cursor.execute(query)
+            self.modify_stock(product_id, quantity, "raise")
+            response.update({"msg": "Product deleted from cart"})
+            self.status_code = 200
+        except Exception:
+            response.update({"msg": "Database error"})
+            self.status_code = 505
+        return jsonify(response), self.status_code
+
     ''' 
-
-    
-
     def get_all_sales_records(self):
         """
         Retrieves all sales records from the database
