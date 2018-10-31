@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, json
 from flask_jwt_extended import current_user
 
 from api import app, connection
@@ -124,11 +124,7 @@ class SalesController:
         else:
             try:
                 query = """
-                SELECT \
-                id, \
-                product_name, \
-                quantity, \
-                price, \
+                SELECT id, product_id, product_name, quantity, price, \
                 (quantity * price) AS total FROM cart
                 """
                 self.cursor.execute(query)
@@ -139,9 +135,7 @@ class SalesController:
 
         return jsonify(response), self.status_code
 
-    ''' 
-
-    def add_sales_record(self):
+    def add_sales_record(self, cart_items, sales_date):
         """
         Adds cart items into the sales record database
 
@@ -152,33 +146,80 @@ class SalesController:
             tuple: With a response message and a status code
         """
         response = {}
-        if self.is_table_empty(cart):
-            response.update({"cart": "Empty cart"})
+        if not connection.is_table_empty("cart"):
+            response.update({"msg": "Empty cart"})
             self.status_code = 404
-            return jsonify(response), self.status_code
-
-        order_number = secrets.token_hex(8)
-        user_id = 2
-        if current_user:
-            user_id = current_user.id
-
-        for product in cart:
-            new_sale = SalesOrder(
-                id=product.product_id,
-                user_id=user_id,
-                order_number=order_number,
-                created_at=""
-            )
-            sales_records.append(new_sale)
-            #  Reduce stock
-            self.reduce_stock(product.product_id, product.qty)
-        #  clear the shopping cart
-        self.clear_cart()
-
-        response.update({"msg": "Sales order submitted successfully"})
-        self.status_code = 200
-
+        else:
+            try:
+                query = """
+                INSERT INTO salesorder(user_id, created_at) \
+                VALUES({}, '{}'::DATE)
+                """.format(
+                    current_user.id,
+                    sales_date
+                )
+                self.cursor.execute(query)
+                #  Get order id
+                order_id = self.get_current_order_id()
+                for product in json.loads(cart_items.data):
+                    self.add_line_items(
+                        product.get("product_id"),
+                        order_id, product.get("product_name"),
+                        product.get("quantity"), product.get("price"))
+                connection.clear_table("cart")
+                response.update({"msg": "Sales order submitted successfully"})
+                self.status_code = 200
+            except Exception as error:
+                response.update({"msg": "Database error {}".format(error)})
+                self.status_code = 500
         return jsonify(response), self.status_code
+
+    def generate_order_number(self, value):
+        """
+        Generates the order number with leading zeros
+
+        Args:
+            value(int): Sales order ID
+
+        Returns:
+            str: Representation of the order number
+        """
+        response = "0" * (5 - len(str(value)))
+        response = "SO-{}{}".format(response, str(value))
+        return response
+
+    def get_current_order_id(self):
+        response = {}
+        try:
+            query = """
+            SELECT id FROM salesorder ORDER BY id DESC
+            """
+            self.cursor.execute(query)
+            response = self.cursor.fetchone()
+        except Exception:
+            print("Database error")
+
+        return response.get("id")
+
+    def add_line_items(self, pid, sid, pname, qty, price):
+        try:
+            query = """
+            INSERT INTO line_items(product_id, sales_id, product_name, quantity, price) \
+            VALUES({}, {}, '{}', {}, {})
+            """.format(
+                pid,
+                sid,
+                pname,
+                qty,
+                price
+            )
+            self.cursor.execute(query)
+        except Exception as error:
+            print("Database error {}".format(error))
+
+    ''' 
+
+    
 
     def get_all_sales_records(self):
         """
@@ -236,17 +277,5 @@ class SalesController:
 
     
 
-    def generate_order_number(self, value):
-        """
-        Generates the order number with leading zeros
-
-        Args:
-            value(int): Sales order ID
-
-        Returns:
-            str: Representation of the order number
-        """
-        response = "0" * (5 - len(str(value)))
-        response = "SO-{}{}".format(response, str(value))
-        return response
+    
  '''

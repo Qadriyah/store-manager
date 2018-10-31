@@ -96,7 +96,6 @@ class DatabaseObjects:
             CREATE TABLE IF NOT EXISTS salesorder(
                 id SERIAL PRIMARY KEY, 
                 user_id INTEGER NOT NULL, 
-                order_number VARCHAR (50) NOT NULL, 
                 created_at DATE NOT NULL, 
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );

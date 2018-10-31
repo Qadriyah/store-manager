@@ -6,7 +6,7 @@ from flasgger import swag_from
 from . import sales
 #  import sales controller
 from . import controllers
-#  import validator
+from models.models import Cart
 
 from api.utils.jwt_helper import attendant_required, admin_required
 
@@ -36,7 +36,9 @@ def get_cart_items():
 def add_sales_record():
 
     if request.method == "POST":
-        pass
+        cart_items = controller.get_cart_items()
+        return controller.add_sales_record(
+            cart_items[0], request.form.get("sales_date"))
 
 
 @sales.route("/sales", methods=["GET"])
