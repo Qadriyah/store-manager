@@ -86,3 +86,12 @@ def edit_product(product_id):
 
     if request.method == "POST":
         return controller.edit_product(product_id, request.form)
+
+
+@product.route("/products/category", methods=["GET"])
+@jwt_required
+def get_product_categories():
+    """Modifies the product details"""
+
+    if request.method == "GET":
+        return controller.get_product_categories()

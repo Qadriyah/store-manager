@@ -1,4 +1,3 @@
-import json
 from flask import jsonify
 
 from api import app, connection
@@ -301,5 +300,27 @@ class ProductController:
             self.status_code = 200
         except Exception as error:
             response.update({"msg": "Databse error {}".format(error)})
+            self.status_code = 500
+        return jsonify(response), self.status_code
+
+    def get_product_categories(self):
+        """
+        Retrieves products categories
+        """
+        response = {}
+        try:
+            query = """
+            SELECT category_name, price, created_at \
+            FROM category ORDER BY category_name ASC
+            """
+            self.cursor.execute(query)
+            response = self.cursor.fetchall()
+            if not response:
+                response = {}
+                response.update({"msg": "No product categories"})
+                self.status_code = 404
+            self.status_code = 200
+        except Exception:
+            response.update({"msg": "Databse error"})
             self.status_code = 500
         return jsonify(response), self.status_code
