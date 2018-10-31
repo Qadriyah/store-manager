@@ -95,3 +95,10 @@ def get_product_categories():
 
     if request.method == "GET":
         return controller.get_product_categories()
+
+
+@product.route("/products/category/delete/<category_id>", methods=["DELETE"])
+@admin_required
+def edit_product_category(category_id):
+    if request.method == "DELETE":
+        return controller.delete_product_category(category_id)

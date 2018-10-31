@@ -310,9 +310,9 @@ class ProductController:
         response = {}
         try:
             query = """
-            SELECT category_name, price, created_at \
-            FROM category ORDER BY category_name ASC
-            """
+            SELECT id, category_name, price, created_at \
+            FROM category WHERE status = '{}' ORDER BY category_name ASC
+            """.format("Active")
             self.cursor.execute(query)
             response = self.cursor.fetchall()
             if not response:
@@ -322,5 +322,28 @@ class ProductController:
             self.status_code = 200
         except Exception:
             response.update({"msg": "Databse error"})
+            self.status_code = 500
+        return jsonify(response), self.status_code
+
+    def delete_product_category(self, category_id):
+        """
+        Deletes a product category
+
+        Args:
+            category_id(int): Category identifier
+        """
+        response = {}
+        if not connection.is_item_exist("category", category_id, "id"):
+            return jsonify({"msg": "Category does not exist"}), 404
+
+        try:
+            query = """
+            UPDATE category SET status = '{}' WHERE id = {}
+            """.format("Deleted", category_id)
+            self.cursor.execute(query)
+            response.update({"msg": "Category deleted successfully"})
+            self.status_code = 200
+        except Exception:
+            response.update({"msg": "Database error"})
             self.status_code = 500
         return jsonify(response), self.status_code
