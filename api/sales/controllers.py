@@ -244,7 +244,7 @@ class SalesController:
             self.status_code = 404
         else:
             query = """
-            SELECT * FROM salesorder
+            SELECT * FROM salesorder ORDER BY created_at DESC
             """
             self.cursor.execute(query)
             sales_orders = self.cursor.fetchall()
@@ -312,4 +312,29 @@ class SalesController:
                 self.status_code = 404
         except Exception as error:
             print("Database error {}".format(error))
+        return jsonify(response), self.status_code
+
+    def get_sales_for_attendant(self, user_id):
+        """
+        Retrieves all sales for a particular sales attendant
+        """
+        response = {}
+        try:
+            query = """
+            SELECT * FROM salesorder WHERE user_id = {} ORDER BY created_at DESC
+            """.format(user_id)
+            self.cursor.execute(query)
+            sales_orders = self.cursor.fetchall()
+            for item in sales_orders:
+                response.update({
+                    "order_number": self.generate_order_number(item.get("id")),
+                    "order_date": item.get("created_at"),
+                    "items": self.get_line_items(item.get("id"))
+                })
+            self.status_code = 200
+            if not response:
+                response.update({"msg": "Sales record not found"})
+                self.status_code = 404
+        except Exception:
+            print("Database error")
         return jsonify(response), self.status_code

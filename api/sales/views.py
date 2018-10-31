@@ -64,3 +64,12 @@ def get_single_sales_record(sales_id):
 
     if request.method == "GET":
         return controller.get_single_sales_record(sales_id)
+
+
+@sales.route("/sales/user/<user_id>", methods=["GET"])
+@jwt_required
+@swag_from("../apidoc/sales/get_single_sales_record.yml")
+def get_sales_for_attendant(user_id):
+
+    if request.method == "GET":
+        return controller.get_sales_for_attendant(user_id)
