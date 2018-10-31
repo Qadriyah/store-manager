@@ -45,7 +45,7 @@ class SalesController:
                 self.cursor.execute(query)
                 self.modify_stock(data.get("product_id"),
                                   data.get("quantity"), "reduce")
-                response = self.get_cart_items()[0].data
+                response = json.loads(self.get_cart_items()[0].data)
                 self.status_code = 200
             except Exception:
                 response.update({"msg": "Database error"})
@@ -187,20 +187,6 @@ class SalesController:
                 self.status_code = 500
         return jsonify(response), self.status_code
 
-    def generate_order_number(self, value):
-        """
-        Generates the order number with leading zeros
-
-        Args:
-            value(int): Sales order ID
-
-        Returns:
-            str: Representation of the order number
-        """
-        response = "0" * (5 - len(str(value)))
-        response = "SO-{}{}".format(response, str(value))
-        return response
-
     def get_current_order_id(self):
         response = {}
         try:
@@ -245,7 +231,6 @@ class SalesController:
             self.status_code = 505
         return jsonify(response), self.status_code
 
-    ''' 
     def get_all_sales_records(self):
         """
         Retrieves all sales records from the database
@@ -254,53 +239,50 @@ class SalesController:
             tuple: With all sales records and a status code
         """
         response = {}
-        if self.is_table_empty(sales_records):
+        if not connection.is_table_empty("salesorder"):
             response.update({"sales": "No sales"})
             self.status_code = 404
         else:
-            items = [
-                dict(
-                    id=sales_item.id,
-                    user_id=sales_item.user_id,
-                    order_number=sales_item.order_number,
-                    created_at=sales_item.created_at)
-                for sales_item in sales_records
-            ]
-            response.update({"items": items})
+            query = """
+            SELECT * FROM salesorder
+            """
+            self.cursor.execute(query)
+            sales_orders = self.cursor.fetchall()
+            for item in sales_orders:
+                response.update({
+                    "order_number": self.generate_order_number(item.get("id")),
+                    "order_date": item.get("created_at"),
+                    "items": self.get_line_items(item.get("id"))
+                })
             self.status_code = 200
 
         return jsonify(response), self.status_code
 
-    def get_single_sales_record(self, sales_id):
+    def get_line_items(self, sales_id):
+        response = {}
+        try:
+            query = """
+            SELECT *, (quantity * price) AS total FROM line_items
+            """
+            self.cursor.execute(query)
+            response = self.cursor.fetchall()
+        except Exception:
+            print("Database error")
+        return response
+
+    def generate_order_number(self, value):
         """
-        Retrieves a single sales records using the sales_id
+        Generates the order number with leading zeros
 
         Args:
-            sales_id(str): Sales record unique identifier
+            value(int): Sales order ID
 
         Returns:
-            tuple: With a single sales record and a status code
+            str: Representation of the order number
         """
-        response = {}
-        found = False
-        for sales_item in sales_records:
-            if sales_item.id == sales_id:
-                response.update({
-                    "id": sales_item.id,
-                    "user_id": sales_item.user_id,
-                    "created_at": sales_item.created_at
-                })
-                found = True
-                break
-        if found:
-            self.status_code = 200
-            return jsonify(response), self.status_code
-
-        response.update({"msg": "Sales record not found"})
-        self.status_code = 404
-        return jsonify(response), self.status_code
+        response = "0" * (5 - len(str(value)))
+        response = "SO-{}{}".format(response, str(value))
+        return response
 
     
 
-    
- '''

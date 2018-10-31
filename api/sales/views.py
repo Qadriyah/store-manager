@@ -54,7 +54,7 @@ def delete_cart_item(cid, pid, qty):
 def get_all_sales_record():
 
     if request.method == "GET":
-        pass
+        return controller.get_all_sales_records()
 
 
 @sales.route("/sales/<sales_id>", methods=["GET"])
@@ -63,4 +63,4 @@ def get_all_sales_record():
 def get_single_sales_record(sales_id):
 
     if request.method == "GET":
-        pass
+        return controller.get_single_sales_record(sales_id)
