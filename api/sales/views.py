@@ -18,7 +18,7 @@ controller = controllers.SalesController()
 @swag_from("../apidoc/sales/add_to_cart.yml")
 def add_to_cart():
     if request.method == "POST":
-        pass
+        return controller.add_to_cart(request.form)
 
 
 @sales.route("/sales/cart/items", methods=["GET"])
@@ -37,6 +37,7 @@ def add_sales_record():
 
     if request.method == "POST":
         pass
+
 
 @sales.route("/sales", methods=["GET"])
 @admin_required

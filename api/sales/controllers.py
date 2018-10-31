@@ -9,8 +9,9 @@ class SalesController:
 
     def __init__(self):
         self.status_code = 200
+        self.cursor = connection.cursor
 
-    ''' def add_to_cart(self, request_data):
+    def add_to_cart(self, data):
         """
         Add products to the shopping cart
 
@@ -21,26 +22,90 @@ class SalesController:
             str: Message
         """
         response = {}
-        if self.is_product_out_of_stock(request_data["pid"]):
+        if self.is_product_out_of_stock(data.get("product_id"), data.get("quantity")):
             return jsonify({"msg": "Item is out of stock"}), 401
 
-        if self.is_product_in_cart(request_data["name"]):
-            self.update_qty_in_cart(request_data["pid"], request_data["qty"])
-            response.update({"msg": "Success"})
-            self.status_code = 200
+        if connection.is_item_exist("cart", data.get("product_name"), "product_name"):
+            self.update_qty_in_cart(
+                data.get("product_id"), data.get("quantity"))
+            self.reduce_stock(data.get("product_id"), data.get("quantity"))
         else:
-            new_cart_item = Cart(
-                pid=request_data["pid"],
-                name=request_data["name"],
-                qty=request_data["qty"],
-                price=request_data["price"])
-            cart.append(new_cart_item)
+            query = """
+            INSERT INTO cart(product_id, product_name, quantity, price) \
+            VALUES({}, '{}', {}, {})
+            """.format(
+                data.get("product_id"),
+                data.get("product_name"),
+                data.get("quantity"),
+                data.get("price")
+            )
+            self.cursor.execute(query)
+            self.reduce_stock(data.get("product_id"), data.get("quantity"))
             response.update({"msg": "Success"})
             self.status_code = 200
 
         return jsonify(response), 200
 
-    def get_cart_items(self):
+    def is_product_out_of_stock(self, product_id, quantity):
+        """
+        Checks if an item is out of stock
+
+        Args:
+            product_id(str): Unique product identifier
+
+        Returns:
+
+        """
+        out_of_stock = False
+        try:
+            query = """
+            SELECT stock_level FROM inventory WHERE product_id = {} AND stock_level >= {} 
+            """.format(product_id, quantity)
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            if not result:
+                out_of_stock = True
+
+        except Exception:
+            return out_of_stock
+        return out_of_stock
+
+    def update_qty_in_cart(self, product_id, quantity):
+        """
+        Updates quantity if product is already in the cart
+
+        Args:
+            product_id(str): Product identifier
+            qty(int): Product quantity
+        """
+        try:
+            query = """
+            UPDATE cart SET quantity = quantity + {} WHERE product_id = {}
+            """.format(quantity, product_id)
+            self.cursor.execute(query)
+        except Exception:
+            print("Database error")
+
+    def reduce_stock(self, product_id, quantity):
+        """
+        Reduces product quantity
+
+        Args:
+            product_id(str): Unique product identifier
+            quantity(int): Quantity sold
+        """
+        try:
+            query = """
+            UPDATE inventory SET stock_level = stock_level - {} WHERE product_id = {}
+            """.format(
+                quantity,
+                product_id
+            )
+            self.cursor.execute(query)
+        except Exception:
+            print("Database error")
+
+    ''' def get_cart_items(self):
         """
         Retrieves a list of all products from in the cart
 
@@ -104,45 +169,6 @@ class SalesController:
 
         return jsonify(response), self.status_code
 
-    def is_product_in_cart(self, product_name):
-        """
-        Checks if product has already been added to the cart
-
-        Args:
-            product_name(str): Product to check for
-
-        Returns:
-            bool: True if found, False otherwise
-        """
-        found = False
-        if self.is_table_empty(cart):
-            return found
-
-        for product in cart:
-            if product.product_name == product_name:
-                found = True
-                break
-        return found
-
-    def update_qty_in_cart(self, product_id, qty):
-        """
-        Updates quantity if product is already in the cart
-
-        Args:
-            product_id(str): Product identifier
-            qty(int): Product quantity
-
-        Returns:
-            int: 1
-        """
-        for product in cart:
-            if product.product_id == product_id:
-                temp = int(product.qty)
-                temp += int(qty)
-                product.qty = str(temp)
-                break
-        return 1
-
     def get_all_sales_records(self):
         """
         Retrieves all sales records from the database
@@ -197,39 +223,7 @@ class SalesController:
         self.status_code = 404
         return jsonify(response), self.status_code
 
-    def reduce_stock(self, product_id, quantity):
-        """
-        Reduces product quantity
-
-        Args:
-            product_id(str): Unique product identifier
-            quantity(int): Quantity sold
-
-        Returns:
-            int: 1
-        """
-        for product in product_list:
-            if product.id == product_id:
-                temp = int(product.quantity)
-                temp -= int(quantity)
-                product.quantity = temp
-                break
-        return 1
-
-    def is_product_out_of_stock(self, product_id):
-        """
-        Checks if an item is out of stock
-
-        Args:
-            product_id(str): Unique product identifier
-
-        Returns:
-            bool: True for out of stock, False otherwise
-        """
-        out_of_stock = False
-        query = """
-        SELECT 
-        """
+    
 
     def generate_order_number(self, value):
         """
@@ -244,5 +238,4 @@ class SalesController:
         response = "0" * (5 - len(str(value)))
         response = "SO-{}{}".format(response, str(value))
         return response
-
  '''
