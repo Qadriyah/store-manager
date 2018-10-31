@@ -21,13 +21,13 @@ def add_to_cart():
         return controller.add_to_cart(request.form)
 
 
-@sales.route("/sales/cart/items", methods=["GET"])
+@sales.route("/sales/cart", methods=["GET"])
 @attendant_required
 @swag_from("../apidoc/sales/get_cart_items.yml")
 def get_cart_items():
 
     if request.method == "GET":
-        pass
+        return controller.get_cart_items()
 
 
 @sales.route("/sales", methods=["POST"])

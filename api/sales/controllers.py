@@ -29,22 +29,27 @@ class SalesController:
             self.update_qty_in_cart(
                 data.get("product_id"), data.get("quantity"))
             self.reduce_stock(data.get("product_id"), data.get("quantity"))
+            return self.get_cart_items()
         else:
-            query = """
-            INSERT INTO cart(product_id, product_name, quantity, price) \
-            VALUES({}, '{}', {}, {})
-            """.format(
-                data.get("product_id"),
-                data.get("product_name"),
-                data.get("quantity"),
-                data.get("price")
-            )
-            self.cursor.execute(query)
-            self.reduce_stock(data.get("product_id"), data.get("quantity"))
-            response.update({"msg": "Success"})
-            self.status_code = 200
+            try:
+                query = """
+                INSERT INTO cart(product_id, product_name, quantity, price) \
+                VALUES({}, '{}', {}, {})
+                """.format(
+                    data.get("product_id"),
+                    data.get("product_name"),
+                    data.get("quantity"),
+                    data.get("price")
+                )
+                self.cursor.execute(query)
+                self.reduce_stock(data.get("product_id"), data.get("quantity"))
+                response = self.get_cart_items()
+                self.status_code = 200
+            except Exception:
+                response.update({"msg": "Database error"})
+                self.status_code = 500
 
-        return jsonify(response), 200
+        return jsonify(response), self.status_code
 
     def is_product_out_of_stock(self, product_id, quantity):
         """
@@ -105,7 +110,7 @@ class SalesController:
         except Exception:
             print("Database error")
 
-    ''' def get_cart_items(self):
+    def get_cart_items(self):
         """
         Retrieves a list of all products from in the cart
 
@@ -113,22 +118,28 @@ class SalesController:
             list: A list of products
         """
         response = {}
-        if self.is_table_empty(cart):
+        if not connection.is_table_empty("cart"):
             response.update({"msg": "Empty cart"})
             self.status_code = 404
         else:
-            items = [
-                dict(
-                    id=product.product_id,
-                    name=product.product_name,
-                    qty=product.quantity,
-                    price=product.price,
-                    total=int(product.quantity) * int(product.price))
-                for product in cart
-            ]
-            response.update({"items": items})
-            self.status_code = 200
+            try:
+                query = """
+                SELECT \
+                id, \
+                product_name, \
+                quantity, \
+                price, \
+                (quantity * price) AS total FROM cart
+                """
+                self.cursor.execute(query)
+                response = self.cursor.fetchall()
+                self.status_code = 200
+            except Exception:
+                print("Database error")
+
         return jsonify(response), self.status_code
+
+    ''' 
 
     def add_sales_record(self):
         """
