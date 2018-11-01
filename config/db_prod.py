@@ -1,4 +1,4 @@
 import os
 
 
-postgres_db = os.environ.get("DB_URL")
+postgres_db = os.environ.get("DATABASE_URL")

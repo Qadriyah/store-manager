@@ -1,12 +1,11 @@
 product_schema = {
-    'category_id': {'type': 'integer', 'required': True},
-    'product_name': {'type': 'string', 'required': True}
+    'category_id': {'type': 'integer', 'coerce': int, 'required': True},
+    'product_name': {'type': 'string', 'coerce': str, 'required': True},
+    'product_price': {'type': 'integer', 'coerce': int, 'required': True}
 }
 
 category_schema = {
-    'category_name': {'type': 'string', 'required': True},
-    'price': {'type': 'integer', 'required': True},
-    'created_at': {'type': 'string', 'required': True}
+    'category_name': {'type': 'string', 'required': True}
 }
 
 stock_schema = {
@@ -16,9 +15,7 @@ stock_schema = {
 
 cart_schema = {
     'product_id': {'type': 'integer', 'required': True},
-    'product_name': {'type': 'string', 'required': True},
-    'quantity': {'type': 'integer', 'required': True},
-    'price': {'type': 'integer', 'required': True}
+    'quantity': {'type': 'integer', 'required': True}
 }
 
 sales_schema = {

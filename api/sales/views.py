@@ -43,13 +43,8 @@ def get_cart_items():
 def add_sales_record():
 
     if request.method == "POST":
-        data = request.json
-        err = validator.validate(data, sales_schema)
-        if not err:
-            return jsonify(validator.errors)
         cart_items = controller.get_cart_items()
-        return controller.add_sales_record(
-            cart_items[0], data.get("sales_date"))
+        return controller.add_sales_record(cart_items[0])
 
 
 @sales.route("/sales/cart/delete/<cid>/<pid>/<qty>", methods=["DELETE"])

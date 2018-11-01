@@ -28,11 +28,12 @@ class ProductController:
             try:
                 #  Create product
                 query = """
-                INSERT INTO products(category_id, product_name) \
-                VALUES({}, '{}')
+                INSERT INTO products(category_id, product_name, product_price) \
+                VALUES({}, '{}', {})
                 """.format(
                     data.get("category_id"),
-                    data.get("product_name")
+                    data.get("product_name"),
+                    data.get("product_price")
                 )
                 self.cursor.execute(query)
             except Exception:
@@ -95,12 +96,10 @@ class ProductController:
         else:
             try:
                 query = """
-                INSERT INTO category(category_name, price, created_at) \
-                VALUES('{}', {}, '{}'::DATE)
+                INSERT INTO category(category_name) \
+                VALUES('{}')
                 """.format(
-                    data.get("category_name"),
-                    data.get("price"),
-                    data.get("created_at")
+                    data.get("category_name")
                 )
                 self.cursor.execute(query)
                 response.update({"msg": "Category added successfully"})
@@ -125,7 +124,7 @@ class ProductController:
             query = """
             SELECT \
                 category.category_name, \
-                category.price, \
+                products.product_price, \
                 products.product_name, \
                 products.id \
             FROM category \
@@ -154,7 +153,7 @@ class ProductController:
             query = """
             SELECT \
                 category.category_name, \
-                category.price, \
+                products.product_price, \
                 products.product_name, \
                 products.id \
             FROM category \
@@ -288,11 +287,13 @@ class ProductController:
             UPDATE products SET \
                 category_id = {}, \
                 product_name = '{}', \
+                product_price = {}, \
                 modified_at = '{}' \
             WHERE id = {}
             """.format(
                 data.get("category_id"),
                 data.get("product_name"),
+                data.get("product_price"),
                 "NOW()",
                 product_id
             )
@@ -311,7 +312,7 @@ class ProductController:
         response = {}
         try:
             query = """
-            SELECT id, category_name, price, created_at \
+            SELECT id, category_name \
             FROM category WHERE status = '{}' ORDER BY category_name ASC
             """.format("Active")
             self.cursor.execute(query)
@@ -360,11 +361,10 @@ class ProductController:
         try:
             query = """
             UPDATE category SET \
-                category_name = '{}', price = {}, modified_at = '{}'::TIMESTAMP \
+                category_name = '{}', modified_at = '{}'::TIMESTAMP \
             WHERE id = {}
             """.format(
                 data.get("category_name"),
-                data.get("price"),
                 "NOW()",
                 category_id
             )

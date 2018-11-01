@@ -2,7 +2,9 @@ from flask import jsonify, json
 from flask_jwt_extended import current_user
 
 from api import app, connection
-from models.models import SalesOrder, Cart
+from api.product.controllers import ProductController
+
+pcontroller = ProductController()
 
 
 class SalesController:
@@ -25,7 +27,9 @@ class SalesController:
         if self.is_product_out_of_stock(data.get("product_id"), data.get("quantity")):
             return jsonify({"msg": "Item is out of stock"}), 401
 
-        if connection.is_item_exist("cart", data.get("product_name"), "product_name"):
+        res = pcontroller.get_single_product(data.get("product_id"))
+        product = json.loads(res[0].data)
+        if connection.is_item_exist("cart", product.get("product_name"), "product_name"):
             self.update_qty_in_cart(
                 data.get("product_id"), data.get("quantity"))
             self.modify_stock(data.get("product_id"),
@@ -38,17 +42,17 @@ class SalesController:
                 VALUES({}, '{}', {}, {})
                 """.format(
                     data.get("product_id"),
-                    data.get("product_name"),
+                    product.get("product_name"),
                     data.get("quantity"),
-                    data.get("price")
+                    product.get("product_price")
                 )
                 self.cursor.execute(query)
                 self.modify_stock(data.get("product_id"),
                                   data.get("quantity"), "reduce")
                 response = json.loads(self.get_cart_items()[0].data)
                 self.status_code = 200
-            except Exception:
-                response.update({"msg": "Database error"})
+            except Exception as error:
+                response.update({"msg": "Database error {}".format(error)})
                 self.status_code = 500
 
         return jsonify(response), self.status_code
@@ -148,7 +152,7 @@ class SalesController:
 
         return jsonify(response), self.status_code
 
-    def add_sales_record(self, cart_items, sales_date):
+    def add_sales_record(self, cart_items):
         """
         Adds cart items into the sales record database
 
@@ -165,18 +169,15 @@ class SalesController:
         else:
             try:
                 query = """
-                INSERT INTO salesorder(user_id, created_at) \
-                VALUES({}, '{}'::DATE)
-                """.format(
-                    current_user.id,
-                    sales_date
-                )
+                INSERT INTO salesorder(user_id) \
+                VALUES({}) RETURNING id
+                """.format(current_user.id)
                 self.cursor.execute(query)
-                order_id = self.get_current_order_id()
+                order_id = self.cursor.fetchone()
                 for product in json.loads(cart_items.data):
                     self.add_line_items(
                         product.get("product_id"),
-                        order_id, product.get("product_name"),
+                        order_id.get("id"), product.get("product_name"),
                         product.get("quantity"), product.get("price"))
                 connection.clear_table("cart")
                 response.update({"msg": "Sales order submitted successfully"})
@@ -185,19 +186,6 @@ class SalesController:
                 response.update({"msg": "Database error {}".format(error)})
                 self.status_code = 500
         return jsonify(response), self.status_code
-
-    def get_current_order_id(self):
-        response = {}
-        try:
-            query = """
-            SELECT id FROM salesorder ORDER BY id DESC
-            """
-            self.cursor.execute(query)
-            response = self.cursor.fetchone()
-        except Exception:
-            print("Database error")
-
-        return response.get("id")
 
     def add_line_items(self, pid, sid, pname, qty, price):
         """

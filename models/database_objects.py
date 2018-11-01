@@ -1,5 +1,6 @@
 from models import connection
 import time
+from models import sample_data
 
 
 class DatabaseObjects:
@@ -24,12 +25,12 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS users(
-                id SERIAL PRIMARY KEY, 
-                fullname VARCHAR (255) NOT NULL, 
-                username VARCHAR (255) UNIQUE NOT NULL, 
-                password VARCHAR (255) NOT NULL, 
-                roles VARCHAR (20) NOT NULL, 
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                id SERIAL PRIMARY KEY,
+                fullname VARCHAR (255) NOT NULL,
+                username VARCHAR (255) UNIQUE NOT NULL,
+                password VARCHAR (255) NOT NULL,
+                roles VARCHAR (20) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """
@@ -40,11 +41,10 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS category(
-                id SERIAL PRIMARY KEY, 
-                category_name VARCHAR (255) NOT NULL, 
-                price INTEGER NOT NULL, 
-                created_at DATE DEFAULT CURRENT_DATE, 
-                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                id SERIAL PRIMARY KEY,
+                category_name VARCHAR (255) NOT NULL,
+                created_at DATE DEFAULT CURRENT_DATE,
+                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 status VARCHAR (10) DEFAULT 'Active'
             );
             """
@@ -55,15 +55,16 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS products(
-                id SERIAL PRIMARY KEY, 
+                id SERIAL PRIMARY KEY,
                 category_id INTEGER NOT NULL,
-                product_name VARCHAR (255) NOT NULL,  
-                created_at DATE DEFAULT CURRENT_DATE, 
+                product_name VARCHAR (255) NOT NULL,
+                product_price INTEGER NOT NULL,
+                created_at DATE DEFAULT CURRENT_DATE,
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 status VARCHAR (10) DEFAULT 'Active',
-                CONSTRAINT product_category_fkey FOREIGN KEY (category_id) 
-                    REFERENCES category (id) 
-                    ON DELETE CASCADE 
+                CONSTRAINT product_category_fkey FOREIGN KEY (category_id)
+                    REFERENCES category (id)
+                    ON DELETE CASCADE
                     ON UPDATE CASCADE
             );
             """
@@ -74,16 +75,16 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS inventory(
-                id SERIAL PRIMARY KEY, 
-                product_id INTEGER NOT NULL, 
-                quantity INTEGER DEFAULT 0, 
-                stock_level INTEGER DEFAULT 0, 
-                min_quantity INTEGER DEFAULT 10,  
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                id SERIAL PRIMARY KEY,
+                product_id INTEGER NOT NULL,
+                quantity INTEGER DEFAULT 0,
+                stock_level INTEGER DEFAULT 0,
+                min_quantity INTEGER DEFAULT 10,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                CONSTRAINT inventory_products_fkey FOREIGN KEY (product_id) 
-                    REFERENCES products (id) 
-                    ON DELETE CASCADE 
+                CONSTRAINT inventory_products_fkey FOREIGN KEY (product_id)
+                    REFERENCES products (id)
+                    ON DELETE CASCADE
                     ON UPDATE CASCADE
             );
             """
@@ -94,9 +95,9 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS salesorder(
-                id SERIAL PRIMARY KEY, 
-                user_id INTEGER NOT NULL, 
-                created_at DATE NOT NULL, 
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                created_at DATE DEFAULT CURRENT_DATE,
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """
@@ -107,15 +108,15 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS line_items(
-                id SERIAL PRIMARY KEY, 
-                product_id INTEGER NOT NULL, 
-                sales_id INTEGER NOT NULL, 
-                product_name VARCHAR (255) NOT NULL, 
-                quantity INTEGER NOT NULL, 
-                price INTEGER NOT NULL, 
-                CONSTRAINT line_items_salesorder_fkey FOREIGN KEY (sales_id) 
-                    REFERENCES salesorder (id) 
-                    ON DELETE CASCADE 
+                id SERIAL PRIMARY KEY,
+                product_id INTEGER NOT NULL,
+                sales_id INTEGER NOT NULL,
+                product_name VARCHAR (255) NOT NULL,
+                quantity INTEGER NOT NULL,
+                price INTEGER NOT NULL,
+                CONSTRAINT line_items_salesorder_fkey FOREIGN KEY (sales_id)
+                    REFERENCES salesorder (id)
+                    ON DELETE CASCADE
                     ON UPDATE CASCADE
             );
             """
@@ -126,10 +127,10 @@ class DatabaseObjects:
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS cart(
-                id SERIAL PRIMARY KEY, 
-                product_id INTEGER NOT NULL, 
-                product_name VARCHAR (255) NOT NULL, 
-                quantity INTEGER NOT NULL, 
+                id SERIAL PRIMARY KEY,
+                product_id INTEGER NOT NULL,
+                product_name VARCHAR (255) NOT NULL,
+                quantity INTEGER NOT NULL,
                 price INTEGER NOT NULL
             );
             """
@@ -207,3 +208,59 @@ class DatabaseObjects:
         DELETE FROM {}
         """.format(table_name)
         self.cursor.execute(query)
+
+    def add_sample_data(self, table):
+        if table == "users":
+            for user in sample_data.users:
+                self.cursor.execute(
+                    """
+                        INSERT INTO {}(fullname, username, password, roles)
+                            VALUES('{}', '{}', '{}', '{}')
+                        """.format(table, user.fullname, user.username, user.password.decode(), user.roles)
+                )
+        if table == "cart":
+            for product in sample_data.cart:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(product_id, product_name, quantity, price) 
+                        VALUES({}, '{}', {}, {})
+                    """.format(table, product.product_id, product.product_name, product.quantity, product.price)
+                )
+        if table == "inventory":
+            for product in sample_data.inventories:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(product_id, quantity, stock_level, min_quantity) VALUES({}, {}, {}, {})
+                    """.format(table, product.product_id, product.quantity, product.stock_level, product.min_quantity)
+                )
+        if table == "line_items":
+            for product in sample_data.line_items:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(product_id, sales_id, product_name, quantity, price) 
+                        VALUES({}, {}, '{}', {}, {})
+                    """.format(table, product.product_id, product.sales_id, product.product_name, product.quantity, product.price)
+                )
+        if table == "products":
+            for product in sample_data.product_list:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(category_id, product_name) VALUES({}, '{}')
+                    """.format(table, product.category_id, product.product_name)
+                )
+        if table == "salesorder":
+            for record in sample_data.sales_records:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(user_id, order_number, created_at) 
+                        VALUES({}, '{}', '{}'::DATE)
+                    """.format(table, record.user_id, record.order_number, record.created_at)
+                )
+        if table == "category":
+            for category in sample_data.categories:
+                self.cursor.execute(
+                    """
+                    INSERT INTO {}(category_name, price) \
+                    VALUES('{}', {})
+                    """.format(table, category.category_name, category.price)
+                )
