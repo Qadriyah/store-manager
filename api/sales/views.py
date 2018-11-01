@@ -8,6 +8,10 @@ from . import sales
 from . import controllers
 
 from api.utils.jwt_helper import attendant_required, admin_required
+from api.validations.validation_schemas import (
+    cart_schema, sales_schema
+)
+from api import validator
 
 controller = controllers.SalesController()
 
@@ -17,7 +21,11 @@ controller = controllers.SalesController()
 @swag_from("../apidoc/sales/add_to_cart.yml")
 def add_to_cart():
     if request.method == "POST":
-        return controller.add_to_cart(request.form)
+        data = request.json
+        err = validator.validate(data, cart_schema)
+        if not err:
+            return jsonify(validator.errors)
+        return controller.add_to_cart(data)
 
 
 @sales.route("/sales/cart", methods=["GET"])
@@ -35,9 +43,13 @@ def get_cart_items():
 def add_sales_record():
 
     if request.method == "POST":
+        data = request.json
+        err = validator.validate(data, sales_schema)
+        if not err:
+            return jsonify(validator.errors)
         cart_items = controller.get_cart_items()
         return controller.add_sales_record(
-            cart_items[0], request.form.get("sales_date"))
+            cart_items[0], data.get("sales_date"))
 
 
 @sales.route("/sales/cart/delete/<cid>/<pid>/<qty>", methods=["DELETE"])

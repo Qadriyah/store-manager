@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger
 from flask_script import Manager
+from cerberus import Validator
 
 from config.config import app_settings
 from models.database_objects import DatabaseObjects
@@ -14,6 +15,7 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 swagger = Swagger(app)
 manager = Manager(app)
+validator = Validator()
 connection = DatabaseObjects()
 
 #  Register blueprints

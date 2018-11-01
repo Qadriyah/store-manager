@@ -172,7 +172,6 @@ class SalesController:
                     sales_date
                 )
                 self.cursor.execute(query)
-                #  Get order id
                 order_id = self.get_current_order_id()
                 for product in json.loads(cart_items.data):
                     self.add_line_items(
@@ -201,6 +200,9 @@ class SalesController:
         return response.get("id")
 
     def add_line_items(self, pid, sid, pname, qty, price):
+        """
+        Adds sales line items
+        """
         try:
             query = """
             INSERT INTO line_items(product_id, sales_id, product_name, quantity, price) \

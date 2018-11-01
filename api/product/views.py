@@ -9,6 +9,10 @@ from . import controllers
 #  import validations
 
 from api.utils.jwt_helper import admin_required
+from api.validations.validation_schemas import (
+    product_schema, category_schema, stock_schema
+)
+from api import validator
 
 controller = controllers.ProductController()
 
@@ -20,14 +24,22 @@ def add_product():
     """Add product route"""
 
     if request.method == "POST":
-        return controller.add_product(request.form)
+        data = request.json
+        err = validator.validate(data, product_schema)
+        if not err:
+            return jsonify(validator.errors)
+        return controller.add_product(data)
 
 
 @product.route("/products/category", methods=["POST"])
 @admin_required
 def add_category():
     if request.method == "POST":
-        return controller.add_category(request.form)
+        data = request.json
+        err = validator.validate(data, category_schema)
+        if not err:
+            return jsonify(validator.errors)
+        return controller.add_category(data)
 
 
 @product.route("/products", methods=["GET"])
@@ -57,7 +69,11 @@ def add_stock():
     """Updates the stock level for a given product"""
 
     if request.method == "POST":
-        return controller.update_stock_level(request.form)
+        data = request.json
+        err = validator.validate(data, stock_schema)
+        if not err:
+            return jsonify(validator.errors)
+        return controller.update_stock_level(data)
 
 
 @product.route("/products/stock", methods=["GET"])
@@ -85,7 +101,11 @@ def edit_product(product_id):
     """Modifies the product details"""
 
     if request.method == "POST":
-        return controller.edit_product(product_id, request.form)
+        data = request.json
+        err = validator.validate(data, product_schema)
+        if not err:
+            return jsonify(validator.errors)
+        return controller.edit_product(product_id, data)
 
 
 @product.route("/products/category", methods=["GET"])
@@ -108,4 +128,5 @@ def delete_product_category(category_id):
 @admin_required
 def edit_product_category(category_id):
     if request.method == "POST":
-        return controller.edit_product_category(category_id, request.form)
+        data = request.json
+        return controller.edit_product_category(category_id, data)

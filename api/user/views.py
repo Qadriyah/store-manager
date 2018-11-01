@@ -3,15 +3,16 @@ from flasgger import swag_from
 
 #  import user blueprint
 from . import user
-#  import authentication controller
+
 from . import controllers
-#  import data validator
-from api.validations.validations import ValidateInputData
 from api.utils.jwt_helper import admin_required
 from api import app
 from api import swagger
+from api.validations.validation_schemas import (
+    login_schema, register_schema
+)
+from api import validator
 
-validator = ValidateInputData()
 controller = controllers.AuthController()
 
 
@@ -21,16 +22,12 @@ controller = controllers.AuthController()
 def register_user():
 
     if request.method == "POST":
-        errors = {}
-        if not validator.validate_user_data(request.form):
-            errors.update({"msg": "All fields are required"})
-            return jsonify(errors), 401
+        data = request.json
+        err = validator.validate(data, register_schema)
+        if not err:
+            return jsonify(validator.errors), 400
 
-        if not validator.validate_password_match(request.form):
-            errors.update({"msg": "Passwords dont match"})
-            return jsonify(errors), 401
-
-        return controller.register_user(request.form)
+        return controller.register_user(data)
 
 
 @user.route("/login", methods=["POST"])
@@ -38,14 +35,12 @@ def register_user():
 def login_user():
 
     if request.method == "POST":
-        errors = {}
-        username = validator.validate_text_fields(request.form["username"])
-        password = validator.validate_text_fields(request.form["password"])
-        if not username or not password:
-            errors.update({"msg": "Wrong username or password"})
-            return jsonify(errors), 401
+        data = request.json
+        err = validator.validate(data, login_schema)
+        if not err:
+            return jsonify(validator.errors), 400
 
-        return controller.login_user(request.form)
+        return controller.login_user(data)
 
 
 @app.route("/", methods=["GET"])

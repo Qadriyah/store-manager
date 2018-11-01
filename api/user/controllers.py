@@ -106,7 +106,7 @@ class AuthController:
                 )
                 response.update({
                     "success": True,
-                    "token": "Bearer {}".format(token)
+                    "token": token
                 })
                 self.status_code = 200
             else:
