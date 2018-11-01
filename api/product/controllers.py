@@ -220,6 +220,7 @@ class ProductController:
         try:
             query = """
             SELECT \
+                products.id, \
                 products.product_name, \
                 inventory.quantity, \
                 inventory.stock_level, \

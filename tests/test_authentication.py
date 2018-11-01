@@ -16,31 +16,34 @@ class TestAuthentication(TestCase):
         self.controller = controllers.AuthController()
         self.client = app.test_client()
         #  Login as admin to get the access token
+        data = dict(
+            username="admin",
+            password="admin"
+        )
         response = self.client.post(
             "/api/v1/login",
-            data=dict(
-                username="admin",
-                password="admin"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             }
         )
-        self.access_token = json.loads(response.data)["token"]
+        self.access_token = "Bearer {}".format(
+            json.loads(response.data)["token"])
 
     def tearDown(self):
         self.db_objects.delete_database_tables()
 
     def test_user_login(self):
         """Tests that a user logins in successfully"""
+        data = dict(
+            username="admin",
+            password="admin"
+        )
         res = self.client.post(
             "/api/v1/login",
-            data=dict(
-                username="admin",
-                password="admin"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             }
         )
         self.assertTrue(json.loads(res.data)["success"])
@@ -48,14 +51,15 @@ class TestAuthentication(TestCase):
 
     def test_wrong_username(self):
         """Tests that the username entered already exists"""
+        data = dict(
+            username="Qadriyah",
+            password="admin"
+        )
         res = self.client.post(
             "/api/v1/login",
-            data=dict(
-                username="Qadriyah",
-                password="admin"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             }
         )
         self.assertEqual(json.loads(res.data)["errors"], "Wrong username")
@@ -63,14 +67,15 @@ class TestAuthentication(TestCase):
 
     def test_wrong_password(self):
         """Tests that the password entered is wrong"""
+        data = dict(
+            username="admin",
+            password="mukungu"
+        )
         res = self.client.post(
             "/api/v1/login",
-            data=dict(
-                username="admin",
-                password="mukungu"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             }
         )
         self.assertEqual(json.loads(res.data)["errors"], "Wrong password")
@@ -78,17 +83,18 @@ class TestAuthentication(TestCase):
 
     def test_register_user(self):
         """Tests that a user is registered successfully"""
+        data = dict(
+            fullname="Aretha Kebirungi",
+            username="Aretha",
+            password="programmer",
+            password2="programmer",
+            roles="attendant"
+        )
         res = self.client.post(
             "/api/v1/register",
-            data=dict(
-                fullname="Aretha Kebirungi",
-                username="Aretha",
-                password="programmer",
-                password2="programmer",
-                roles="attendant"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
                 "Authorization": self.access_token
             }
         )
@@ -98,17 +104,18 @@ class TestAuthentication(TestCase):
 
     def test_user_already_exists(self):
         """Tests that the username entered already exists"""
+        data = dict(
+            fullname="Aretha Kebirungi",
+            username="admin",
+            password="programmer",
+            password2="programmer",
+            roles="attendant"
+        )
         res = self.client.post(
             "/api/v1/register",
-            data=dict(
-                fullname="Aretha Kebirungi",
-                username="admin",
-                password="programmer",
-                password2="programmer",
-                roles="attendant"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
                 "Authorization": self.access_token
             }
         )
@@ -117,43 +124,45 @@ class TestAuthentication(TestCase):
 
     def test_attendant_cannot_register_user(self):
         """Tests that the attendant cannot register a new user"""
+        data = dict(
+            fullname="Henry Bulemi",
+            username="Henry",
+            password="attendant",
+            password2="attendant",
+            roles="attendant"
+        )
         self.client.post(
             "/api/v1/register",
-            data=dict(
-                fullname="Henry Bulemi",
-                username="Henry",
-                password="attendant",
-                password2="attendant",
-                roles="attendant"
-            ),
+            json=data,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
                 "Authorization": self.access_token
             }
         )
+        data1 = dict(
+            username="Henry",
+            password="attendant"
+        )
         res = self.client.post(
             "/api/v1/login",
-            data=dict(
-                username="Henry",
-                password="attendant"
-            ),
+            json=data1,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             }
         )
-        access_token_ = json.loads(res.data)["token"]
-
+        access_token_ = "Bearer {}".format(json.loads(res.data)["token"])
+        data2 = dict(
+            fullname="Shirat Qadriyah",
+            username="Qadie",
+            password="smart",
+            password2="smart",
+            roles="attendant"
+        )
         response = self.client.post(
             "/api/v1/register",
-            data=dict(
-                fullname="Shirat Qadriyah",
-                username="Qadie",
-                password="smart",
-                password2="smart",
-                roles="attendant"
-            ),
+            json=data2,
             headers={
-                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Type": "application/json",
                 "Authorization": access_token_
             }
         )
