@@ -239,6 +239,7 @@ class SalesController:
             tuple: With all sales records and a status code
         """
         response = {}
+        orders = []
         if not connection.is_table_empty("salesorder"):
             response.update({"sales": "No sales"})
             self.status_code = 404
@@ -249,11 +250,15 @@ class SalesController:
             self.cursor.execute(query)
             sales_orders = self.cursor.fetchall()
             for item in sales_orders:
-                response.update({
+                temp = {}
+                temp.update({
                     "order_number": self.generate_order_number(item.get("id")),
                     "order_date": item.get("created_at"),
+                    "sold_by": self.get_user_details(item.get("user_id")).get("fullname"),
                     "items": self.get_line_items(item.get("id"))
                 })
+                orders.append(temp)
+            response = {"orders": orders}
             self.status_code = 200
 
         return jsonify(response), self.status_code
@@ -262,8 +267,9 @@ class SalesController:
         response = {}
         try:
             query = """
-            SELECT *, (quantity * price) AS total FROM line_items
-            """
+            SELECT *, (quantity * price) AS total FROM line_items \
+            WHERE sales_id = {}
+            """.format(sales_id)
             self.cursor.execute(query)
             response = self.cursor.fetchall()
         except Exception:
@@ -282,6 +288,22 @@ class SalesController:
         """
         response = "0" * (5 - len(str(value)))
         response = "SO-{}{}".format(response, str(value))
+        return response
+
+    def get_user_details(self, user_id):
+        response = {}
+        try:
+            query = """
+            SELECT id, fullname, username, roles FROM users WHERE id = {}
+            """.format(user_id)
+            self.cursor.execute(query)
+            response = self.cursor.fetchone()
+            if not response:
+                response = {}
+                response.update({"msg": "User not found"})
+                self.status_code = 404
+        except Exception:
+            print("Database error")
         return response
 
     def get_single_sales_record(self, sales_id):
@@ -304,6 +326,7 @@ class SalesController:
             response.update({
                 "order_number": self.generate_order_number(sales_orders.get("id")),
                 "order_date": sales_orders.get("created_at"),
+                "sold_by": self.get_user_details(sales_orders.get("user_id")).get("fullname"),
                 "items": self.get_line_items(sales_orders.get("id"))
             })
             self.status_code = 200
@@ -329,6 +352,7 @@ class SalesController:
                 response.update({
                     "order_number": self.generate_order_number(item.get("id")),
                     "order_date": item.get("created_at"),
+                    "sold_by": self.get_user_details(item.get("user_id")).get("fullname"),
                     "items": self.get_line_items(item.get("id"))
                 })
             self.status_code = 200
