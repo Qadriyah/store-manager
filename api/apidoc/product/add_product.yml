@@ -6,8 +6,8 @@
 produces:
   - application/json
 parameters:
-  - in: formData
-    name: name
+  - in: body
+    name: body
     schema:
       type: string
     required: true
