@@ -6,7 +6,7 @@ from . import user
 
 from . import controllers
 from api.utils.jwt_helper import admin_required
-from api import app
+from api import app, Swagger
 from api.validations.validation_schemas import (
     login_schema, register_schema
 )

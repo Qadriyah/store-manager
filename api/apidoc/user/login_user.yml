@@ -7,18 +7,9 @@
 produces:
   - application/json
 parameters:
-  - in: formData
-    name: username
-    schema:
-      type: string
+  - in: body
+    name: body
     required: true
-  - in: formData
-    name: password
-    schema:
-      type: string
-    required: true
-  - in: header
-    name: Content-Type
 responses:
   200:
     description: An object containing a boolean and a JWT Token

@@ -27,7 +27,7 @@ def add_product():
         data = request.json
         err = validator.validate(data, product_schema)
         if not err:
-            return jsonify(validator.errors)
+            return jsonify(validator.errors), 400
         return controller.add_product(data)
 
 
