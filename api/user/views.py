@@ -29,7 +29,7 @@ def register_user():
         return controller.register_user(data)
 
 
-@user.route("/", methods=["POST"])
+@user.route("/login", methods=["POST"])
 @swag_from("../apidoc/user/login_user.yml")
 def login_user():
 
