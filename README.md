@@ -36,7 +36,7 @@ git checkout gh-pages
 ### Production ready code for the API endpoints
 
 ```
-git checkout api-v1
+git checkout api-v1-postgres-db
 ```
 
 ## Runing the tests
@@ -86,7 +86,7 @@ pytest test/test_validations.py -p no:warnings
 ## Links
 
 - [gh-pages](https://qadriyah.github.io/store-manager/UI/)
-- [herouk](https://pos-api-v1.herokuapp.com/apidocs)
+- [herouk](https://pos-api-v1.herokuapp.com)
 - [No documentation yet]()
 
 ## Usage

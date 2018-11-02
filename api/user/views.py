@@ -29,7 +29,7 @@ def register_user():
         return controller.register_user(data)
 
 
-@user.route("/login", methods=["POST"])
+@user.route("/", methods=["POST"])
 @swag_from("../apidoc/user/login_user.yml")
 def login_user():
 
@@ -40,10 +40,3 @@ def login_user():
             return jsonify(validator.errors), 400
 
         return controller.login_user(data)
-
-
-@app.route("/", methods=["GET"])
-def welcome_page():
-    return render_template(
-        "welcome.html"
-    )
