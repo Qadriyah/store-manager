@@ -99,12 +99,12 @@ def delete_product(product_id):
         return controller.delete_product(product_id)
 
 
-@product.route("/products/edit/<product_id>", methods=["POST"])
+@product.route("/products/edit/<product_id>", methods=["PUT"])
 @admin_required
 def edit_product(product_id):
     """Modifies the product details"""
 
-    if request.method == "POST":
+    if request.method == "PUT":
         if not int_validator.validate_integer(product_id):
             return jsonify({"msg": "Product Id should be an integer"}), 400
 

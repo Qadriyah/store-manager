@@ -29,24 +29,23 @@ class ProductController:
                 #  Create product
                 query = """
                 INSERT INTO products(category_id, product_name, product_price) \
-                VALUES({}, '{}', {})
+                VALUES({}, '{}', {}) RETURNING id
                 """.format(
                     data.get("category_id"),
                     data.get("product_name"),
                     data.get("product_price")
                 )
                 self.cursor.execute(query)
+                product_id = self.cursor.fetchone()
+                #  Create an entry in the inventory
+                self.add_stock(product_id.get("id"))
+                response.update({
+                    "id": product_id.get("id"),
+                    "msg": "Product added successfully"
+                })
+                self.status_code = 200
             except Exception:
                 print("Database error")
-            #  Create an entry in the inventory
-            product_id = self.get_current_product_id()
-            self.add_stock(product_id.get("id"))
-            response.update({
-                "id": product_id.get("id"),
-                "msg": "Product added successfully"
-            })
-            self.status_code = 200
-
         return jsonify(response), self.status_code
 
     def is_product_exists(self, product_name, category_id):
@@ -70,18 +69,6 @@ class ProductController:
             return None
         return result
 
-    def get_current_product_id(self):
-        response = {}
-        try:
-            query = """
-            SELECT id FROM products ORDER BY id DESC
-            """
-            self.cursor.execute(query)
-            response = self.cursor.fetchone()
-        except Exception:
-            print("Database error")
-        return response
-
     def add_category(self, data):
         """
         creates a product category 
@@ -97,12 +84,16 @@ class ProductController:
             try:
                 query = """
                 INSERT INTO category(category_name) \
-                VALUES('{}')
+                VALUES('{}') RETURNING id
                 """.format(
                     data.get("category_name")
                 )
                 self.cursor.execute(query)
-                response.update({"msg": "Category added successfully"})
+                category_id = self.cursor.fetchone()
+                response.update({
+                    "id": category_id.get("id"),
+                    "msg": "Category added successfully"
+                })
                 self.status_code = 200
             except Exception as error:
                 response.update({"msg": "Database error {}".format(error)})
@@ -166,6 +157,7 @@ class ProductController:
                 response = {}
                 response.update({"msg": "Product does not exist"})
                 self.status_code = 404
+            self.status_code = 200
         except Exception:
             return jsonify({"msg": "Database error"}), 500
         return jsonify(response), self.status_code
@@ -206,10 +198,11 @@ class ProductController:
             )
             self.cursor.execute(query)
             response.update({"msg": "Stock updated successfully"})
+            self.status_code = 200
         except Exception as error:
             response.update({"msg": "Database error {}".format(error)})
             self.status_code = 500
-        return jsonify(response), 200
+        return jsonify(response), self.status_code
 
     def get_stock(self):
         """
@@ -260,7 +253,7 @@ class ProductController:
             UPDATE products SET status = '{}' WHERE id = {}
             """.format("Deleted", product_id)
             self.cursor.execute(query)
-            response.update({"msg": "product deleted successfullt"})
+            response.update({"msg": "Product deleted successfully"})
             self.status_code = 200
 
         except Exception:
