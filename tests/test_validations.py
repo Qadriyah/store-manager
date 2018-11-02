@@ -46,7 +46,7 @@ class TestValidations(TestCase):
                     "Authorization": self.access_token
                 }
             )
-        self.assertEqual(res.status_code, 400)
+            self.assertEqual(res.status_code, 400)
 
     def test_field_does_not_exixts(self):
         """Tests that an input field does not exist"""
@@ -60,7 +60,7 @@ class TestValidations(TestCase):
                     "Authorization": self.access_token
                 }
             )
-        self.assertEqual(res.status_code, 400)
+            self.assertEqual(res.status_code, 400)
 
     def test_value_entered_in_integer_fields(self):
         """Tests that the value in the number field is not integers"""
@@ -78,4 +78,18 @@ class TestValidations(TestCase):
                     "Authorization": self.access_token
                 }
             )
-        self.assertEqual(res.status_code, 400)
+            self.assertEqual(res.status_code, 400)
+
+    def test_url_parameter(self):
+        """Tests that the number passed as a url parameter is not integer"""
+        with app.app_context():
+            res = self.client.get(
+                "/api/v1/products/k",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(json.loads(res.data)[
+                             "msg"], "Product Id should be an integer")
+            self.assertEqual(res.status_code, 400)

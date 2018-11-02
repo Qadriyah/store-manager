@@ -6,8 +6,7 @@ from flasgger import swag_from
 from . import product
 #  import product controller
 from . import controllers
-#  import validations
-
+from api.validations.validation_tests import Validation
 from api.utils.jwt_helper import admin_required
 from api.validations.validation_schemas import (
     product_schema, category_schema, stock_schema
@@ -15,6 +14,7 @@ from api.validations.validation_schemas import (
 from api import validator
 
 controller = controllers.ProductController()
+int_validator = Validation()
 
 
 @product.route("/products", methods=["POST"])
@@ -38,7 +38,7 @@ def add_category():
         data = request.json
         err = validator.validate(data, category_schema)
         if not err:
-            return jsonify(validator.errors)
+            return jsonify(validator.errors), 400
         return controller.add_category(data)
 
 
@@ -59,6 +59,8 @@ def get_single_product(product_id):
     """Get a single product"""
 
     if request.method == "GET":
+        if not int_validator.validate_integer(product_id):
+            return jsonify({"msg": "Product Id should be an integer"}), 400
         return controller.get_single_product(product_id)
 
 
@@ -72,7 +74,7 @@ def add_stock():
         data = request.json
         err = validator.validate(data, stock_schema)
         if not err:
-            return jsonify(validator.errors)
+            return jsonify(validator.errors), 400
         return controller.update_stock_level(data)
 
 
@@ -92,6 +94,8 @@ def delete_product(product_id):
     """Deletes a product with a given product_id"""
 
     if request.method == "DELETE":
+        if not int_validator.validate_integer(product_id):
+            return jsonify({"msg": "Product Id should be an integer"}), 400
         return controller.delete_product(product_id)
 
 
@@ -101,10 +105,13 @@ def edit_product(product_id):
     """Modifies the product details"""
 
     if request.method == "POST":
+        if not int_validator.validate_integer(product_id):
+            return jsonify({"msg": "Product Id should be an integer"}), 400
+
         data = request.json
         err = validator.validate(data, product_schema)
         if not err:
-            return jsonify(validator.errors)
+            return jsonify(validator.errors), 400
         return controller.edit_product(product_id, data)
 
 
@@ -121,12 +128,20 @@ def get_product_categories():
 @admin_required
 def delete_product_category(category_id):
     if request.method == "DELETE":
+        if not int_validator.validate_integer(category_id):
+            return jsonify({"msg": "Category Id should be an integer"}), 400
         return controller.delete_product_category(category_id)
 
 
-@product.route("/products/category/edit/<category_id>", methods=["POST"])
+@product.route("/products/category/edit/<category_id>", methods=["PUT"])
 @admin_required
 def edit_product_category(category_id):
-    if request.method == "POST":
+    if request.method == "PUT":
+        if not int_validator.validate_integer(category_id):
+            return jsonify({"msg": "Category Id should be an integer"}), 400
+
         data = request.json
+        err = validator.validate(data, category_schema)
+        if not err:
+            return jsonify(validator.errors), 400
         return controller.edit_product_category(category_id, data)
