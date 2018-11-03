@@ -24,6 +24,9 @@ class SalesController:
             str: Message
         """
         response = {}
+        if not self.check_negative_quantity(data.get("quantity")):
+            return jsonify({"msg": "Quantity should be greater than zero"}), 406
+
         if self.is_product_out_of_stock(data.get("product_id"), data.get("quantity")):
             return jsonify({"msg": "Item is out of stock"}), 401
 
@@ -56,6 +59,11 @@ class SalesController:
                 self.status_code = 500
 
         return jsonify(response), self.status_code
+    
+    def check_negative_quantity(self, quantity):
+        if quantity <= 0:
+            return False
+        return True
 
     def is_product_out_of_stock(self, product_id, quantity):
         """

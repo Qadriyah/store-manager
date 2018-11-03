@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 from flasgger import swag_from
+import secrets
 
 #  import sales blueprint
 from . import sales
