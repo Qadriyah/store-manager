@@ -3,17 +3,17 @@ from flask import jsonify
 from flask_jwt_extended import create_access_token, current_user
 
 from models.models import User
-from api import bcrypt, connection
-from models.connection import Connection
+from models.user import UserModels
+from api import bcrypt
 
 
 class AuthController:
 
     def __init__(self):
         self.status_code = 200
-        self.cursor = connection.cursor
+        self.user_models = UserModels()
 
-    def register_user(self, request_data):
+    def register_user(self, data):
         """
         Registers and a new user
 
@@ -24,62 +24,32 @@ class AuthController:
             tuple: With a response message and a status code
         """
         response = {}
-        if self.get_user(request_data["username"], self.cursor):
+        find_user = self.user_models.get_user(
+            "username", data.get("username").strip())
+        if find_user.get("msg") == "Found":
             response.update({"msg": "User already exists"})
             self.status_code = 401
         else:
             #  Hash password
             password_hash = bcrypt.generate_password_hash(
-                request_data["password"].strip(), 15)
-            query = """
-            INSERT INTO users(fullname, username, password, roles) \
-            VALUES('{}', '{}', '{}', '{}')
-            """.format(
-                request_data["fullname"].strip(),
-                request_data["username"].strip(),
-                password_hash.decode(),
-                request_data["roles"]
+                data.get("password").strip(), 15)
+            user = User(
+                fullname=data.get("fullname").strip(),
+                username=data.get("username").strip(),
+                password=password_hash.decode(),
+                roles=data.get("roles").strip()
             )
-            self.cursor.execute(query)
-            response.update({"msg": "User registered successfully"})
-            self.status_code = 200
+            result = self.user_models.add_user(user)
+            if result.get("msg") == "Success":
+                response.update({"msg": "User registered successfully"})
+                self.status_code = 200
+            else:
+                response.update({"msg": result.get("msg")})
+                self.status_code = 500
 
         return jsonify(response), self.status_code
 
-    @classmethod
-    def get_user(cls, username, cursor):
-        """
-        Checks if user already exists
-
-        Args:
-            username(str): Username provided by the user
-
-        Returns:
-            user(User): User if found, None otherwise
-        """
-        try:
-            query = """
-            SELECT id, fullname, username, password, roles, created_at \
-            FROM users WHERE username = '{}'
-            """.format(username)
-            cursor.execute(query)
-            result = cursor.fetchone()
-            if not result:
-                return None
-
-        except Exception as error:
-            print(error)
-            return "Database error"
-        return User(
-            id=result["id"],
-            fullname=result["fullname"],
-            username=result["username"],
-            password=result["password"],
-            roles=result["roles"],
-            created_at=result["created_at"]
-        )
-
-    def login_user(self, request_data):
+    def login_user(self, data):
         """
         Authenticates a user and returns a JWT token back to the client if successful
 
@@ -91,17 +61,24 @@ class AuthController:
         """
         response = {}
         #  Check if user exists
-        user = self.get_user(request_data["username"], self.cursor)
-        if not user:
-            response.update({"errors": "Wrong username"})
+        user = self.user_models.get_user(
+            "username", data.get("username").strip())
+        if user.get("msg") == "User not found":
+            response.update({"msg": "Wrong username"})
             self.status_code = 401
         else:
             #  Check if password provided matches one in the database
             if bcrypt.check_password_hash(
-                    user.password, request_data["password"]):
+                    user.get("password"), data.get("password")):
                 #  Create token
                 token = create_access_token(
-                    identity=user,
+                    identity=User(
+                        id=user.get("id"),
+                        fullname=user.get("fullname"),
+                        username=user.get("username"),
+                        roles=user.get("roles"),
+                        created_at=user.get("created_at")
+                    ),
                     expires_delta=datetime.timedelta(days=7)
                 )
                 response.update({
