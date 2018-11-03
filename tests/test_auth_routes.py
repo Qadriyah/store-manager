@@ -62,7 +62,7 @@ class TestAuthentication(TestCase):
                 "Content-Type": "application/json"
             }
         )
-        self.assertEqual(json.loads(res.data)["errors"], "Wrong username")
+        self.assertEqual(json.loads(res.data)["msg"], "Wrong username")
         self.assertEqual(res.status_code, 401)
 
     def test_wrong_password(self):
@@ -78,7 +78,7 @@ class TestAuthentication(TestCase):
                 "Content-Type": "application/json"
             }
         )
-        self.assertEqual(json.loads(res.data)["errors"], "Wrong password")
+        self.assertEqual(json.loads(res.data)["msg"], "Wrong password")
         self.assertEqual(res.status_code, 401)
 
     def test_register_user(self):
@@ -170,12 +170,3 @@ class TestAuthentication(TestCase):
                          "msg"], "Admin previlidges required")
         self.assertEqual(response.status_code, 403)
 
-    def test_get_user_method(self):
-        """Tests that a user is fetched from the database"""
-        res = self.controller.get_user("admin", self.db_objects.cursor)
-        self.assertIsInstance(res, User)
-
-    def test_get_user_failure(self):
-        """Tests that a user was not found in the database"""
-        res = self.controller.get_user("Ben", self.db_objects.cursor)
-        self.assertIsNone(res)

@@ -1,3 +1,7 @@
+"""
+User data access layer
+"""
+
 from models.connection import Connection
 
 
@@ -21,10 +25,10 @@ class UserModels:
                 user.roles
             )
             self.cursor.execute(query)
-            result = self.cursor.fetchone()
+            result.update({"user": self.cursor.fetchone()})
             result.update({"msg": "Success"})
-        except Exception as error:
-            result.update({"msg": "Database error {}".format(error)})
+        except Exception:
+            result.update({"msg": "Some fields were missing"})
 
         return result
 
@@ -46,14 +50,13 @@ class UserModels:
             FROM users WHERE {} = '{}'
             """.format(column, value)
             self.cursor.execute(query)
-            result = self.cursor.fetchone()
+            result.update({"user": self.cursor.fetchone()})
             if not result:
-                result = {}
                 result.update({"msg": "User not found"})
             else:
                 result.update({"msg": "Found"})
         except Exception:
-            result.update({"msg": "Database error"})
+            result.update({"msg": "Unknown column {}".format(column)})
 
         return result
 
@@ -66,9 +69,8 @@ class UserModels:
             FROM users 
             """
             self.cursor.execute(query)
-            result = self.cursor.fetchall()
+            result.update({"users": self.cursor.fetchall()})
             if not result:
-                result = {}
                 result.update({"msg": "Users not found"})
             else:
                 result.update({"msg": "Found"})
@@ -76,3 +78,15 @@ class UserModels:
             result.update({"msg": "Database error"})
 
         return result
+
+    def edit_user(self):
+        """
+        Modifies user details
+        """
+        pass
+
+    def delete_user(self):
+        """
+        Deletes a user from the database
+        """
+        pass
