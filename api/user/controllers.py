@@ -68,16 +68,16 @@ class AuthController:
             self.status_code = 401
         else:
             #  Check if password provided matches one in the database
-            if bcrypt.check_password_hash(
-                    user.get("password"), data.get("password")):
+            if bcrypt.check_password_hash(user.get("user").get("password"),
+                                          data.get("password")):
                 #  Create token
                 token = create_access_token(
                     identity=User(
-                        id=user.get("id"),
-                        fullname=user.get("fullname"),
-                        username=user.get("username"),
-                        roles=user.get("roles"),
-                        created_at=user.get("created_at")
+                        id=user.get("user").get("id"),
+                        fullname=user.get("user").get("fullname"),
+                        username=user.get("user").get("username"),
+                        roles=user.get("user").get("roles"),
+                        created_at=user.get("user").get("created_at")
                     ),
                     expires_delta=datetime.timedelta(days=7)
                 )

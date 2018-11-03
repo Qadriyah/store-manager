@@ -50,8 +50,9 @@ class UserModels:
             FROM users WHERE {} = '{}'
             """.format(column, value)
             self.cursor.execute(query)
-            result.update({"user": self.cursor.fetchone()})
-            if not result:
+            res = self.cursor.fetchone()
+            result.update({"user": res})
+            if not res:
                 result.update({"msg": "User not found"})
             else:
                 result.update({"msg": "Found"})
@@ -69,8 +70,9 @@ class UserModels:
             FROM users 
             """
             self.cursor.execute(query)
-            result.update({"users": self.cursor.fetchall()})
-            if not result:
+            res = self.cursor.fetchone()
+            result.update({"users": res})
+            if not res:
                 result.update({"msg": "Users not found"})
             else:
                 result.update({"msg": "Found"})
