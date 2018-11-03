@@ -71,10 +71,10 @@ class UserModels:
             """
             self.cursor.execute(query)
             res = self.cursor.fetchone()
-            result.update({"users": res})
             if not res:
                 result.update({"msg": "Users not found"})
             else:
+                result.update({"users": res})
                 result.update({"msg": "Found"})
         except Exception:
             result.update({"msg": "Database error"})
