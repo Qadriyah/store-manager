@@ -62,8 +62,8 @@ class TestAuthentication(TestCase):
                 "Content-Type": "application/json"
             }
         )
-        self.assertEqual(json.loads(res.data)["msg"], "Wrong username")
-        self.assertEqual(res.status_code, 401)
+        self.assertEqual(json.loads(res.data)["msg"], "Username not found")
+        self.assertEqual(res.status_code, 404)
 
     def test_wrong_password(self):
         """Tests that the password entered is wrong"""
@@ -98,8 +98,7 @@ class TestAuthentication(TestCase):
                 "Authorization": self.access_token
             }
         )
-        self.assertEqual(json.loads(res.data)[
-                         "msg"], "User registered successfully")
+        self.assertEqual(json.loads(res.data)["msg"], "Success")
         self.assertEqual(res.status_code, 200)
 
     def test_user_already_exists(self):
@@ -169,4 +168,3 @@ class TestAuthentication(TestCase):
         self.assertEqual(json.loads(response.data)[
                          "msg"], "Admin previlidges required")
         self.assertEqual(response.status_code, 403)
-

@@ -8,7 +8,7 @@ class DatabaseObjects:
     def __init__(self):
         db_connect = connection.Connection()
         self.cursor = db_connect.connect()
-        self.tables = ["users", "category", "products",
+        self.tables = ["users", "categories", "products",
                        "inventory",  "cart", "salesorder", "line_items"]
         self.create_user_table()
         self.create_category_table()
@@ -17,8 +17,10 @@ class DatabaseObjects:
         self.create_shopping_cart_table()
         self.create_sales_table()
         self.create_line_items_table()
-        if not self.is_item_exist("users", "admin", "username"):
+        if not self.is_item_exist("username", "users", "admin"):
             self.add_admin_account()
+        if not self.is_item_exist("category_name", "categories", "Uncategorized"):
+            self.add_default_category()
 
     def create_user_table(self):
         """Creates a user table"""
@@ -40,7 +42,7 @@ class DatabaseObjects:
         """Creates the category table"""
         self.cursor.execute(
             """
-            CREATE TABLE IF NOT EXISTS category(
+            CREATE TABLE IF NOT EXISTS categories(
                 id SERIAL PRIMARY KEY,
                 category_name VARCHAR (255) NOT NULL,
                 created_at DATE DEFAULT CURRENT_DATE,
@@ -63,7 +65,7 @@ class DatabaseObjects:
                 modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 status VARCHAR (10) DEFAULT 'Active',
                 CONSTRAINT product_category_fkey FOREIGN KEY (category_id)
-                    REFERENCES category (id)
+                    REFERENCES categories (id)
                     ON DELETE CASCADE
                     ON UPDATE CASCADE
             );
@@ -113,7 +115,7 @@ class DatabaseObjects:
                 sales_id INTEGER NOT NULL,
                 product_name VARCHAR (255) NOT NULL,
                 quantity INTEGER NOT NULL,
-                price INTEGER NOT NULL,
+                unit_price INTEGER NOT NULL,
                 CONSTRAINT line_items_salesorder_fkey FOREIGN KEY (sales_id)
                     REFERENCES salesorder (id)
                     ON DELETE CASCADE
@@ -128,6 +130,7 @@ class DatabaseObjects:
             """
             CREATE TABLE IF NOT EXISTS cart(
                 id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL, 
                 product_id INTEGER NOT NULL,
                 product_name VARCHAR (255) NOT NULL,
                 quantity INTEGER NOT NULL,
@@ -147,55 +150,48 @@ class DatabaseObjects:
 
     def add_admin_account(self):
         """Adds the default admin to the database"""
-        query = """
-        INSERT INTO users(fullname, username, password, roles) \
-        VALUES('{}', '{}', '{}', '{}')
-        """.format(
-            "Baker Sekitoleko",
-            "admin",
-            "$2b$15$rMjCuBxFGbikgDVgFXkFcu6z8BMrHdUDf7hCr7KAjEef8KIlFTeKa",
-            "admin"
-        )
-        self.cursor.execute(query)
+        try:
+            query = """
+            INSERT INTO users(fullname, username, password, roles) \
+            VALUES('{}', '{}', '{}', '{}')
+            """.format(
+                "Baker Sekitoleko",
+                "admin",
+                "$2b$15$rMjCuBxFGbikgDVgFXkFcu6z8BMrHdUDf7hCr7KAjEef8KIlFTeKa",
+                "admin"
+            )
+            self.cursor.execute(query)
+        except Exception:
+            print("Server error")
 
-    def is_item_exist(self, table_name, item_name, field_name):
+    def add_default_category(self):
+        """Adds a default category for uncategorized products"""
+        try:
+            query = """
+            INSERT INTO categories(category_name) VALUES('{}')
+            """.format("Uncategorized")
+            self.cursor.execute(query)
+        except Exception:
+            print("Server error")
+
+    def is_item_exist(self, column, table, value):
         """
-        Checks if an item exists in the relation
+        Checks if an item exists in a given table
 
-        Args:
-            table_name(str): The target table
-            item_name(str): Item to be searched for
-
-        Returns:
-            object: Item searched for if found, None otherwise
         """
-        query = """
-        SELECT * FROM {} WHERE {} = '{}'
-        """.format(table_name, field_name, item_name)
-        self.cursor.execute(query)
-        result = self.cursor.fetchone()
-        if not result:
-            return None
-        return result
+        found = False
+        try:
+            query = """
+            SELECT {} FROM {} WHERE {} = '{}'
+            """.format(column, table, column, value)
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            if result:
+                found = True
+        except Exception:
+            print("Database error")
 
-    def is_table_empty(self, table_name):
-        """
-        Checks if a relation is empty
-
-        Args:
-            table_name(str): Name of table to be checked
-
-        Returns:
-            bool: True if empty, False otherwise
-        """
-        query = """
-        SELECT * FROM {}
-        """.format(table_name)
-        self.cursor.execute(query)
-        result = self.cursor.fetchall()
-        if not result:
-            return None
-        return result
+        return found
 
     def clear_table(self, table_name):
         """
@@ -204,7 +200,10 @@ class DatabaseObjects:
         Args:
             table_name(str): Name of the table to be cleared
         """
-        query = """
-        DELETE FROM {}
-        """.format(table_name)
-        self.cursor.execute(query)
+        try:
+            query = """
+            DELETE FROM {}
+            """.format(table_name)
+            self.cursor.execute(query)
+        except Exception:
+            print("database error")

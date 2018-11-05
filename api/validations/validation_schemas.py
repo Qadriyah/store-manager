@@ -1,7 +1,7 @@
 product_schema = {
-    'category_id': {'type': 'integer', 'forbidden': ["", " "], 'required': True},
+    'category_id': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True},
     'product_name': {'type': 'string', 'forbidden': ["", " "], 'required': True},
-    'product_price': {'type': 'integer', 'forbidden': ["", " "], 'required': True}
+    'product_price': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True}
 }
 
 category_schema = {
@@ -9,13 +9,13 @@ category_schema = {
 }
 
 stock_schema = {
-    'product_id': {'type': 'integer', 'forbidden': ["", " "], 'required': True},
-    'quantity': {'type': 'integer', 'forbidden': ["", " "], 'required': True}
+    'product_id': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True},
+    'quantity': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True}
 }
 
 cart_schema = {
-    'product_id': {'type': 'integer', 'forbidden': ["", " "], 'required': True},
-    'quantity': {'type': 'integer', 'forbidden': ["", " "], 'required': True}
+    'product_id': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True},
+    'quantity': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True}
 }
 
 sales_schema = {

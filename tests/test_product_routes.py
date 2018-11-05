@@ -1,11 +1,10 @@
 import os
 import json
-from unittest import TestCase, skip
+from unittest import TestCase
 from datetime import datetime
 
 from api import app
 from config.config import app_settings
-from models.models import Product
 from models.database_objects import DatabaseObjects
 from api.product import controllers
 
@@ -49,7 +48,8 @@ class TestProducts(TestCase):
                 }
             )
             data1 = dict(
-                category_id=json.loads(response.data)["id"],
+                category_id=json.loads(response.data).get(
+                    "category").get("id"),
                 product_name="PV-160",
                 product_price=2600000
             )
@@ -61,8 +61,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            self.assertEqual(json.loads(res.data)[
-                             "msg"], "Product added successfully")
+            self.assertEqual(json.loads(res.data).get("msg"), "Success")
             self.assertTrue(res.status_code, 200)
 
     def test_is_product_exists(self):
@@ -79,7 +78,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            category_id = json.loads(response.data)["id"]
+            category_id = json.loads(response.data).get("category").get("id")
             data1 = dict(
                 category_id=category_id,
                 product_name="Round Top",
@@ -93,7 +92,8 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            res = self.controller.is_product_exists("Round Top", category_id)
+            res = self.controller.select.select_single_product(
+                data.get("product_name"), data.get("category_id"))
             self.assertIsNotNone(res)
 
     def test_get_all_products_route(self):
@@ -110,7 +110,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            category_id = json.loads(response.data)["id"]
+            category_id = json.loads(response.data).get("category").get("id")
             data1 = dict(
                 category_id=category_id,
                 product_name="B004",
@@ -147,7 +147,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            category_id = json.loads(response.data)["id"]
+            category_id = json.loads(response.data).get("category").get("id")
             data1 = dict(
                 category_id=category_id,
                 product_name="WU007",
@@ -161,7 +161,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            product_id = json.loads(resp.data)["id"]
+            product_id = json.loads(resp.data).get("product").get("id")
             res = self.client.get(
                 "/api/v1/products/{}".format(product_id),
                 headers={
@@ -169,7 +169,8 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            self.assertEqual(json.loads(res.data)["product_name"], "WU007")
+            self.assertEqual(json.loads(res.data).get("products")[
+                             0].get("product_name"), "WU007")
             self.assertEqual(res.status_code, 200)
 
     def test_add_stock(self):
@@ -186,7 +187,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            category_id = json.loads(response.data)["id"]
+            category_id = json.loads(response.data).get("category").get("id")
             data1 = dict(
                 category_id=category_id,
                 product_name="Rose Foam",
@@ -200,7 +201,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            product_id = json.loads(resp.data)["id"]
+            product_id = json.loads(resp.data).get("product").get("id")
             data2 = dict(
                 product_id=product_id,
                 quantity=200
@@ -213,8 +214,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            self.assertEqual(json.loads(result.data)[
-                             "msg"], "Stock updated successfully")
+            self.assertEqual(json.loads(result.data).get("msg"), "Success")
             self.assertEqual(result.status_code, 200)
 
     def test_edit_product(self):
@@ -231,7 +231,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            category_id = json.loads(response.data)["id"]
+            category_id = json.loads(response.data).get("category").get("id")
             data1 = dict(
                 category_id=category_id,
                 product_name="6x6",
@@ -245,7 +245,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            product_id = json.loads(resp.data)["id"]
+            product_id = json.loads(resp.data).get("product").get("id")
             data2 = dict(
                 category_id=category_id,
                 product_name="6x5",
@@ -260,8 +260,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            self.assertEqual(json.loads(result.data)[
-                             "msg"], "Product details updated successfully")
+            self.assertEqual(json.loads(result.data).get("msg"), "Success")
             self.assertEqual(result.status_code, 200)
 
     def test_delete_product(self):
@@ -278,7 +277,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            category_id = json.loads(response.data)["id"]
+            category_id = json.loads(response.data).get("category").get("id")
             data1 = dict(
                 category_id=category_id,
                 product_name="Executive",
@@ -292,7 +291,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            product_id = json.loads(resp.data)["id"]
+            product_id = json.loads(resp.data).get("product").get("id")
             result = self.client.delete(
                 "/api/v1/products/delete/{}".format(product_id),
                 headers={
@@ -300,16 +299,15 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            self.assertEqual(json.loads(result.data)[
-                             "msg"], "Product deleted successfully")
+            self.assertEqual(json.loads(result.data).get("msg"), "Success")
             self.assertEqual(result.status_code, 200)
 
     def test_attendant_cannot_add_product(self):
         """Tests that the attendant cannot add a product"""
         user = dict(
-            fullname="Qadriyah Shirat", 
-            username="Qadie", 
-            password="mukungu", 
+            fullname="Qadriyah Shirat",
+            username="Qadie",
+            password="mukungu",
             password2="mukungu",
             roles="attendant"
         )
@@ -317,12 +315,12 @@ class TestProducts(TestCase):
             "/api/v1/register",
             json=user,
             headers={
-                "Content-Type": "application/json", 
+                "Content-Type": "application/json",
                 "Authorization": self.access_token
             }
         )
         data = dict(
-            username="Qadie", 
+            username="Qadie",
             password="mukungu"
         )
         res = self.client.post(
@@ -334,9 +332,9 @@ class TestProducts(TestCase):
         )
         access_token_ = "Bearer {}".format(json.loads(res.data)["token"])
         user1 = dict(
-            fullname="Bulemi Henry", 
-            username="Freedom", 
-            password="mukungu", 
+            fullname="Bulemi Henry",
+            username="Freedom",
+            password="mukungu",
             password2="mukungu",
             roles="attendant"
         )
@@ -344,11 +342,11 @@ class TestProducts(TestCase):
             "/api/v1/register",
             json=user1,
             headers={
-                "Content-Type": "application/json", 
+                "Content-Type": "application/json",
                 "Authorization": access_token_
             }
         )
-        self.assertEqual(json.loads(response.data)["msg"], "Admin previlidges required")
+        self.assertEqual(json.loads(response.data).get("msg"), "Admin previlidges required")
         self.assertEqual(response.status_code, 403)
 
     def test_attendant_cannot_edit_product(self):
@@ -377,7 +375,7 @@ class TestProducts(TestCase):
                 "Authorization": self.access_token
             }
         )
-        category_id = json.loads(response.data)["id"]
+        category_id = json.loads(response.data).get("category").get("id")
         data1 = dict(
             category_id=category_id,
             product_name="3 Door",
@@ -391,7 +389,7 @@ class TestProducts(TestCase):
                 "Authorization": self.access_token
             }
         )
-        product_id = json.loads(resp.data)["id"]
+        product_id = json.loads(resp.data).get("product").get("id")
         data = dict(
             username="Aretha", 
             password="mukungu"
@@ -418,8 +416,7 @@ class TestProducts(TestCase):
                 "Authorization": access_token_
             }
         )
-        self.assertEqual(json.loads(result.data)[
-                            "msg"], "Admin previlidges required")
+        self.assertEqual(json.loads(result.data).get("msg"), "Admin previlidges required")
         self.assertEqual(result.status_code, 403)
 
     def test_attendant_cannot_delete_product(self):
@@ -448,7 +445,7 @@ class TestProducts(TestCase):
                 "Authorization": self.access_token
             }
         )
-        category_id = json.loads(response.data)["id"]
+        category_id = json.loads(response.data).get("category").get("id")
         data1 = dict(
             category_id=category_id,
             product_name="Executive",
@@ -462,7 +459,7 @@ class TestProducts(TestCase):
                 "Authorization": self.access_token
             }
         )
-        product_id = json.loads(resp.data)["id"]
+        product_id = json.loads(resp.data).get("product").get("id")
         data = dict(
             username="Tinka", 
             password="mukungu"
@@ -482,6 +479,5 @@ class TestProducts(TestCase):
                 "Authorization": access_token_
             }
         )
-        self.assertEqual(json.loads(result.data)[
-                            "msg"], "Admin previlidges required")
+        self.assertEqual(json.loads(result.data).get("msg"), "Admin previlidges required")
         self.assertEqual(result.status_code, 403)

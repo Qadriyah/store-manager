@@ -1,10 +1,9 @@
-import os
+''' import os
 import json
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from api import app
 from models.models import User
-from models.user import UserModels
 from models.database_objects import DatabaseObjects
 from config.config import app_settings
 
@@ -13,7 +12,6 @@ class TestUserModels(TestCase):
     def setUp(self):
         app.config.from_object(app_settings[os.environ.get("APP_ENV")])
         self.db_objects = DatabaseObjects()
-        self.user_models = UserModels()
 
     def tearDown(self):
         self.db_objects.delete_database_tables()
@@ -53,3 +51,4 @@ class TestUserModels(TestCase):
         with app.app_context():
             result = self.user_models.get_all_users()
             self.assertEqual(result.get("msg"), "Found")
+ '''
