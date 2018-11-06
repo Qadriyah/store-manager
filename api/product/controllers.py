@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from api import app, connection
+from api import connection
 from models.select import Select
 from models.insert import Insert
 from models.delete import Delete

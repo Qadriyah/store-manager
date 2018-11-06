@@ -20,3 +20,16 @@ class Delete:
             response.update({"msg": "Failure"})
 
         return response
+
+    def delete_from_table(self, table, record_id):
+        response = {}
+        try:
+            query = """
+            DELETE FROM {} WHERE id = {}
+            """.format(table, record_id)
+            self.cursor.execute(query)
+            response.update({"msg": "Success"})
+        except Exception:
+            response.update({"msg": "Failure"})
+
+        return response

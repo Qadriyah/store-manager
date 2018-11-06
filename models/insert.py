@@ -95,15 +95,15 @@ class Insert:
         response = {}
         try:
             query = """
-            INSERT INTO cart(product_id, user_id, product_name, quantity, price) \
+            INSERT INTO cart(product_id, user_id, product_name, quantity, unit_price) \
             VALUES({}, {}, '{}', {}, {}) 
-            RETURNING id, product_name, quantity, price, (quantity * price) AS total
+            RETURNING id, product_name, quantity, price, (quantity * unit_price) AS total
             """.format(
                 cart.get("product_id"),
                 cart.get("user_id"),
                 cart.get("product_name"),
                 cart.get("quantity"),
-                cart.get("price")
+                cart.get("product_price")
             )
             self.cursor.execute(query)
             result = self.cursor.fetchone()
@@ -111,7 +111,8 @@ class Insert:
                 "cart": result,
                 "msg": "Success"
             })
-        except Exception:
+        except Exception as error:
+            print(error)
             response.update({"msg": "Failure"})
 
         return response
@@ -122,7 +123,7 @@ class Insert:
         items = []
         try:
             query = """
-            INSERT INTO salesorder(user_id) VALUES({})
+            INSERT INTO salesorder(user_id) VALUES({}) RETURNING id
             """.format(salesorder.get("user_id"))
             self.cursor.execute(query)
             result = self.cursor.fetchone()

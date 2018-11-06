@@ -112,3 +112,58 @@ class Update:
             response.update({"msg": "Failure"})
 
         return response
+
+    def update_stock_level(self, product_id, quantity, operation):
+        """
+        Reduces product quantity
+
+        Args:
+            product_id(str): Unique product identifier
+            quantity(int): Quantity sold
+        """
+        try:
+            query1 = """
+            UPDATE inventory \
+            SET stock_level = stock_level - {} WHERE product_id = {}
+            """.format(
+                quantity,
+                product_id
+            )
+            query2 = """
+            UPDATE inventory \
+            SET stock_level = stock_level + {} WHERE product_id = {}
+            """.format(
+                quantity,
+                product_id
+            )
+            if operation == "del":
+                self.cursor.execute(query2)
+            if operation == "add":
+                self.cursor.execute(query1)
+        except Exception:
+            print("Database error")
+
+    def update_qty_in_cart(self, product_id, quantity):
+        """
+        Updates quantity if product is already in the cart
+
+        Args:
+            product_id(str): Product identifier
+            qty(int): Product quantity
+        """
+        response = {}
+        try:
+            query = """
+            UPDATE cart SET quantity = quantity + {} WHERE product_id = {} \
+            RETURNING id, product_name, quantity, price, (quantity * price) AS total
+            """.format(quantity, product_id)
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            response.update({
+                "cart": result,
+                "msg": "Success"
+            })
+        except Exception:
+            response.update({"msg": "Failure"})
+
+        return response

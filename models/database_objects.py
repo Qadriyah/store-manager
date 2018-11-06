@@ -134,7 +134,7 @@ class DatabaseObjects:
                 product_id INTEGER NOT NULL,
                 product_name VARCHAR (255) NOT NULL,
                 quantity INTEGER NOT NULL,
-                price INTEGER NOT NULL
+                unit_price INTEGER NOT NULL
             );
             """
         )
@@ -207,3 +207,18 @@ class DatabaseObjects:
             self.cursor.execute(query)
         except Exception:
             print("database error")
+
+    def generate_order_number(self, value):
+        """
+        Generates the order number with leading zeros
+
+        Args:
+            value(int): Sales order ID
+
+        Returns:
+            str: Representation of the order number
+        """
+        response = "0" * (5 - len(str(value)))
+        response = "SO-{}{}".format(response, str(value))
+        return response
+
