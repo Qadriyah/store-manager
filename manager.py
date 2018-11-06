@@ -2,7 +2,6 @@ import time
 
 from models import database_objects
 from api import manager
-from models import sample_data
 
 
 db_object = database_objects.DatabaseObjects()

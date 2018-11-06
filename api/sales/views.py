@@ -1,7 +1,6 @@
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 from flasgger import swag_from
-import secrets
 
 #  import sales blueprint
 from . import sales
@@ -10,9 +9,7 @@ from . import controllers
 from api.validations.validation_tests import Validation
 
 from api.utils.jwt_helper import attendant_required, admin_required
-from api.validations.validation_schemas import (
-    cart_schema, sales_schema
-)
+from api.validations.validation_schemas import stock_schema
 from api import validator
 
 controller = controllers.SalesController()
@@ -25,7 +22,7 @@ int_validator = Validation()
 def add_to_cart():
     if request.method == "POST":
         data = request.json
-        err = validator.validate(data, cart_schema)
+        err = validator.validate(data, stock_schema)
         if not err:
             return jsonify(validator.errors)
         return controller.add_to_cart(data)
@@ -55,7 +52,7 @@ def delete_cart_item(cart_id):
 
     if request.method == "DELETE":
         if not int_validator.validate_integer(cart_id):
-            return jsonify({"msg": "Id should be an integer"}), 400
+            return jsonify({"msg": "Id should be an integer"}), 401
         return controller.delete_cart_item(cart_id)
 
 
@@ -75,7 +72,7 @@ def get_single_sales_record(sales_id):
 
     if request.method == "GET":
         if not int_validator.validate_integer(sales_id):
-            return jsonify({"msg": "Id should be an integer"}), 400
+            return jsonify({"msg": "Id should be an integer"}), 401
         return controller.get_all_sales_records(sales_id, "single")
 
 
@@ -86,5 +83,5 @@ def get_sales_for_attendant(user_id):
 
     if request.method == "GET":
         if not int_validator.validate_integer(user_id):
-            return jsonify({"msg": "Id should be an integer"}), 400
+            return jsonify({"msg": "Id should be an integer"}), 401
         return controller.get_all_sales_records(user_id, "user")

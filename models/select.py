@@ -12,7 +12,7 @@ class Select:
             query = """
             SELECT {} FROM {} WHERE {} = '{}' ORDER BY {} {}
             """.format(", ".join(columns), table, options.get("where"),
-                options.get("cell"), options.get("order"), options.get("sort"))
+                       options.get("cell"), options.get("order"), options.get("sort"))
             self.cursor.execute(query)
             result = self.cursor.fetchall()
             if not result:
@@ -34,8 +34,7 @@ class Select:
             query = """
             SELECT {} FROM {} WHERE {} = {}
             """.format(", ".join(columns), table, options.get("where"),
-                       options.get("cell")
-                       )
+                       options.get("cell"))
             self.cursor.execute(query)
             result = self.cursor.fetchone()
             if not result:
@@ -59,8 +58,7 @@ class Select:
             """.format(", ".join(columns), tables[0], tables[1], options.get("on"),
                        options.get("to"), options.get(
                            "where"), options.get("cell"),
-                       options.get("order"), options.get("sort")
-                       )
+                       options.get("order"), options.get("sort"))
             self.cursor.execute(query)
             result = self.cursor.fetchall()
             if not result:

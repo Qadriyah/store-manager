@@ -13,15 +13,6 @@ stock_schema = {
     'quantity': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True}
 }
 
-cart_schema = {
-    'product_id': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True},
-    'quantity': {'type': 'integer', 'forbidden': ["", " "], 'min': 1, 'required': True}
-}
-
-sales_schema = {
-    'sales_date': {'type': 'string', 'forbidden': ["", " "], 'required': True}
-}
-
 register_schema = {
     'fullname': {'type': 'string', 'forbidden': ["", " "], 'required': True},
     'username': {'type': 'string', 'forbidden': ["", " "], 'required': True},
