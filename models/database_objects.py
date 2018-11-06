@@ -1,6 +1,5 @@
 from models import connection
 import time
-from models import sample_data
 
 
 class DatabaseObjects:
@@ -221,4 +220,3 @@ class DatabaseObjects:
         response = "0" * (5 - len(str(value)))
         response = "SO-{}{}".format(response, str(value))
         return response
-
