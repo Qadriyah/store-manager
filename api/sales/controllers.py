@@ -1,4 +1,4 @@
-from flask import jsonify, json
+from flask import jsonify
 from flask_jwt_extended import current_user
 
 from api import connection

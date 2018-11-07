@@ -1,5 +1,4 @@
 from models import connection
-import time
 
 
 class DatabaseObjects:

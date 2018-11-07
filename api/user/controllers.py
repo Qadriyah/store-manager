@@ -1,6 +1,6 @@
 import datetime
 from flask import jsonify
-from flask_jwt_extended import create_access_token, current_user
+from flask_jwt_extended import create_access_token
 
 from models.models import User
 from models.insert import Insert

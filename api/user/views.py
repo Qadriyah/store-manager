@@ -1,4 +1,4 @@
-from flask import request, jsonify, render_template
+from flask import request, jsonify
 from flasgger import swag_from
 
 #  import user blueprint
@@ -6,7 +6,7 @@ from . import user
 
 from . import controllers
 from api.utils.jwt_helper import admin_required
-from api import app, Swagger
+from api import app
 from api.validations.validation_schemas import (
     login_schema, register_schema
 )
