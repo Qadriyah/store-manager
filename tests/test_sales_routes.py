@@ -1,42 +1,99 @@
 import json
+import os
 from unittest import TestCase, skip
 
-from api.sales import controllers
-from models.models import SalesOrder, Cart
+from api.sales.controllers import SalesController
+from models.database_objects import DatabaseObjects
+from config.config import app_settings
 from api import app
 
 
 class TestSales(TestCase):
 
     def setUp(self):
-        self.controller = controllers.SalesController()
+        app.config.from_object(app_settings[os.environ.get("APP_ENV")])
+        self.controller = SalesController()
+        self.db_objects = DatabaseObjects()
         self.client = app.test_client()
-        self.cart_item = {
-            "pid": "7bad398f",
-            "name": "Bread",
-            "qty": 1,
-            "price": 2700
-        }
         #  Login to get the access token
-        response = self.client.post(
+        resp = self.client.post(
             "/api/v1/login",
-            data=dict(
-                username="attendant",
+            json=dict(
+                username="Qadie",
                 password="attendant"
             ),
             headers={
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/json"
             }
         )
-        self.access_token = json.loads(response.data)["token"]
+        self.attendant_token = "Bearer {}".format(
+            json.loads(resp.data).get("token"))
+        #  Admin login
+        res = self.client.post(
+            "/api/v1/login",
+            json=dict(
+                username="admin",
+                password="admin"
+            ),
+            headers={
+                "Content-Type": "application/json"
+            }
+        )
+        self.admin_token = "Bearer {}".format(
+            json.loads(res.data).get("token"))
 
     def tearDown(self):
-        pass
+        self.db_objects.delete_database_tables()
 
-    @skip("Needs refactoring")
     def test_add_to_cart(self):
         """Tests that an item is added to the shopping cart"""
-        pass
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Sofas"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="PV-160",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            resp = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertGreater(len(json.loads(resp.data).get("cart")), 0)
+            self.assertEqual(resp.status_code, 200)
 
     @skip("Needs refactoring")
     def test_get_cart_items(self):

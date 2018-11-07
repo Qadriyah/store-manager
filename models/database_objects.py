@@ -18,6 +18,7 @@ class DatabaseObjects:
         self.create_line_items_table()
         if not self.is_item_exist("username", "users", "admin"):
             self.add_admin_account()
+            self.add_default_attendant()
         if not self.is_item_exist("category_name", "categories", "Uncategorized"):
             self.add_default_category()
 
@@ -158,6 +159,22 @@ class DatabaseObjects:
                 "admin",
                 "$2b$15$rMjCuBxFGbikgDVgFXkFcu6z8BMrHdUDf7hCr7KAjEef8KIlFTeKa",
                 "admin"
+            )
+            self.cursor.execute(query)
+        except Exception:
+            print("Server error")
+
+    def add_default_attendant(self):
+        """Adds the default admin to the database"""
+        try:
+            query = """
+            INSERT INTO users(fullname, username, password, roles) \
+            VALUES('{}', '{}', '{}', '{}')
+            """.format(
+                "Aijuka Miria",
+                "Qadie",
+                "$2b$15$/Mhe1jPXUg99JajE76cwaOg8dQyDi7RaOJ/7jZxXuZXFcFphqpxUK",
+                "attendant"
             )
             self.cursor.execute(query)
         except Exception:

@@ -155,7 +155,7 @@ class Update:
         try:
             query = """
             UPDATE cart SET quantity = quantity + {} WHERE product_id = {} \
-            RETURNING id, product_name, quantity, price, (quantity * price) AS total
+            RETURNING id, product_name, quantity, unit_price, (quantity * unit_price) AS total
             """.format(quantity, product_id)
             self.cursor.execute(query)
             result = self.cursor.fetchone()

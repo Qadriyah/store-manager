@@ -97,7 +97,7 @@ class Insert:
             query = """
             INSERT INTO cart(product_id, user_id, product_name, quantity, unit_price) \
             VALUES({}, {}, '{}', {}, {}) 
-            RETURNING id, product_name, quantity, price, (quantity * unit_price) AS total
+            RETURNING id, product_name, quantity, unit_price, (quantity * unit_price) AS total
             """.format(
                 cart.get("product_id"),
                 cart.get("user_id"),
