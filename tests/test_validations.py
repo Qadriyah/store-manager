@@ -25,7 +25,7 @@ class TestValidations(TestCase):
             }
         )
         self.access_token = "Bearer {}".format(
-            json.loads(response.data)["token"])
+            json.loads(response.data).get("token"))
 
     def tearDown(self):
         self.db_objects.delete_database_tables()
@@ -92,4 +92,33 @@ class TestValidations(TestCase):
             )
             self.assertEqual(json.loads(res.data)[
                              "msg"], "Product Id should be an integer")
+            self.assertEqual(res.status_code, 400)
+
+    def test_negative_values(self):
+        """Tests that quantity values cannot be less or equal to zero"""
+        resp = self.client.post(
+            "/api/v1/login",
+            json=dict(
+                username="Qadie",
+                password="attendant"
+            ),
+            headers={
+                "Content-Type": "application/json"
+            }
+        )
+        token = "Bearer {}".format(json.loads(resp.data).get("token"))
+        with app.app_context():
+            res = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=1,
+                    quantity=-10
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                }
+            )
+            self.assertEqual(json.loads(res.data).get(
+                "quantity")[0], "min value is 1")
             self.assertEqual(res.status_code, 400)

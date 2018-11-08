@@ -216,6 +216,7 @@ class Select:
             for item in sales_orders:
                 temp = {}
                 temp.update({
+                    "id": item.get("id"),
                     "order_number": connection.generate_order_number(item.get("id")),
                     "order_date": item.get("created_at"),
                     "sold_by": self.select_single_record(["fullname"], "users", where="id", cell=item.get("user_id")).get("fullname"),

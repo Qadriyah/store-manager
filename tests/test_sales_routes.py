@@ -1,6 +1,7 @@
 import json
 import os
-from unittest import TestCase, skip
+from unittest import TestCase
+from flask_jwt_extended import current_user
 
 from api.sales.controllers import SalesController
 from models.database_objects import DatabaseObjects
@@ -95,58 +96,538 @@ class TestSales(TestCase):
             self.assertGreater(len(json.loads(resp.data).get("cart")), 0)
             self.assertEqual(resp.status_code, 200)
 
-    @skip("Needs refactoring")
     def test_get_cart_items(self):
         """Tests that items are retrieved from the cart"""
-        pass
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Electronics"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="Hisence 42inc",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            resp = self.client.get(
+                "/api/v1/sales/cart",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertGreater(len(json.loads(resp.data).get("cart")), 0)
+            self.assertEqual(resp.status_code, 200)
 
-    @skip("Needs refactoring")
-    def test_is_product_in_cart(self):
-        """Tests that the product is already in the shopping cart"""
-        #  Add item to the shopping cart
-        pass
+    def test_out_of_stock(self):
+        """Tests that the product being added to the shopping cart is out of stock"""
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Beds"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="Bed 406",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            resp = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=70
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertEqual(json.loads(resp.data).get(
+                "msg"), "Product is out of stock")
+            self.assertEqual(resp.status_code, 401)
 
-    @skip("Needs refactoring")
-    def test_update_qty_in_cart(self):
-        """Tests that the quantity of an item in the cart is incremented"""
-        pass
+    def test_prouduct_does_not_exists(self):
+        """Tests that the product being added to the cart does not exists"""
+        with app.app_context():
+            resp = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=10,
+                    quantity=2
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertEqual(json.loads(resp.data).get(
+                "msg"), "Product does not exist")
+            self.assertEqual(resp.status_code, 404)
 
-    @skip("Needs refactoring")
     def test_is_cart_empty(self):
-        """Tests that the shopping cart is not empty"""
-        pass
+        """Tests that the shopping cart is empty"""
+        with app.app_context():
+            resp = self.client.get(
+                "/api/v1/sales/cart",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertEqual(json.loads(resp.data).get(
+                "msg"), "No items in the shopping cart")
+            self.assertEqual(resp.status_code, 404)
 
-    @skip("Needs refactoring")
-    def test_add_to_cart_route(self):
-        """Tests that the route adds an item to the cart"""
-        pass
-
-    @skip("Needs refactoring")
-    def test_get_cart_items_route(self):
-        """Tests that the route gets items from the shopping cart"""
-        pass
-
-    @skip("Needs refactoring")
     def test_add_sales_record(self):
         """Tests that a sales record is added to the database"""
-        pass
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Burnners"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="Solstar 4 Bunner",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            result = self.client.post(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertEqual(json.loads(result.data).get("msg"), "Success")
+            self.assertEqual(result.status_code, 200)
 
-    @skip("Needs refactoring")
     def test_get_all_sales_records(self):
         """Tests that all sales records are retrieved from the database"""
-        pass
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Bookshelves"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="BS-1900",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            result = self.client.get(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.assertEqual(json.loads(result.data).get("msg"), "Success")
+            self.assertEqual(result.status_code, 200)
 
-    @skip("Needs refactoring")
-    def test_get_all_sales_records_route(self):
-        """Tests that the route retrieves all sales records"""
-        pass
+    def test_delete_cart_item(self):
+        """Tests that an item is deleted from the cart"""
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Garden Sets"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="2 Seater",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            resp = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            card_id = json.loads(resp.data).get("cart")[0].get("id")
+            result = self.client.delete(
+                "/api/v1/sales/cart/delete/{}".format(card_id),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertEqual(json.loads(result.data).get(
+                "msg"), "Item deleted successfully")
+            self.assertEqual(result.status_code, 200)
 
-    @skip("Needs refactoring")
-    def test_add_sales_record_route(self):
-        """Tests that the route adds a sales record to the database"""
-        pass
-
-    @skip("Needs refactoring")
     def test_admin_cannot_add_to_cart(self):
         """Tests that the admin cannot add items to the shopping cart"""
-        pass
+        with app.app_context():
+            resp = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=1,
+                    quantity=2
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.assertEqual(json.loads(resp.data).get(
+                "msg"), "Attendants only")
+            self.assertEqual(resp.status_code, 403)
+
+    def test_attendant_cannot_get_all_sales_records(self):
+        """
+        Tests that a sales attendant cannot retrieved all sales records
+        from the database
+        """
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Office Tables"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="OT5009",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            result = self.client.get(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.assertEqual(json.loads(result.data).get("msg"), "Admin previlidges required")
+            self.assertEqual(result.status_code, 403)
+
+    def test_get_single_sales_record(self):
+        """Tests that a single sales record is retrieved from the database"""
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Wall Units"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="WU-1900",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            result = self.client.post(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            sales_id = json.loads(result.data).get("id")
+            resp = self.client.get(
+                "/api/v1/sales/{}".format(sales_id), 
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.assertEqual(json.loads(resp.data).get("msg"), "Success")
+            self.assertEqual(resp.status_code, 200)
+
+    def test_get_sales_for_specific_user(self):
+        """Tests that sales records for a specific user are retrieved from the database"""
+        with app.app_context():
+            response = self.client.post(
+                "/api/v1/products/category",
+                json=dict(category_name="Office Chairs"),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            category_id = json.loads(response.data).get("category").get("id")
+            res = self.client.post(
+                "/api/v1/products",
+                json=dict(
+                    category_id=category_id,
+                    product_name="OC-1900",
+                    product_price=2600000
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            product_id = json.loads(res.data).get("product").get("id")
+            self.client.post(
+                "/api/v1/products/stock",
+                json=dict(
+                    product_id=product_id,
+                    quantity=50
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=product_id,
+                    quantity=5
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            self.client.post(
+                "/api/v1/sales",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.attendant_token
+                }
+            )
+            resp = self.client.get(
+                "/api/v1/sales/user/{}".format(current_user.id), 
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.admin_token
+                }
+            )
+            self.assertEqual(json.loads(resp.data).get("msg"), "Success")
+            self.assertEqual(resp.status_code, 200)
+
+    

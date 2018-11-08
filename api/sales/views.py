@@ -24,7 +24,7 @@ def add_to_cart():
         data = request.json
         err = validator.validate(data, stock_schema)
         if not err:
-            return jsonify(validator.errors)
+            return jsonify(validator.errors), 400
         return controller.add_to_cart(data)
 
 

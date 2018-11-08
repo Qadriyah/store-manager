@@ -46,14 +46,5 @@ def delete_tables():
     print("[+] Tables deleted successfully")
 
 
-''' @manager.command
-def add_sample_data():
-    for table in tables:
-        print("[+] Inserting data in table {}...".format(table))
-        db_object.add_sample_data(table)
-        time.sleep(1)
-    print("[+] Data inserted successfully") '''
-
-
 if __name__ == "__main__":
     manager.run()

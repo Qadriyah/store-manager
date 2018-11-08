@@ -87,7 +87,10 @@ class SalesController:
                 "product_id"), result.get("cart").get("quantity"), "del")
 
             cart = self.select.select_cart_items(current_user.id)
-            response.update({"cart": cart.get("cart")})
+            response.update({
+                "cart": cart.get("cart"),
+                "msg": "Item deleted successfully"
+            })
             self.status_code = 200
         else:
             response.update({"msg": "Server error"})

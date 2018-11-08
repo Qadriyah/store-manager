@@ -134,6 +134,7 @@ class Insert:
                 items.append(item.get("cart"))
 
             response.update({
+                "id": result.get("id"),
                 "sales_order": result,
                 "items": items,
                 "msg": "Success"
