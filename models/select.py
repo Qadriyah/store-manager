@@ -192,26 +192,11 @@ class Select:
 
         return response
 
-    def select_sales_records(self, value, option):
+    def select_sales_records(self, query):
         response = {}
         orders = []
         try:
-            query = """
-            SELECT id, user_id, created_at FROM salesorder ORDER BY created_at DESC
-            """
-            query1 = """
-            SELECT id, user_id, created_at FROM salesorder WHERE id = {}
-            """.format(value)
-            query2 = """
-            SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
-            ORDER BY created_at DESC
-            """.format(value)
-            if option == "single":
-                self.cursor.execute(query1)
-            elif option == "user":
-                self.cursor.execute(query2)
-            else:
-                self.cursor.execute(query)
+            self.cursor.execute(query)
             sales_orders = self.cursor.fetchall()
             for item in sales_orders:
                 temp = {}

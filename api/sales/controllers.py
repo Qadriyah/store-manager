@@ -132,7 +132,22 @@ class SalesController:
             tuple: With all sales records and a status code
         """
         response = {}
-        response = self.select.select_sales_records(value, option)
+        query = """
+        SELECT id, user_id, created_at FROM salesorder ORDER BY created_at DESC
+        """
+
+        if option == "single":
+            query = """
+            SELECT id, user_id, created_at FROM salesorder WHERE id = {}
+            """.format(value)
+
+        if option == "user":
+            query = """
+            SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
+            ORDER BY created_at DESC
+            """.format(value)
+        
+        response = self.select.select_sales_records(query)
         if response.get("msg") == "Empty":
             return jsonify({"msg": "No sales found"}), 404
 
