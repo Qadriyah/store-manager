@@ -1,25 +1,15 @@
 |
 
-  Requires that the admin should enter the product name, product price and category to be able to add a new product
+  Requires that the admin should enter the category name to be able to add a product category
 
 ---
 produces:
   - application/json
 parameters:
   - in: body
-    name: category_id
-    schema:
-      type: integer
-    required: true
-  - in: body
-    name: product_name
+    name: category_name
     schema:
       type: string
-    required: true
-  - in: body
-    name: product_price
-    schema:
-      type: integer
     required: true
   - in: header
     name: Content-Type
@@ -28,21 +18,15 @@ parameters:
     name: Authorization
     required: true
 definitions:
-  products:
+  categories:
     type: object
     properties:
       id:
         type: integer
         example: 1
-      category_id:
-        type: integer
-        example: 1
-      product_name:
+      category_name:
         type: string
-        example: iPhone X
-      product_price:
-        type: integer
-        example: 1500000
+        example: Electronics
       created_at:
         type: string
         example: 25/10/2018
@@ -54,7 +38,7 @@ definitions:
         example: Active
 responses:
   200:
-    description: A success message and the added product
+    description: A success message and the edded category
     schema:
       properties:
         msg:
@@ -73,13 +57,10 @@ responses:
     description: An object containing error message
     schema:
       properties:
-        product_price:
+        category:
           type: string
-          example: product price should be an integer
-        product_name:
-          type: string
-          example: Product already exists
-        header:
+          example: Category already exists
+        msg:
           type: string
           example: Missing Authorization Header
   403:

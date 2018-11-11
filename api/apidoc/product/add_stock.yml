@@ -1,17 +1,17 @@
 |
 
-  Updates product quantity
+  Requires that the admin should enter the product and quantity to add a stock item
 
 ---
 produces:
   - application/json
 parameters:
-  - in: formData
+  - in: body
     name: product_id
     schema:
-      type: string
+      type: integer
     required: true
-  - in: formData
+  - in: body
     name: quantity
     schema:
       type: integer
@@ -22,7 +22,74 @@ parameters:
   - in: header
     name: Authorization
     required: true
+definitions:
+  inventory:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      product_id:
+        type: integer
+        example: 1
+      quantity:
+        type: integer
+        example: 10
+      stock_level:
+        type: integer
+        example: 10
+      min_quantity:
+        type: integer
+        example: 10
+      created_at:
+        type: string
+        example: 25/10/2018
+      modified_at:
+        type: string
+        example: 25/10/2018
 responses:
   200:
-    description: A response message
-    example: { 'msg': 'Stock added successfully' }
+    description: A success message and the cart item
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Success
+        cart:
+          type: array
+          items:
+            type: object
+  400:
+    description: An object containing error messages
+    schema:
+      properties:
+        msg:
+          type: string
+          example: All fields are required
+  401:
+    description: An object containing error message
+    schema:
+      properties:
+        product_id:
+          type: string
+          example: product_id should be an integer
+        quantity:
+          type: string
+          example: Quantity should be greater than zero
+        header:
+          type: string
+          example: Missing Authorization Header
+  403:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Admin previlidges required
+  500:
+    description: An object containing error messages
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Internal server error

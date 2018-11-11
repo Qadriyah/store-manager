@@ -33,6 +33,7 @@ def add_product():
 
 @product.route("/products/category", methods=["POST"])
 @admin_required
+@swag_from("../apidoc/product/add_category.yml")
 def add_category():
     if request.method == "POST":
         data = request.json
@@ -80,7 +81,7 @@ def add_stock():
 
 @product.route("/products/stock", methods=["GET"])
 @admin_required
-@swag_from("../apidoc/product/add_stock.yml")
+@swag_from("../apidoc/product/get_stock_items.yml")
 def get_stock():
     """Gets a list of stock levels"""
 
@@ -90,6 +91,7 @@ def get_stock():
 
 @product.route("/products/delete/<product_id>", methods=["DELETE"])
 @admin_required
+@swag_from("../apidoc/product/delete_product.yml")
 def delete_product(product_id):
     """Deletes a product with a given product_id"""
 
@@ -101,6 +103,7 @@ def delete_product(product_id):
 
 @product.route("/products/edit/<product_id>", methods=["PUT"])
 @admin_required
+@swag_from("../apidoc/product/edit_product.yml")
 def edit_product(product_id):
     """Modifies the product details"""
 
@@ -117,6 +120,7 @@ def edit_product(product_id):
 
 @product.route("/products/category", methods=["GET"])
 @jwt_required
+@swag_from("../apidoc/product/get_categories.yml")
 def get_product_categories():
     """Modifies the product details"""
 
@@ -126,6 +130,7 @@ def get_product_categories():
 
 @product.route("/products/category/delete/<category_id>", methods=["DELETE"])
 @admin_required
+@swag_from("../apidoc/product/delete_category.yml")
 def delete_product_category(category_id):
     if request.method == "DELETE":
         if not int_validator.validate_integer(category_id):
@@ -135,6 +140,7 @@ def delete_product_category(category_id):
 
 @product.route("/products/category/edit/<category_id>", methods=["PUT"])
 @admin_required
+@swag_from("../apidoc/product/edit_category.yml")
 def edit_product_category(category_id):
     if request.method == "PUT":
         if not int_validator.validate_integer(category_id):

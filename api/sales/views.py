@@ -48,6 +48,7 @@ def add_sales_record():
 
 @sales.route("/sales/cart/delete/<cart_id>", methods=["DELETE"])
 @attendant_required
+@swag_from("../apidoc/sales/delete_cart_item.yml")
 def delete_cart_item(cart_id):
 
     if request.method == "DELETE":
@@ -67,7 +68,7 @@ def get_all_sales_record():
 
 @sales.route("/sales/<sales_id>", methods=["GET"])
 @jwt_required
-@swag_from("../apidoc/sales/get_single_sales_record.yml")
+@swag_from("../apidoc/sales/get_sales_record_by_id.yml")
 def get_single_sales_record(sales_id):
 
     if request.method == "GET":
@@ -78,7 +79,7 @@ def get_single_sales_record(sales_id):
 
 @sales.route("/sales/user/<user_id>", methods=["GET"])
 @jwt_required
-@swag_from("../apidoc/sales/get_single_sales_record.yml")
+@swag_from("../apidoc/sales/get_sales_record_by_user.yml")
 def get_sales_for_attendant(user_id):
 
     if request.method == "GET":

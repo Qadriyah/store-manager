@@ -1,11 +1,16 @@
 |
 
-  Requires that a logged user should retrieve a list of all products
+  Requires that a stores attendant deletes an item from the shopping cart 
 
 ---
 produces:
   - application/json
 parameters:
+  - in: path
+    name: cart_id
+    schema:
+      type: integer
+    required: true
   - in: header
     name: Content-Type
     required: true
@@ -14,13 +19,13 @@ parameters:
     required: true
 responses:
   200:
-    description: A success message list of all products
+    description: A success message and the cart items
     schema:
       properties:
         msg:
           type: string
           example: Success
-        products:
+        cart:
           type: array
           items:
             type: object
@@ -31,13 +36,20 @@ responses:
         msg:
           type: string
           example: Missing Authorization Header
+  403:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Attendants only
   404:
     description: An object containing error message
     schema:
       properties:
         msg:
           type: string
-          example: Products not found
+          example: Empty cart
   500:
     description: An object containing error messages
     schema:
