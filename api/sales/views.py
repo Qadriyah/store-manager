@@ -6,12 +6,14 @@ from flasgger import swag_from
 from . import sales
 #  import sales controller
 from . import controllers
-#  import validator
-from api.validations import validate_product
+from api.validations.validation_tests import Validation
+
 from api.utils.jwt_helper import attendant_required, admin_required
+from api.validations.validation_schemas import stock_schema
+from api import validator
 
 controller = controllers.SalesController()
-validator = validate_product.ValidateProduct()
+int_validator = Validation()
 
 
 @sales.route("/sales/cart", methods=["POST"])
@@ -19,17 +21,14 @@ validator = validate_product.ValidateProduct()
 @swag_from("../apidoc/sales/add_to_cart.yml")
 def add_to_cart():
     if request.method == "POST":
-        result = validator.validate_input_data(request.form)
-        errors = validator.validate_number_fields(request.form)
-        if not result["is_true"]:
-            return jsonify(result["errors"]), 400
-
-        if not errors["is_true"]:
-            return jsonify(errors["errors"]), 400
-        return controller.add_to_cart(request.form)
+        data = request.json
+        err = validator.validate(data, stock_schema)
+        if not err:
+            return jsonify(validator.errors), 400
+        return controller.add_to_cart(data)
 
 
-@sales.route("/sales/cart/items", methods=["GET"])
+@sales.route("/sales/cart", methods=["GET"])
 @attendant_required
 @swag_from("../apidoc/sales/get_cart_items.yml")
 def get_cart_items():
@@ -47,19 +46,43 @@ def add_sales_record():
         return controller.add_sales_record()
 
 
+@sales.route("/sales/cart/delete/<cart_id>", methods=["DELETE"])
+@attendant_required
+@swag_from("../apidoc/sales/delete_cart_item.yml")
+def delete_cart_item(cart_id):
+
+    if request.method == "DELETE":
+        if not int_validator.validate_integer(cart_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.delete_cart_item(cart_id)
+
+
 @sales.route("/sales", methods=["GET"])
 @admin_required
 @swag_from("../apidoc/sales/get_sales_records.yml")
 def get_all_sales_record():
 
     if request.method == "GET":
-        return controller.get_all_sales_records()
+        return controller.get_all_sales_records("all", "all")
 
 
 @sales.route("/sales/<sales_id>", methods=["GET"])
 @jwt_required
-@swag_from("../apidoc/sales/get_single_sales_record.yml")
+@swag_from("../apidoc/sales/get_sales_record_by_id.yml")
 def get_single_sales_record(sales_id):
 
     if request.method == "GET":
-        return controller.get_single_sales_record(sales_id)
+        if not int_validator.validate_integer(sales_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.get_all_sales_records(sales_id, "single")
+
+
+@sales.route("/sales/user/<user_id>", methods=["GET"])
+@jwt_required
+@swag_from("../apidoc/sales/get_sales_record_by_user.yml")
+def get_sales_for_attendant(user_id):
+
+    if request.method == "GET":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.get_all_sales_records(user_id, "user")

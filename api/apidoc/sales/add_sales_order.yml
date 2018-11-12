@@ -1,6 +1,6 @@
 |
 
-  Creates a sales record using items in the shopping cart
+  Requires that a sales attendant creates a sales record
 
 ---
 produces:
@@ -12,7 +12,75 @@ parameters:
   - in: header
     name: Authorization
     required: true
+definitions:
+  salesorder:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      user_id:
+        type: integer
+        example: 2
+      created_at:
+        type: string
+        example: 10/11/2018
+      modified_at:
+        type: string
+        example: 10/11/2018
+  line-items:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      product_id:
+        type: integer
+        example: 2
+      sales_id:
+        type: integer
+        example: 1
+      product_name:
+        type: string
+        example: iPhone 4
+      unit_price:
+        type: integer
+        example: 1000000
 responses:
   200:
-    description: A message
-    example: { 'msg': 'Order created successfully' }
+    description: A success message and the sold items
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Success
+        sales_order:
+          properties:
+            id:
+              type: integer
+              example: 1
+            items:
+              type: array
+              items:
+                type: object
+  403:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Attendants only
+  404:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Empty cart
+  500:
+    description: An object containing error messages
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Internal server error

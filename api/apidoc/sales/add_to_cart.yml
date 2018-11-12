@@ -1,28 +1,18 @@
 |
 
-  Adds an item to the shopping cart
+  Requires that a sales attendant adds an item to the shopping cart
 
 ---
 produces:
   - application/json
 parameters:
-  - in: formData
-    name: pid
-    schema:
-      type: string
-    required: true
-  - in: formData
-    name: name
-    schema:
-      type: string
-    required: true
-  - in: formData
-    name: price
+  - in: body
+    name: product_id
     schema:
       type: integer
     required: true
-  - in: formData
-    name: qty
+  - in: body
+    name: quantity
     schema:
       type: integer
     required: true
@@ -33,34 +23,80 @@ parameters:
     name: Authorization
     required: true
 definitions:
-  Sale:
+  cart:
     type: object
     properties:
       id:
-        type: string
-        example: 055ad1fd
+        type: integer
+        example: 1
       user_id:
-        type: string
-        example: 2067fe34
-      order_number:
-        type: string
-        example: de0c1292738aff11
+        type: integer
+        example: 2
       product_id:
-        type: string
-        example: 7bad398f
-      price:
         type: integer
-        example: 5000000
-      qty:
-        type: integer
-        example: 3
+        example: 1
       product_name:
         type: string
-        example: iPhone X
-      created_at:
-        type: string
-        example: 25/10/2018
+        example: iPhone 8
+      quantity:
+        type: integer
+        example: 10
+      unit_price:
+        type: integer
+        example: 1500000
 responses:
   200:
-    description: A response message
-    example: { 'msg': 'success' }
+    description: A success message and the cart item
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Success
+        cart:
+          type: array
+          items:
+            type: object
+  400:
+    description: An object containing error messages
+    schema:
+      properties:
+        msg:
+          type: string
+          example: All fields are required
+  401:
+    description: An object containing error message
+    schema:
+      properties:
+        product_id:
+          type: string
+          example: product_id should be an integer
+        product:
+          type: string
+          example: Product is out of stock
+        quantity:
+          type: string
+          example: Quantity should be greater than zero
+        header:
+          type: string
+          example: Missing Authorization Header
+  403:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Attendants only
+  404:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Product not found
+  500:
+    description: An object containing error messages
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Internal server error

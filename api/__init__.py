@@ -3,14 +3,20 @@ from flask import Flask, request
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flasgger import Swagger
+from flask_script import Manager
+from cerberus import Validator
 
-from config import app_settings
+from config.config import app_settings
+from models.database_objects import DatabaseObjects
 
 app = Flask(__name__)
 app.config.from_object(app_settings[os.environ.get("APP_ENV")])
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-swagger = Swagger(app)
+Swagger(app)
+manager = Manager(app)
+validator = Validator()
+connection = DatabaseObjects()
 
 #  Register blueprints
 from .product import product as product_bp

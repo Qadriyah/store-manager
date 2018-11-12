@@ -1,13 +1,13 @@
 |
 
-  Requires that a user should be logged in to retrieve a specific product
+  Requires that the store sales attendant retrieves a specific sales record they recorded 
 
 ---
 produces:
   - application/json
 parameters:
   - in: path
-    name: product_id
+    name: user_id
     schema:
       type: integer
     required: true
@@ -25,15 +25,31 @@ responses:
         msg:
           type: string
           example: Success
-        product:
-          type: object
+        orders:
+          type: array
+          items:
+            type: object
+            properties:
+              order_number:
+                type: string
+                example: SO-00001
+              order_date:
+                type: string
+                example: 10/11/2018
+              sold_by:
+                type: string
+                example: Aijuka Miria
+              items:
+                type: array
+                items:
+                  type: object
   400:
     description: An object containing error message
     schema:
       properties:
         msg:
           type: string
-          example: product_id should be an integer
+          example: user_id should be an integer
   401:
     description: An object containing error message
     schema:
@@ -47,7 +63,7 @@ responses:
       properties:
         msg:
           type: string
-          example: Product not found
+          example: Empty cart
   500:
     description: An object containing error messages
     schema:

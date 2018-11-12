@@ -5,7 +5,7 @@ from flask import jsonify
 from functools import wraps
 
 from api import jwt
-from models.user import User
+from models.models import User
 
 
 def admin_required(fn):
@@ -51,7 +51,7 @@ def add_claims_to_access_token(user):
     """
     return {
         "id": user.id,
-        "name": user.name,
+        "fullname": user.fullname,
         "username": user.username,
         "roles": user.roles
     }
@@ -79,8 +79,9 @@ def user_loader_callback(identity):
 
     return User(
         id=claims["id"],
-        name=claims["name"],
+        fullname=claims["fullname"],
         username=identity,
         password="",
-        roles=claims["roles"]
+        roles=claims["roles"],
+        created_at=""
     )

@@ -1,81 +1,124 @@
+import os
+import json
 from unittest import TestCase
 
-from api.validations import is_empty, validate_product, validate_stock
+from models.database_objects import DatabaseObjects
+from config.config import app_settings
+from api import app
 
 
 class TestValidations(TestCase):
 
     def setUp(self):
-        self.product = {
-            "name": "Sugar",
-            "price": 4500
-        }
-        self.validator = validate_product.ValidateProduct()
-        self.stock_validator = validate_stock.ValidateStockInput()
+        app.config.from_object(app_settings[os.environ.get("APP_ENV")])
+        self.db_objects = DatabaseObjects()
+        self.client = app.test_client()
+        data = dict(
+            username="admin",
+            password="admin"
+        )
+        response = self.client.post(
+            "/api/v1/login",
+            json=data,
+            headers={
+                "Content-Type": "application/json"
+            }
+        )
+        self.access_token = "Bearer {}".format(
+            json.loads(response.data).get("token"))
 
     def tearDown(self):
-        pass
+        self.db_objects.delete_database_tables()
 
-    def test_is_empty(self):
-        """Tests if an object is empty"""
-        self.assertFalse(is_empty.is_empty(self.product))
+    def test_empty_text_fields(self):
+        """Tests that an input field is empty"""
+        with app.app_context():
+            product = dict(
+                category_id="",
+                product_name="",
+                product_price=""
+            )
+            res = self.client.post(
+                "/api/v1/products",
+                json=product,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(res.status_code, 400)
 
-    def test_new_product_input_data(self):
-        """Tests if input fields are not empty"""
-        self.assertEqual(self.validator.validate_input_data(
-            self.product)["is_true"], True)
-        self.assertEqual(
-            len(self.validator.validate_input_data(self.product)["errors"]), 0)
+    def test_field_does_not_exixts(self):
+        """Tests that an input field does not exist"""
+        with app.app_context():
+            product = dict()
+            res = self.client.post(
+                "/api/v1/products",
+                json=product,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(res.status_code, 400)
 
-    def test_number_fields(self):
-        """Tests that the values in the number fields are integers"""
-        cart_item = dict(
-            name="Milk",
-            price=1500,
-            qty=2
+    def test_value_entered_in_integer_fields(self):
+        """Tests that the value in the number field is not integers"""
+        with app.app_context():
+            product = dict(
+                category_id="KK",
+                product_name="iPhone X",
+                product_price="5000000G"
+            )
+            res = self.client.post(
+                "/api/v1/products",
+                json=product,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(res.status_code, 400)
+
+    def test_url_parameter(self):
+        """Tests that the number passed as a url parameter is not integer"""
+        with app.app_context():
+            res = self.client.get(
+                "/api/v1/products/k",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": self.access_token
+                }
+            )
+            self.assertEqual(json.loads(res.data)[
+                             "msg"], "Product Id should be an integer")
+            self.assertEqual(res.status_code, 400)
+
+    def test_negative_values(self):
+        """Tests that quantity values cannot be less or equal to zero"""
+        resp = self.client.post(
+            "/api/v1/login",
+            json=dict(
+                username="Qadie",
+                password="attendant"
+            ),
+            headers={
+                "Content-Type": "application/json"
+            }
         )
-        self.assertEqual(self.validator.validate_number_fields(
-            cart_item)["is_true"], True)
-
-    def test_new_stock_input_data(self):
-        """Tests that the input fields are not empty"""
-        new_stock = dict(
-            product_id="539c3032",
-            quantity=100
-        )
-        self.assertTrue(
-            self.stock_validator.validate_input_data(new_stock)["is_true"])
-
-    def test_non_integer_values(self):
-        """Tests that the quantity and price fields contain non interger values"""
-        cart_item = dict(
-            name="Milk",
-            price="1500P",
-            qty="2Q"
-        )
-        self.assertEqual(self.validator.validate_number_fields(
-            cart_item)["errors"]["value"], "Only numbers allowed for both price and quantity")
-
-    def test_new_product_empty_form_fields(self):
-        """Tests that the form fields are empty"""
-        new_product = dict(
-            name="",
-            price=""
-        )
-        self.assertEqual(
-            self.validator.validate_input_data(new_product)["is_true"],
-            False
-        )
-        self.assertGreater(
-            len(self.validator.validate_input_data(new_product)["errors"]), 0)
-
-    def test_new_stock_empty_form_fields(self):
-        """Tests that the form fields are empty"""
-        new_stock = dict(
-            product_id="",
-            quantity=""
-        )
-        self.assertFalse(
-            self.stock_validator.validate_input_data(new_stock)["is_true"])
-        self.assertGreater(
-            len(self.stock_validator.validate_input_data(new_stock)["errors"]), 0)
+        token = "Bearer {}".format(json.loads(resp.data).get("token"))
+        with app.app_context():
+            res = self.client.post(
+                "/api/v1/sales/cart",
+                json=dict(
+                    product_id=1,
+                    quantity=-10
+                ),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                }
+            )
+            self.assertEqual(json.loads(res.data).get(
+                "quantity")[0], "min value is 1")
+            self.assertEqual(res.status_code, 400)

@@ -1,11 +1,16 @@
 |
 
-  Requires that a logged user should retrieve a list of all products
+  Requires that the admin deletes a product using the product Id
 
 ---
 produces:
   - application/json
 parameters:
+  - in: path
+    name: product_id
+    schema:
+      type: integer
+    required: true
   - in: header
     name: Content-Type
     required: true
@@ -14,16 +19,12 @@ parameters:
     required: true
 responses:
   200:
-    description: A success message list of all products
+    description: A success message
     schema:
       properties:
         msg:
           type: string
           example: Success
-        products:
-          type: array
-          items:
-            type: object
   401:
     description: An object containing error message
     schema:
@@ -31,13 +32,20 @@ responses:
         msg:
           type: string
           example: Missing Authorization Header
+  403:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Admin previlidges required
   404:
     description: An object containing error message
     schema:
       properties:
         msg:
           type: string
-          example: Products not found
+          example: Product not found
   500:
     description: An object containing error messages
     schema:

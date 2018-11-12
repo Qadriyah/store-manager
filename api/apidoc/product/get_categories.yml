@@ -1,6 +1,6 @@
 |
 
-  Requires that a logged user should retrieve a list of all products
+  Requires that a logged user should retrieve a list of all categories
 
 ---
 produces:
@@ -20,7 +20,7 @@ responses:
         msg:
           type: string
           example: Success
-        products:
+        categories:
           type: array
           items:
             type: object
@@ -37,7 +37,7 @@ responses:
       properties:
         msg:
           type: string
-          example: Products not found
+          example: Product categories not found
   500:
     description: An object containing error messages
     schema:
