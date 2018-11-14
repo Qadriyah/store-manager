@@ -1,9 +1,7 @@
-from api import connection
-
-
 class Select:
-    def __init__(self):
-        self.cursor = connection.cursor
+    def __init__(self, connection):
+        self.connection = connection
+        self.cursor = self.connection.cursor
 
     def select_all_records(self, columns, table, **options):
         """Retrieves all records from a given table"""
@@ -44,7 +42,8 @@ class Select:
                     table: result,
                     "msg": "Found"
                 })
-        except Exception:
+        except Exception as error:
+            print(error)
             response.update({"msg": "Failure"})
 
         return response
@@ -202,7 +201,7 @@ class Select:
                 temp = {}
                 temp.update({
                     "id": item.get("id"),
-                    "order_number": connection.generate_order_number(item.get("id")),
+                    "order_number": self.connection.generate_order_number(item.get("id")),
                     "order_date": item.get("created_at"),
                     "sold_by": self.select_single_record(["fullname"], "users", where="id", cell=item.get("user_id")).get("fullname"),
                     "items": self.get_line_items(item.get("id"))

@@ -68,6 +68,18 @@ definitions:
       modified_at:
         type: string
         example: 25/10/2018
+  blacklists:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      token:
+        type: string
+        example: John Doe
+      created_at:
+        type: string
+        example: 25/10/2018
 responses:
   200:
     description: A success message and a created user

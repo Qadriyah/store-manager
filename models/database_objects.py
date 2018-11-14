@@ -15,6 +15,7 @@ class DatabaseObjects:
         self.create_shopping_cart_table()
         self.create_sales_table()
         self.create_line_items_table()
+        self.create_blacklist_table()
         if not self.is_item_exist("username", "users", "admin"):
             self.add_admin_account()
             self.add_default_attendant()
@@ -138,6 +139,21 @@ class DatabaseObjects:
             """
         )
 
+    def create_blacklist_table(self):
+        """Creates table for blacklisted tokens"""
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS blacklists(
+                id SERIAL PRIMARY KEY,
+                jti VARCHAR (255) NOT NULL,
+                identity VARCHAR (255) NOT NULL,
+                expires TIMESTAMP,
+                revoked BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """
+        )
+
     def delete_database_tables(self):
         """Deletes database tables"""
         for table in self.tables:
@@ -190,10 +206,7 @@ class DatabaseObjects:
             print("Server error")
 
     def is_item_exist(self, column, table, value):
-        """
-        Checks if an item exists in a given table
-
-        """
+        """Checks if an item exists in a given table"""
         found = False
         try:
             query = """
@@ -229,9 +242,6 @@ class DatabaseObjects:
 
         Args:
             value(int): Sales order ID
-
-        Returns:
-            str: Representation of the order number
         """
         response = "0" * (5 - len(str(value)))
         response = "SO-{}{}".format(response, str(value))

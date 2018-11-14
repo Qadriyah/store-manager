@@ -1,8 +1,5 @@
-from api import connection
-
-
 class Update:
-    def __init__(self):
+    def __init__(self, connection):
         self.cursor = connection.cursor
 
     def edit_user(self):
@@ -161,6 +158,24 @@ class Update:
             result = self.cursor.fetchone()
             response.update({
                 "cart": result,
+                "msg": "Success"
+            })
+        except Exception:
+            response.update({"msg": "Failure"})
+
+        return response
+
+    def update_token(self, jti):
+        """Updates the revoked status of the token"""
+        response = {}
+        try:
+            query = """
+            UPDATE blacklists SET revoked = '{}'::BOOLEAN WHERE jti = '{}' RETURNING revoked
+            """.format(True, jti)
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            response.update({
+                "revoked": result.get("revoked"),
                 "msg": "Success"
             })
         except Exception:

@@ -4,7 +4,7 @@ from flask_jwt_extended import (
 from flask import jsonify
 from functools import wraps
 
-from api import jwt
+from api import jwt, select
 from models.models import User
 
 
@@ -85,3 +85,14 @@ def user_loader_callback(identity):
         roles=claims["roles"],
         created_at=""
     )
+
+
+@jwt.token_in_blacklist_loader
+def token_loader_callback(decoded_token):
+    jti = decoded_token.get("jti")
+    stored_jti = select.select_all_records(
+        ["revoked"], "blacklists", where="jti", cell=jti, order="id", sort="ASC")
+    if stored_jti.get("msg") == "Empty":
+        return True
+    
+    return stored_jti.get("blacklists")[0].get("revoked")

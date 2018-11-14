@@ -9,6 +9,8 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY: secrets.token_hex(16)
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ["access"]
 
 
 class DevelopmentConfig(Config):

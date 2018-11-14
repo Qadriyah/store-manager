@@ -1,26 +1,22 @@
 import datetime
 from flask import jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, decode_token
 
 from models.models import User
-from models.insert import Insert
-from models.select import Select
-from api import bcrypt
+from api import bcrypt, app, select, insert, update
 
 
 class AuthController:
 
     def __init__(self):
         self.status_code = 200
-        self.sql_select = Select()
-        self.sql_insert = Insert()
 
     def register_user(self, data):
         """
         Registers and a new user
         """
         response = {}
-        user = self.sql_select.select_all_records(
+        user = select.select_all_records(
             ["username"], "users", where="username",
             cell=data.get("username").strip(), order="username", sort="ASC")
 
@@ -32,7 +28,7 @@ class AuthController:
             password_hash = bcrypt.generate_password_hash(
                 data.get("password").strip(), 15)
             data["password"] = password_hash.decode()
-            response = self.sql_insert.insert_user(data)
+            response = insert.insert_user(data)
 
             if response.get("msg") == "Success":
                 self.status_code = 200
@@ -49,7 +45,7 @@ class AuthController:
         #  Check if user exists
         columns = ["id", "fullname", "username",
                    "password", "roles", "created_at"]
-        user = self.sql_select.select_all_records(
+        user = select.select_all_records(
             columns, "users", where="username",
             cell=data.get("username").strip(), order="username", sort="ASC")
 
@@ -76,8 +72,25 @@ class AuthController:
                     "token": token
                 })
                 self.status_code = 200
+                insert.insert_blacklist(self.decode_jwt_token(token))
             else:
                 response.update({"msg": "Wrong password"})
                 self.status_code = 401
 
         return jsonify(response), self.status_code
+
+    def logout(self, jti):
+        """Logs out a user"""
+        response = update.update_token(jti)
+        if response.get("msg") == "Success":
+            self.status_code = 200
+        else:
+            self.status_code = 500
+
+        return jsonify(response), self.status_code
+
+    def decode_jwt_token(self, token):
+        """Decodes the JWT token"""
+        payload = decode_token(token)
+
+        return payload

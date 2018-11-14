@@ -6,6 +6,7 @@ from . import user
 
 from . import controllers
 from api.utils.jwt_helper import admin_required
+from flask_jwt_extended import get_raw_jwt, jwt_required
 from api.validations.validation_schemas import (
     login_schema, register_schema
 )
@@ -39,3 +40,10 @@ def login_user():
             return jsonify(validator.errors), 400
 
         return controller.login_user(data)
+
+
+@user.route("/logout", methods=["DELETE"])
+@jwt_required
+def logout():
+    token = get_raw_jwt()
+    return controller.logout(token.get("jti"))

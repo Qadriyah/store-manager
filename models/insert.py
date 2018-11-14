@@ -1,8 +1,8 @@
-from api import connection
+from datetime import datetime
 
 
 class Insert:
-    def __init__(self):
+    def __init__(self, connection):
         self.cursor = connection.cursor
 
     def insert_user(self, user):
@@ -165,6 +165,26 @@ class Insert:
                 "msg": "Success"
             })
         except Exception:
+            response.update({"msg": "Failure"})
+
+        return response
+
+    def insert_blacklist(self, token):
+        """Inserts a blacklisted token"""
+        response = {}
+        try:
+            query = """
+            INSERT INTO blacklists(jti, identity, expires) \
+            VALUES('{}', '{}', '{}'::TIMESTAMP) RETURNING id, jti, identity, expires
+            """.format(token.get("jti"), token.get("identity"), datetime.fromtimestamp(token.get("exp")))
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            response.update({
+                "token": result,
+                "msg": "Success"
+            })
+        except Exception as error:
+            print(error)
             response.update({"msg": "Failure"})
 
         return response

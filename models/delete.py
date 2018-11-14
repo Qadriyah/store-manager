@@ -1,8 +1,5 @@
-from api import connection
-
-
 class Delete:
-    def __init__(self):
+    def __init__(self, connection):
         self.cursor = connection.cursor
 
     def delete_record(self, table, record_id):
@@ -27,6 +24,20 @@ class Delete:
             query = """
             DELETE FROM {} WHERE id = {}
             """.format(table, record_id)
+            self.cursor.execute(query)
+            response.update({"msg": "Success"})
+        except Exception:
+            response.update({"msg": "Failure"})
+
+        return response
+
+    def delete_expired_tokens(self):
+        """Deletes expired tokens from the databse"""
+        response = {}
+        try:
+            query = """
+            DELETE FROM blacklists WHERE expires < '{}'::TIMESTAMP
+            """.format("NOW()")
             self.cursor.execute(query)
             response.update({"msg": "Success"})
         except Exception:
