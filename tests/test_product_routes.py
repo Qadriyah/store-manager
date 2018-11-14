@@ -2,7 +2,7 @@ import os
 import json
 from unittest import TestCase
 
-from api import app
+from api import app, select
 from config.config import app_settings
 from models.database_objects import DatabaseObjects
 from api.product import controllers
@@ -82,7 +82,7 @@ class TestProducts(TestCase):
                     "Authorization": self.access_token
                 }
             )
-            res = self.controller.select.select_single_product(
+            res = select.select_single_product(
                 "Round Top", category_id)
             self.assertIsNotNone(res)
 
