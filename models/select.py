@@ -228,3 +228,21 @@ class Select:
         except Exception:
             print("Failure")
         return response
+
+    def select_from_users(self, query):
+        """Retrieves records from the user table based on the query"""
+        response = {}
+        try:
+            self.cursor.execute(query)
+            result = self.cursor.fetchall()
+            if not result:
+                response.update({"msg": "Empty"})
+            else:
+                response.update({
+                    "users": result,
+                    "msg": "Success"
+                })
+        except Exception:
+            response.update({"msg": "Failure"})
+
+        return response

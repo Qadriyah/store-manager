@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from flasgger import Swagger
 from flask_script import Manager
 from cerberus import Validator
+from flask_cors import CORS
 
 from config.config import app_settings
 from models.database_objects import DatabaseObjects
@@ -18,7 +19,9 @@ app.config.from_object(app_settings[os.environ.get("APP_ENV")])
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 Swagger(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 manager = Manager(app)
+
 validator = Validator()
 connection = DatabaseObjects()
 delete = Delete(connection)

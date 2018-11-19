@@ -33,7 +33,8 @@ class DatabaseObjects:
                 password VARCHAR (255) NOT NULL,
                 roles VARCHAR (20) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status VARCHAR (15) NOT NULL DEFAULT 'Active'
             );
             """
         )

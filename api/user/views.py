@@ -47,3 +47,9 @@ def login_user():
 def logout():
     token = get_raw_jwt()
     return controller.logout(token.get("jti"))
+
+
+@user.route("/users", methods=["GET"])
+@admin_required
+def get_users():
+    return controller.get_all_users()
