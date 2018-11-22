@@ -203,7 +203,7 @@ class Select:
                     "id": item.get("id"),
                     "order_number": self.connection.generate_order_number(item.get("id")),
                     "order_date": item.get("created_at"),
-                    "sold_by": self.select_single_record(["fullname"], "users", where="id", cell=item.get("user_id")).get("fullname"),
+                    "sold_by": self.select_single_record(["fullname"], "users", where="id", cell=item.get("user_id")).get("users").get("fullname"),
                     "items": self.get_line_items(item.get("id"))
                 })
                 orders.append(temp)

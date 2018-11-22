@@ -60,7 +60,7 @@ class ProductController:
         response = {}
         #  Check if product already exists
         if select.select_single_product(data.get("product_name"), data.get("category_id")):
-            response.update({"product": "Product already exists"})
+            response.update({"msg": "Product already exists"})
             self.status_code = 401
         else:
             response = insert.insert_product(data)
@@ -80,8 +80,7 @@ class ProductController:
             list: A list of products
         """
         response = {}
-        columns = ["categories.category_name", "products.product_price",
-                   "products.product_name", "products.id"]
+        columns = ["categories.category_name", "categories.id AS cid", "product_price", "products.product_name", "products.id"]
         result = select.select_all_records_join(columns, ["categories", "products"], on="categories.id", to="products.category_id", where="products.status", cell="Active", order="products.product_name", sort="ASC")
 
         if result.get("msg") == "Success":
@@ -103,8 +102,7 @@ class ProductController:
         Retrieves a single product by product id
         """
         response = {}
-        columns = ["categories.category_name", "products.product_price",
-                   "products.product_name", "products.id"]
+        columns = ["categories.category_name", "categories.id AS cid", "products.product_price", "products.product_name", "products.id"]
         result = select.select_all_records_join(columns, ["categories", "products"], on="categories.id",
                                                 to="products.category_id", where="products.id", cell=product_id, order="products.product_name", sort="ASC")
 

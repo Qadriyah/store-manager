@@ -116,7 +116,7 @@ class SalesController:
 
         return jsonify(response), self.status_code
 
-    def get_all_sales_records(self, value, option):
+    def get_all_sales_records(self, data, option):
         """
         Retrieves all sales records from the database
 
@@ -125,19 +125,20 @@ class SalesController:
         """
         response = {}
         query = """
-        SELECT id, user_id, created_at FROM salesorder ORDER BY created_at DESC
-        """
+        SELECT id, user_id, created_at FROM salesorder WHERE created_at \
+        BETWEEN '{}'::DATE AND '{}'::DATE  ORDER BY created_at DESC
+        """.format(data.get('fro'), data.get('to'))
 
         if option == "single":
             query = """
             SELECT id, user_id, created_at FROM salesorder WHERE id = {}
-            """.format(value)
+            """.format(data.get('sales_id'))
 
-        if option == "user":
+        if option == "user" or data.get("user_id") > 0:
             query = """
             SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
-            ORDER BY created_at DESC
-            """.format(value)
+            AND created_at BETWEEN '{}'::DATE AND '{}'::DATE ORDER BY created_at DESC
+            """.format(data.get('user_id'), data.get('fro'), data.get('to'))
 
         response = select.select_sales_records(query)
         if response.get("msg") == "Empty":

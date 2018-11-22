@@ -25,3 +25,9 @@ login_schema = {
     'username': {'type': 'string', 'forbidden': ["", " "], 'required': True},
     'password': {'type': 'string', 'forbidden': ["", " "], 'required': True}
 }
+
+date_schema = {
+    'fro': {'type': 'string', 'forbidden': ["", " "], 'required': True},
+    'to': {'type': 'string', 'forbidden': ["", " "], 'required': True},
+    'user_id': {'type': 'integer', 'forbidden': ["", " "], 'min': 0, 'required': True}
+}
