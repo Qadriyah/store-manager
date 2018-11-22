@@ -37,13 +37,20 @@ class AuthController:
 
         return jsonify(response), self.status_code
 
-    def get_all_users(self):
+    def get_all_users(self, role):
         """Retrieves a list of all users"""
         response = {}
         query = """
         SELECT id, fullname, username, roles, created_at \
         FROM users WHERE status = '{}' ORDER BY fullname ASC
         """.format('Active')
+
+        if role != "all":
+            query = """
+            SELECT id, fullname, username, roles, created_at \
+            FROM users WHERE status = '{}' AND roles = '{}' ORDER BY fullname ASC
+            """.format('Active', role)
+
         response = select.select_from_users(query)
         if response.get("msg") == "Empty":
             self.status_code = 404

@@ -129,12 +129,17 @@ class SalesController:
         BETWEEN '{}'::DATE AND '{}'::DATE  ORDER BY created_at DESC
         """.format(data.get('fro'), data.get('to'))
 
+        if len(data) == 0:
+            query = """
+            SELECT id, user_id, created_at FROM salesorder ORDER BY created_at DESC
+            """
+
         if option == "single":
             query = """
             SELECT id, user_id, created_at FROM salesorder WHERE id = {}
             """.format(data.get('sales_id'))
 
-        if option == "user" or data.get("user_id") > 0:
+        if option == "user" or data.get("user_id") and data.get("user_id") > 0:
             query = """
             SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
             AND created_at BETWEEN '{}'::DATE AND '{}'::DATE ORDER BY created_at DESC

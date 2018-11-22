@@ -57,6 +57,15 @@ def delete_cart_item(cart_id):
         return controller.delete_cart_item(cart_id)
 
 
+@sales.route("/sales", methods=["GET"])
+@admin_required
+@swag_from("../apidoc/sales/get_sales_records.yml")
+def get_all_sales_record_():
+
+    if request.method == "GET":
+        return controller.get_all_sales_records({}, "all")
+
+
 @sales.route("/sales/records", methods=["POST"])
 @admin_required
 @swag_from("../apidoc/sales/get_sales_records.yml")
@@ -96,7 +105,7 @@ def get_sales_for_attendant(user_id):
         err = validator.validate(data, date_schema)
         if not err:
             return jsonify(validator.errors), 400
-            
+
         if not int_validator.validate_integer(user_id):
             return jsonify({"msg": "Id should be an integer"}), 401
 

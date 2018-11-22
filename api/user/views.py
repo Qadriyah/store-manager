@@ -52,4 +52,10 @@ def logout():
 @user.route("/users", methods=["GET"])
 @admin_required
 def get_users():
-    return controller.get_all_users()
+    return controller.get_all_users('all')
+
+
+@user.route("/attendants", methods=["GET"])
+@jwt_required
+def get_sales_attendants():
+    return controller.get_all_users('attendant')

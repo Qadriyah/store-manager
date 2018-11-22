@@ -24,7 +24,6 @@ class ProductController:
             if response.get("msg") == "Success":
                 self.status_code = 200
             else:
-                response.update({"msg": "Some fields are missing"})
                 self.status_code = 500
 
         return jsonify(response), self.status_code
@@ -49,6 +48,24 @@ class ProductController:
 
         else:
             response = result
+            self.status_code = 200
+
+        return jsonify(response), self.status_code
+
+    def get_single_category(self, category_id):
+        """
+        Retrieves a single product category
+        """
+        response = {}
+        query = """
+        SELECT id, category_name FROM categories WHERE id = {}
+        """.format(category_id)
+        response = select.select_from_users(query)
+        if response.get("msg") == "Empty":
+            self.status_code = 404
+        elif response.get("msg") == "Failure":
+            self.status_code = 500
+        else:
             self.status_code = 200
 
         return jsonify(response), self.status_code

@@ -151,3 +151,13 @@ def edit_product_category(category_id):
         if not err:
             return jsonify(validator.errors), 400
         return controller.edit_product_category(category_id, data)
+
+
+@product.route("/products/category/<category_id>", methods=["GET"])
+@admin_required
+def get_specific_category(category_id):
+    if request.method == "GET":
+        if not int_validator.validate_integer(category_id):
+            return jsonify({"msg": "Category Id should be an integer"}), 400
+
+        return controller.get_single_category(category_id)
