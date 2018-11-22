@@ -6,8 +6,8 @@ from flasgger import swag_from
 from . import sales
 #  import sales controller
 from . import controllers
-from api.validations.validation_tests import Validation
 
+from api.validations.validation_tests import Validation
 from api.utils.jwt_helper import attendant_required, admin_required
 from api.validations.validation_schemas import stock_schema, date_schema
 from api import validator

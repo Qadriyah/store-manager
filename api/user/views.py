@@ -11,8 +11,10 @@ from api.validations.validation_schemas import (
     login_schema, register_schema
 )
 from api import validator
+from api.validations.validation_tests import Validation
 
 controller = controllers.AuthController()
+int_validator = Validation()
 
 
 @user.route("/register", methods=["POST"])
@@ -59,3 +61,12 @@ def get_users():
 @jwt_required
 def get_sales_attendants():
     return controller.get_all_users('attendant')
+
+
+@user.route("/users/delete/<user_id>", methods=["GET"])
+@admin_required
+def delete_user(user_id):
+    if request.method == "GET":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.get_single_user(user_id)

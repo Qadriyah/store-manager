@@ -63,6 +63,25 @@ class AuthController:
 
         return jsonify(response), self.status_code
 
+    def get_single_user(self, user_id):
+        """Retrieves a single user using the userId"""
+        response = {}
+        query = """
+        SELECT id, fullname, username, roles, created_at FROM users WHERE id = {}
+        """.format(user_id)
+
+        response = select.select_from_users(query)
+        if response.get("msg") == "Empty":
+            self.status_code = 404
+
+        if response.get("msg") == "Success":
+            self.status_code = 200
+
+        if response.get("msg") == "Failure":
+            self.status_code = 500
+
+        return jsonify(response), self.status_code
+
     def login_user(self, data):
         """
         Authenticates a user and returns a JWT token back to the client if successful
