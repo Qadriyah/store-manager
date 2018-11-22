@@ -63,10 +63,19 @@ def get_sales_attendants():
     return controller.get_all_users('attendant')
 
 
-@user.route("/users/delete/<user_id>", methods=["GET"])
+@user.route("/users/<user_id>", methods=["GET"])
 @admin_required
-def delete_user(user_id):
+def get_single_user(user_id):
     if request.method == "GET":
         if not int_validator.validate_integer(user_id):
             return jsonify({"msg": "Id should be an integer"}), 401
         return controller.get_single_user(user_id)
+
+
+@user.route("/users/delete/<user_id>", methods=["DELETE"])
+@admin_required
+def delete_user(user_id):
+    if request.method == "DELETE":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.delete_user(user_id)

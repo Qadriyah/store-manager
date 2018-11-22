@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_jwt_extended import create_access_token, decode_token
 
 from models.models import User
-from api import bcrypt, app, select, insert, update
+from api import bcrypt, app, select, insert, update, delete
 
 
 class AuthController:
@@ -78,6 +78,24 @@ class AuthController:
             self.status_code = 200
 
         if response.get("msg") == "Failure":
+            self.status_code = 500
+
+        return jsonify(response), self.status_code
+
+    def delete_user(self, user_id):
+        """Deletes a user from the database"""
+        response = {}
+        query = """
+        SELECT id, fullname, username, roles, created_at FROM users WHERE id = {}
+        """.format(user_id)
+        result = select.select_from_users(query)
+        if result.get("msg") == "Empty":
+            return response.update({"msg": "User not found"}), 404
+
+        response = delete.delete_record("users", user_id)
+        if response.get("msg") == "Success":
+            self.status_code = 200
+        else:
             self.status_code = 500
 
         return jsonify(response), self.status_code
