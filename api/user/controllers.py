@@ -106,12 +106,11 @@ class AuthController:
         """
         response = {}
         #  Check if user exists
-        columns = ["id", "fullname", "username",
-                   "password", "roles", "created_at"]
-        user = select.select_all_records(
-            columns, "users", where="username",
-            cell=data.get("username").strip(), order="username", sort="ASC")
-
+        query = """
+        SELECT id, fullname, username, password, roles, created_at \
+        FROM users WHERE username = '{}' AND status = '{}'
+        """.format(data.get("username"), "Active")
+        user = select.select_from_users(query)
         if user.get("msg") == "Empty":
             response.update({"msg": "Username not found"})
             self.status_code = 404
@@ -157,3 +156,22 @@ class AuthController:
         payload = decode_token(token)
 
         return payload
+
+    def edit_user(self, data):
+        """Modifies user details"""
+        response = {}
+        query = """
+        UPDATE users SET fullname = '{}', username = '{}', roles = '{}', modified_at = '{}'::TIMESTAMP WHERE id = {} RETURNING id, fullname, username, roles, modified_at
+        """.format(data.get("fullname"), data.get("username"), data.get("roles"), "NOW()", data.get("user_id"))
+
+        response = update.update_user(query)
+        if response.get("msg") == "Empty":
+            response["msg"] = "User not found"
+            return jsonify(response), 404
+
+        if response.get("msg") == "Success":
+            self.status_code = 200
+        else:
+            self.status_code = 500
+
+        return jsonify(response), self.status_code

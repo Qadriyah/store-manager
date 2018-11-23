@@ -2,11 +2,25 @@ class Update:
     def __init__(self, connection):
         self.cursor = connection.cursor
 
-    def edit_user(self):
+    def update_user(self, query):
         """
         Modifies user details
         """
-        pass
+        response = {}
+        try:
+            self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            if not result:
+                response.update({"msg": "Empty"})
+            else:
+                response.update({
+                    "user": result,
+                    "msg": "Success"
+                })
+        except Exception as err:
+            response.update({"msg": "Failure"})
+
+        return response
 
     def update_inventory(self, data):
         """

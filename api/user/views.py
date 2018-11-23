@@ -8,7 +8,7 @@ from . import controllers
 from api.utils.jwt_helper import admin_required
 from flask_jwt_extended import get_raw_jwt, jwt_required
 from api.validations.validation_schemas import (
-    login_schema, register_schema
+    login_schema, register_schema, update_user_schema
 )
 from api import validator
 from api.validations.validation_tests import Validation
@@ -79,3 +79,19 @@ def delete_user(user_id):
         if not int_validator.validate_integer(user_id):
             return jsonify({"msg": "Id should be an integer"}), 401
         return controller.delete_user(user_id)
+
+
+@user.route("/users/edit/<user_id>", methods=["PUT"])
+@admin_required
+def edit_user(user_id):
+    if request.method == "PUT":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+
+        data = request.json
+        err = validator.validate(data, update_user_schema)
+        if not err:
+            return jsonify(validator.errors), 400
+
+        data.update({"user_id": user_id})
+        return controller.edit_user(data)

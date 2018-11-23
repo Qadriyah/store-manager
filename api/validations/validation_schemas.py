@@ -31,3 +31,9 @@ date_schema = {
     'to': {'type': 'string', 'forbidden': ["", " "], 'required': True},
     'user_id': {'type': 'integer', 'forbidden': ["", " "], 'min': 0, 'required': True}
 }
+
+update_user_schema = {
+    'fullname': {'type': 'string', 'forbidden': ["", " "], 'required': True},
+    'username': {'type': 'string', 'forbidden': ["", " "], 'required': True},
+    'roles': {'type': 'string', 'forbidden': ["", " "], 'required': True}
+}
