@@ -2,17 +2,19 @@ import os
 import psycopg2
 import psycopg2.extras as extras
 
-from config import db_dev, db_prod
+from config.db import db_uri
 
 
 class Connection:
 
     def __init__(self):
-        if os.environ.get("APP_ENV") == "development" or \
-           os.environ.get("APP_ENV") == "testing":
-                self.db_string = db_dev.postgres_db
+        if os.environ.get("APP_ENV") == "development":
+            self.db_string = db_uri.get("dev_db")
+
+        elif os.environ.get("APP_ENV") == "testing":
+            self.db_string = db_uri.get("test_db")
         else:
-            self.db_string = db_prod.postgres_db
+            self.db_string = db_uri.get("prod_db")
 
     def connect(self):
         try:
