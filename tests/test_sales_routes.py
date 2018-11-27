@@ -412,8 +412,7 @@ class TestSales(TestCase):
                     "Authorization": self.attendant_token
                 }
             )
-            self.assertEqual(json.loads(result.data).get(
-                "msg"), "Item deleted successfully")
+            self.assertEqual(json.loads(result.data).get("msg"), "Success")
             self.assertEqual(result.status_code, 200)
 
     def test_admin_cannot_add_to_cart(self):

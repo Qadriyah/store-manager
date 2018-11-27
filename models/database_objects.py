@@ -7,7 +7,7 @@ class DatabaseObjects:
         db_connect = connection.Connection()
         self.cursor = db_connect.connect()
         self.tables = ["users", "categories", "products",
-                       "inventory",  "cart", "salesorder", "line_items"]
+                       "inventory",  "cart", "salesorder", "line_items", "blacklists"]
         self.create_user_table()
         self.create_category_table()
         self.create_product_table()

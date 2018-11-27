@@ -17,7 +17,7 @@ class Update:
                     "user": result,
                     "msg": "Success"
                 })
-        except Exception as err:
+        except Exception:
             response.update({"msg": "Failure"})
 
         return response

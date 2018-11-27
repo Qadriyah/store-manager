@@ -123,7 +123,7 @@ class Insert:
         items = []
         try:
             query = """
-            INSERT INTO salesorder(user_id) VALUES({}) RETURNING id
+            INSERT INTO salesorder(user_id) VALUES({}) RETURNING id, user_id, created_at
             """.format(salesorder.get("user_id"))
             self.cursor.execute(query)
             result = self.cursor.fetchone()

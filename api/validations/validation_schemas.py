@@ -37,3 +37,8 @@ update_user_schema = {
     'username': {'type': 'string', 'forbidden': ["", " "], 'required': True},
     'roles': {'type': 'string', 'forbidden': ["", " "], 'required': True}
 }
+
+user_date_schema = {
+    'fro': {'type': 'string', 'forbidden': ["", " "], 'required': True},
+    'to': {'type': 'string', 'forbidden': ["", " "], 'required': True}
+}

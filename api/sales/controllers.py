@@ -39,7 +39,7 @@ class SalesController:
         update.update_stock_level(
             data.get("product_id"), data.get("quantity"), "add")
         cart = select.select_cart_items(current_user.id)
-        response.update({"cart": cart.get("cart")})
+        response.update({"cart": cart.get("cart"), "msg": "Success"})
         self.status_code = 200
 
         return jsonify(response), self.status_code
@@ -62,7 +62,7 @@ class SalesController:
             response.update({"msg": "No items in the shopping cart"})
             self.status_code = 404
         else:
-            response.update({"cart": items.get("cart")})
+            response.update({"cart": items.get("cart"), "msg": "Success"})
             self.status_code = 200
 
         return jsonify(response), self.status_code
@@ -81,7 +81,7 @@ class SalesController:
             cart = select.select_cart_items(current_user.id)
             response.update({
                 "cart": cart.get("cart"),
-                "msg": "Item deleted successfully"
+                "msg": "Success"
             })
             self.status_code = 200
         else:
@@ -144,6 +144,30 @@ class SalesController:
             SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
             AND created_at BETWEEN '{}'::DATE AND '{}'::DATE ORDER BY created_at DESC
             """.format(data.get('user_id'), data.get('fro'), data.get('to'))
+
+        response = select.select_sales_records(query)
+        if response.get("msg") == "Empty":
+            return jsonify({"msg": "No sales found"}), 404
+
+        if response.get("msg") == "Success":
+            self.status_code = 200
+        else:
+            self.status_code = 500
+
+        return jsonify(response), self.status_code
+
+    def get_user_sales_records(self, user_id):
+        """
+        Retrieves all sales records created by a specific user
+
+        Returns:
+            tuple: With all sales records and a status code
+        """
+        response = {}
+        query = """
+        SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
+        ORDER BY created_at DESC
+        """.format(user_id)
 
         response = select.select_sales_records(query)
         if response.get("msg") == "Empty":

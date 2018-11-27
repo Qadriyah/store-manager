@@ -62,6 +62,9 @@ def get_single_product(product_id):
     if request.method == "GET":
         if not int_validator.validate_integer(product_id):
             return jsonify({"msg": "Product Id should be an integer"}), 400
+
+        if product_id == 0 or product_id == "0":
+            return controller.get_all_products()
         return controller.get_single_product(product_id)
 
 
@@ -80,7 +83,7 @@ def add_stock():
 
 
 @product.route("/products/stock", methods=["GET"])
-@admin_required
+@jwt_required
 @swag_from("../apidoc/product/get_stock_items.yml")
 def get_stock():
     """Gets a list of stock levels"""

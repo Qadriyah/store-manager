@@ -211,7 +211,8 @@ class Select:
                 response.update({"orders": orders, "msg": "Success"})
             else:
                 response.update({"msg": "Empty"})
-        except Exception:
+        except Exception as error:
+            print(error)
             response.update({"msg": "Failure"})
 
         return response
