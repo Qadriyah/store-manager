@@ -77,7 +77,10 @@ def get_all_sales_record():
         if not err:
             return jsonify(validator.errors), 400
 
-        if not int_validator.validate_date(data.get("fro")) or not int_validator.validate_date(data.get("to")):
+        if not int_validator.validate_date(data.get("fro")):
+            return jsonify({"msg": "Wrong date"}), 401
+
+        if not int_validator.validate_date(data.get("to")):
             return jsonify({"msg": "Wrong date"}), 401
 
         return controller.get_all_sales_records(data, "all")
