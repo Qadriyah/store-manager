@@ -108,8 +108,8 @@ class AuthController:
         #  Check if user exists
         query = """
         SELECT id, fullname, username, password, roles, created_at \
-        FROM users WHERE username = '{}'
-        """.format(data.get("username"))
+        FROM users WHERE username = '{}' AND status = '{}'
+        """.format(data.get("username"), "Active")
         user = select.select_from_users(query)
         if user.get("msg") == "Empty":
             response.update({"msg": "Username not found"})
