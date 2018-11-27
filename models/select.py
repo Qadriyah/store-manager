@@ -244,6 +244,6 @@ class Select:
                     "msg": "Success"
                 })
         except Exception as error:
-            response.update({"msg": error})
+            response.update({"msg": str( error)})
 
         return response
