@@ -243,7 +243,7 @@ class Select:
                     "users": result,
                     "msg": "Success"
                 })
-        except Exception as error:
-            response.update({"msg": str( error)})
+        except Exception:
+            response.update({"msg": "Failure"})
 
         return response
