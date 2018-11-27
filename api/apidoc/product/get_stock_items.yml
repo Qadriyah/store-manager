@@ -1,6 +1,6 @@
 |
 
-  Requires that a logged user should retrieve a list of all products
+  Requires that a user should be logged in to retrieve a list of stock items
 
 ---
 produces:
@@ -14,13 +14,13 @@ parameters:
     required: true
 responses:
   200:
-    description: A success message list of all products
+    description: A success message and the a list of stock items
     schema:
       properties:
         msg:
           type: string
           example: Success
-        products:
+        stock:
           type: array
           items:
             type: object
@@ -37,7 +37,7 @@ responses:
       properties:
         msg:
           type: string
-          example: Products not found
+          example: No records found
   500:
     description: An object containing error messages
     schema:

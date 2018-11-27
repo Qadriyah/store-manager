@@ -1,47 +1,53 @@
-import secrets
 from flask import jsonify
 from flask_jwt_extended import current_user
 
-from api import app
-from models.sale import Sale
-from models.cart import Cart
-from models.database import sales_records, cart, product_list
+from api import connection, insert, select, update, delete
 
 
 class SalesController:
 
     def __init__(self):
         self.status_code = 200
+        self.cursor = connection.cursor
 
-    def add_to_cart(self, request_data):
+    def add_to_cart(self, data):
         """
         Add products to the shopping cart
-
-        Args:
-            request_data(object): Object holding form data
-
-        Returns:
-            str: Message
         """
         response = {}
-        if self.is_product_out_of_stock(request_data["pid"]):
-            return jsonify({"msg": "Item is out of stock"}), 401
+        if not self.check_negative_quantity(data.get("quantity")):
+            return jsonify({"msg": "Quantity should be greater than zero"}), 401
 
-        if self.is_product_in_cart(request_data["name"]):
-            self.update_qty_in_cart(request_data["pid"], request_data["qty"])
-            response.update({"msg": "Success"})
-            self.status_code = 200
+        product = select.select_single_stock_level(data.get("product_id"))
+        if product.get("msg") == "Empty":
+            return jsonify({"msg": "Product does not exist"}), 404
+
+        if product.get("stock").get("stock_level") < data.get("quantity"):
+            return jsonify({"msg": "Product is out of stock"}), 401
+
+        data.update({
+            "user_id": current_user.id,
+            "product_name": product.get("stock").get("product_name"),
+            "product_price": product.get("stock").get("product_price")
+        })
+        if connection.is_item_exist("product_id", "cart", data.get("product_id")):
+            update.update_qty_in_cart(
+                data.get("product_id"), data.get("quantity"))
         else:
-            new_cart_item = Cart(
-                pid=request_data["pid"],
-                name=request_data["name"],
-                qty=request_data["qty"],
-                price=request_data["price"])
-            cart.append(new_cart_item)
-            response.update({"msg": "Success"})
-            self.status_code = 200
+            insert.insert_cart(data)
 
-        return jsonify(response), 200
+        update.update_stock_level(
+            data.get("product_id"), data.get("quantity"), "add")
+        cart = select.select_cart_items(current_user.id)
+        response.update({"cart": cart.get("cart"), "msg": "Success"})
+        self.status_code = 200
+
+        return jsonify(response), self.status_code
+
+    def check_negative_quantity(self, quantity):
+        if quantity <= 0:
+            return False
+        return True
 
     def get_cart_items(self):
         """
@@ -51,21 +57,37 @@ class SalesController:
             list: A list of products
         """
         response = {}
-        if self.is_table_empty(cart):
-            response.update({"msg": "Empty cart"})
+        items = select.select_cart_items(current_user.id)
+        if items.get("msg") == "Empty":
+            response.update({"msg": "No items in the shopping cart"})
             self.status_code = 404
         else:
-            items = [
-                dict(
-                    id=product.product_id,
-                    name=product.name,
-                    qty=product.qty,
-                    price=product.price,
-                    total=int(product.qty) * int(product.price))
-                for product in cart
-            ]
-            response.update({"items": items})
+            response.update({"cart": items.get("cart"), "msg": "Success"})
             self.status_code = 200
+
+        return jsonify(response), self.status_code
+
+    def delete_cart_item(self, cart_id):
+        response = {}
+        result = select.select_single_cart_item(cart_id)
+        if result.get("msg") == "Empty":
+            return jsonify({"msg": "Cart item not found"}), 404
+
+        deleted = delete.delete_from_table("cart", cart_id)
+        if deleted.get("msg") == "Success":
+            update.update_stock_level(result.get("cart").get(
+                "product_id"), result.get("cart").get("quantity"), "del")
+
+            cart = select.select_cart_items(current_user.id)
+            response.update({
+                "cart": cart.get("cart"),
+                "msg": "Success"
+            })
+            self.status_code = 200
+        else:
+            response.update({"msg": "Server error"})
+            self.status_code = 500
+
         return jsonify(response), self.status_code
 
     def add_sales_record(self):
@@ -79,92 +101,22 @@ class SalesController:
             tuple: With a response message and a status code
         """
         response = {}
-        if self.is_table_empty(cart):
-            response.update({"cart": "Empty cart"})
+        cart_items = select.select_cart_items(current_user.id)
+        if cart_items.get("msg") == "Empty":
+            response.update({"msg": "Empty cart"})
             self.status_code = 404
-            return jsonify(response), self.status_code
-
-        order_number = secrets.token_hex(8)
-        user_id = "2067fe34"
-        if current_user:
-            user_id = current_user.id
-
-        for product in cart:
-            new_sale = Sale(
-                id=secrets.token_hex(4),
-                user_id=user_id,
-                order_number=order_number,
-                product_id=product.product_id,
-                qty=product.qty,
-                price=product.price,
-                product_name=product.name
-            )
-            sales_records.append(new_sale)
-            #  Reduce stock
-            self.reduce_stock(product.product_id, product.qty)
-        #  clear the shopping cart
-        self.clear_cart()
-
-        response.update({"msg": "Sales order submitted successfully"})
-        self.status_code = 200
+        else:
+            cart_items.update({"user_id": current_user.id})
+            response = insert.insert_salesorder(cart_items)
+            if response.get("msg") == "Success":
+                connection.clear_table("cart")
+                self.status_code = 200
+            else:
+                self.status_code = 500
 
         return jsonify(response), self.status_code
 
-    def is_product_in_cart(self, product_name):
-        """
-        Checks if product has already been added to the cart
-
-        Args:
-            product_name(str): Product to check for
-
-        Returns:
-            bool: True if found, False otherwise
-        """
-        found = False
-        if self.is_table_empty(cart):
-            return found
-
-        for product in cart:
-            if product.name == product_name:
-                found = True
-                break
-        return found
-
-    def update_qty_in_cart(self, product_id, qty):
-        """
-        Updates quantity if product is already in the cart
-
-        Args:
-            product_id(str): Product identifier
-            qty(int): Product quantity
-
-        Returns:
-            int: 1
-        """
-        for product in cart:
-            if product.product_id == product_id:
-                temp = int(product.qty)
-                temp += int(qty)
-                product.qty = str(temp)
-                break
-        return 1
-
-    def is_table_empty(self, table):
-        """
-        Checks if a relation is empty
-
-        Returns:
-            bool: True if empty, False otherwise
-        """
-        if len(table) == 0:
-            return True
-        return False
-
-    def clear_cart(self):
-        """Removes items from the shopping cart"""
-        cart.clear()
-
-    def get_all_sales_records(self):
+    def get_all_sales_records(self, data, option):
         """
         Retrieves all sales records from the database
 
@@ -172,93 +124,58 @@ class SalesController:
             tuple: With all sales records and a status code
         """
         response = {}
-        if self.is_table_empty(sales_records):
-            response.update({"sales": "No sales"})
-            self.status_code = 404
-        else:
-            items = [
-                dict(
-                    id=sales_item.id,
-                    user_id=sales_item.user_id,
-                    order_number=sales_item.order_number,
-                    product_id=sales_item.product_id,
-                    qty=sales_item.qty,
-                    product_name=sales_item.product_name,
-                    price=sales_item.price,
-                    created_at=sales_item.created_at,
-                    total=int(sales_item.price) * int(sales_item.qty))
-                for sales_item in sales_records
-            ]
-            response.update({"items": items})
+        query = """
+        SELECT id, user_id, created_at FROM salesorder WHERE created_at \
+        BETWEEN '{}'::DATE AND '{}'::DATE  ORDER BY created_at DESC
+        """.format(data.get('fro'), data.get('to'))
+
+        if len(data) == 0:
+            query = """
+            SELECT id, user_id, created_at FROM salesorder ORDER BY created_at DESC
+            """
+
+        if option == "single":
+            query = """
+            SELECT id, user_id, created_at FROM salesorder WHERE id = {}
+            """.format(data.get('sales_id'))
+
+        if option == "user" or data.get("user_id") and data.get("user_id") > 0:
+            query = """
+            SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
+            AND created_at BETWEEN '{}'::DATE AND '{}'::DATE ORDER BY created_at DESC
+            """.format(data.get('user_id'), data.get('fro'), data.get('to'))
+
+        response = select.select_sales_records(query)
+        if response.get("msg") == "Empty":
+            return jsonify({"msg": "No sales found"}), 404
+
+        if response.get("msg") == "Success":
             self.status_code = 200
+        else:
+            self.status_code = 500
 
         return jsonify(response), self.status_code
 
-    def get_single_sales_record(self, sales_id):
+    def get_user_sales_records(self, user_id):
         """
-        Retrieves a single sales records using the sales_id
-
-        Args:
-            sales_id(str): Sales record unique identifier
+        Retrieves all sales records created by a specific user
 
         Returns:
-            tuple: With a single sales record and a status code
+            tuple: With all sales records and a status code
         """
         response = {}
-        found = False
-        for sales_item in sales_records:
-            if sales_item.id == sales_id:
-                response.update({
-                    "id": sales_item.id,
-                    "user_id": sales_item.user_id,
-                    "name": sales_item.product_name,
-                    "price": sales_item.price,
-                    "qty": sales_item.qty,
-                    "total": int(sales_item.price) * int(sales_item.qty),
-                    "created_at": sales_item.created_at
-                })
-                found = True
-                break
-        if found:
+        query = """
+        SELECT id, user_id, created_at FROM salesorder WHERE user_id = {} \
+        ORDER BY created_at DESC
+        """.format(user_id)
+
+        response = select.select_sales_records(query)
+        if response.get("msg") == "Empty":
+            return jsonify({"msg": "No sales found"}), 404
+
+        if response.get("msg") == "Success":
             self.status_code = 200
-            return jsonify(response), self.status_code
+        else:
+            self.status_code = 500
 
-        response.update({"msg": "Sales record not found"})
-        self.status_code = 404
         return jsonify(response), self.status_code
-
-    def reduce_stock(self, product_id, quantity):
-        """
-        Reduces product quantity
-
-        Args:
-            product_id(str): Unique product identifier
-            quantity(int): Quantity sold
-
-        Returns:
-            int: 1
-        """
-        for product in product_list:
-            if product.id == product_id:
-                temp = int(product.quantity)
-                temp -= int(quantity)
-                product.quantity = temp
-                break
-        return 1
-
-    def is_product_out_of_stock(self, product_id):
-        """
-        Checks if an item is out of stock
-
-        Args:
-            product_id(str): Unique product identifier
-
-        Returns:
-            bool: True for out of stock, False otherwise
-        """
-        out_of_stock = False
-        for product in product_list:
-            if product.id == product_id and product.quantity <= 0:
-                out_of_stock = True
-                break
-        return out_of_stock

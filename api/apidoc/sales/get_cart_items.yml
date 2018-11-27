@@ -1,6 +1,6 @@
 |
 
-  Retrieves all items in the shopping cart
+  Requires that a sales attendant retrieves all items from the shopping cart
 
 ---
 produces:
@@ -14,12 +14,41 @@ parameters:
     required: true
 responses:
   200:
-    description: A list of all items in the shopping cart
-    example:
-      {
-        'id': '055ad1fd',
-        'name': 'Milk',
-        'price': 1500,
-        'qty': 4,
-        'total': 6000,
-      }
+    description: A success message and the cart items
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Success
+        cart:
+          type: array
+          items:
+            type: object
+  401:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Missing Authorization Header
+  403:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Attendants only
+  404:
+    description: An object containing error message
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Empty cart
+  500:
+    description: An object containing error messages
+    schema:
+      properties:
+        msg:
+          type: string
+          example: Internal server error

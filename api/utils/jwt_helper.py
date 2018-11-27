@@ -4,8 +4,8 @@ from flask_jwt_extended import (
 from flask import jsonify
 from functools import wraps
 
-from api import jwt
-from models.user import User
+from api import jwt, select
+from models.models import User
 
 
 def admin_required(fn):
@@ -51,7 +51,7 @@ def add_claims_to_access_token(user):
     """
     return {
         "id": user.id,
-        "name": user.name,
+        "fullname": user.fullname,
         "username": user.username,
         "roles": user.roles
     }
@@ -79,8 +79,20 @@ def user_loader_callback(identity):
 
     return User(
         id=claims["id"],
-        name=claims["name"],
+        fullname=claims["fullname"],
         username=identity,
         password="",
-        roles=claims["roles"]
+        roles=claims["roles"],
+        created_at=""
     )
+
+
+@jwt.token_in_blacklist_loader
+def token_loader_callback(decoded_token):
+    jti = decoded_token.get("jti")
+    stored_jti = select.select_all_records(
+        ["revoked"], "blacklists", where="jti", cell=jti, order="id", sort="ASC")
+    if stored_jti.get("msg") == "Empty":
+        return True
+    
+    return stored_jti.get("blacklists")[0].get("revoked")

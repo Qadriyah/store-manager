@@ -1,6 +1,6 @@
 |
 
-  Requires that the admin should enter the product name, product price and category to be able to add a new product
+  Requires that the admin should enter the new category name to be able to edit the category using the category Id
 
 ---
 produces:
@@ -12,14 +12,9 @@ parameters:
       type: integer
     required: true
   - in: body
-    name: product_name
+    name: category_name
     schema:
       type: string
-    required: true
-  - in: body
-    name: product_price
-    schema:
-      type: integer
     required: true
   - in: header
     name: Content-Type
@@ -27,34 +22,9 @@ parameters:
   - in: header
     name: Authorization
     required: true
-definitions:
-  products:
-    type: object
-    properties:
-      id:
-        type: integer
-        example: 1
-      category_id:
-        type: integer
-        example: 1
-      product_name:
-        type: string
-        example: iPhone X
-      product_price:
-        type: integer
-        example: 1500000
-      created_at:
-        type: string
-        example: 25/10/2018
-      modified_at:
-        type: string
-        example: 25/10/2018
-      status:
-        type: string
-        example: Active
 responses:
   200:
-    description: A success message and the added product
+    description: A success message and the edited category
     schema:
       properties:
         msg:
@@ -73,13 +43,7 @@ responses:
     description: An object containing error message
     schema:
       properties:
-        product_price:
-          type: string
-          example: product price should be an integer
-        product_name:
-          type: string
-          example: Product already exists
-        header:
+        msg:
           type: string
           example: Missing Authorization Header
   403:
@@ -89,6 +53,13 @@ responses:
         msg:
           type: string
           example: Admin previlidges required
+  404:
+    description: An object containing error message
+    schema:
+      properties:
+        category:
+          type: string
+          example: Category not found
   500:
     description: An object containing error messages
     schema:

@@ -1,18 +1,20 @@
-from flask import request, jsonify, render_template
+from flask import request, jsonify
 from flasgger import swag_from
 
 #  import user blueprint
 from . import user
-#  import authentication controller
-from . import controllers
-#  import data validator
-from api.validations.validate_user import ValidateUserInput
-from api.utils.jwt_helper import admin_required
-from api import app
-from api import swagger
 
-validator = ValidateUserInput()
+from . import controllers
+from api.utils.jwt_helper import admin_required
+from flask_jwt_extended import get_raw_jwt, jwt_required
+from api.validations.validation_schemas import (
+    login_schema, register_schema, update_user_schema
+)
+from api import validator
+from api.validations.validation_tests import Validation
+
 controller = controllers.AuthController()
+int_validator = Validation()
 
 
 @user.route("/register", methods=["POST"])
@@ -21,23 +23,12 @@ controller = controllers.AuthController()
 def register_user():
 
     if request.method == "POST":
-        name = request.form.get("name")
-        username = request.form.get("username")
-        password = request.form.get("password")
-        password2 = request.form.get("password2")
-        roles = request.form.get("roles")
+        data = request.json
+        err = validator.validate(data, register_schema)
+        if not err:
+            return jsonify(validator.errors), 400
 
-        if not name or not username or not password or not password2 or not roles:
-            return jsonify({"errors": "Server Erroe"}), 500
-
-        errors = validator.validate_login_input(request.form)
-        if not errors["is_true"]:
-            return jsonify(errors["errors"]), 400
-
-        result = validator.validate_input_data(request.form)
-        if not result["is_true"]:
-            return jsonify(result["errors"]), 400
-        return controller.register_user(request.form)
+        return controller.register_user(data)
 
 
 @user.route("/login", methods=["POST"])
@@ -45,17 +36,62 @@ def register_user():
 def login_user():
 
     if request.method == "POST":
-        if not request.form.get("username") or not request.form.get("password"):
-            return jsonify({"errors": "Server error"}), 500
+        data = request.json
+        err = validator.validate(data, login_schema)
+        if not err:
+            return jsonify(validator.errors), 400
 
-        result = validator.validate_login_input(request.form)
-        if not result["is_true"]:
-            return jsonify(result["errors"]), 401
-        return controller.login_user(request.form)
+        return controller.login_user(data)
 
 
-@app.route("/", methods=["GET"])
-def welcome_page():
-    return render_template(
-        "welcome.html"
-    )
+@user.route("/logout", methods=["DELETE"])
+@jwt_required
+def logout():
+    token = get_raw_jwt()
+    return controller.logout(token.get("jti"))
+
+
+@user.route("/users", methods=["GET"])
+@admin_required
+def get_users():
+    return controller.get_all_users('all')
+
+
+@user.route("/attendants", methods=["GET"])
+@jwt_required
+def get_sales_attendants():
+    return controller.get_all_users('attendant')
+
+
+@user.route("/users/<user_id>", methods=["GET"])
+@admin_required
+def get_single_user(user_id):
+    if request.method == "GET":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.get_single_user(user_id)
+
+
+@user.route("/users/delete/<user_id>", methods=["DELETE"])
+@admin_required
+def delete_user(user_id):
+    if request.method == "DELETE":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+        return controller.delete_user(user_id)
+
+
+@user.route("/users/edit/<user_id>", methods=["PUT"])
+@admin_required
+def edit_user(user_id):
+    if request.method == "PUT":
+        if not int_validator.validate_integer(user_id):
+            return jsonify({"msg": "Id should be an integer"}), 401
+
+        data = request.json
+        err = validator.validate(data, update_user_schema)
+        if not err:
+            return jsonify(validator.errors), 400
+
+        data.update({"user_id": user_id})
+        return controller.edit_user(data)

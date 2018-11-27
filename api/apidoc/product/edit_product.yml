@@ -1,6 +1,6 @@
 |
 
-  Requires that the admin should enter the product name, product price and category to be able to add a new product
+  Requires that the admin should enter the product name, product price and category to be able to edit the product
 
 ---
 produces:
@@ -27,34 +27,9 @@ parameters:
   - in: header
     name: Authorization
     required: true
-definitions:
-  products:
-    type: object
-    properties:
-      id:
-        type: integer
-        example: 1
-      category_id:
-        type: integer
-        example: 1
-      product_name:
-        type: string
-        example: iPhone X
-      product_price:
-        type: integer
-        example: 1500000
-      created_at:
-        type: string
-        example: 25/10/2018
-      modified_at:
-        type: string
-        example: 25/10/2018
-      status:
-        type: string
-        example: Active
 responses:
   200:
-    description: A success message and the added product
+    description: A success message and the edited product
     schema:
       properties:
         msg:
@@ -76,9 +51,9 @@ responses:
         product_price:
           type: string
           example: product price should be an integer
-        product_name:
+        category:
           type: string
-          example: Product already exists
+          example: Category does not exist
         header:
           type: string
           example: Missing Authorization Header
@@ -89,6 +64,13 @@ responses:
         msg:
           type: string
           example: Admin previlidges required
+  404:
+    description: An object containing error message
+    schema:
+      properties:
+        category:
+          type: string
+          example: Product not found
   500:
     description: An object containing error messages
     schema:

@@ -1,15 +1,16 @@
 import os
+import secrets
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
     """Common configurations"""
-    DEBUG = True
-    TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY: "mukunguB"
+    SECRET_KEY: secrets.token_hex(16)
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ["access"]
 
 
 class DevelopmentConfig(Config):
@@ -21,6 +22,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Testing configurations"""
     TESTING = True
+    DEBUG = True
 
 
 class ProductionConfig(Config):
@@ -29,7 +31,7 @@ class ProductionConfig(Config):
 
 
 app_settings = {
-    "development": "config.DevelopmentConfig",
-    "testing": "config.TestingConfig",
-    "production": "config.ProductionConfig"
+    "development": "config.config.DevelopmentConfig",
+    "testing": "config.config.TestingConfig",
+    "production": "config.config.ProductionConfig"
 }

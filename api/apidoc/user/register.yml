@@ -1,6 +1,6 @@
 |
 
-  Register requires that the admin should enter the
+  Register requires that the store owner/admin should enter the
   - Name 
   - Username
   - Password
@@ -12,27 +12,27 @@
 produces:
   - application/json
 parameters:
-  - in: formData
-    name: name
+  - in: body
+    name: fullname
     schema:
       type: string
     required: true
-  - in: formData
+  - in: body
     name: username
     schema:
       type: string
     required: true
-  - in: formData
+  - in: body
     name: password
     schema:
       type: string
     required: true
-  - in: formData
+  - in: body
     name: password2
     schema:
       type: string
     required: true
-  - in: formData
+  - in: body
     name: roles
     schema:
       type: string
@@ -44,16 +44,19 @@ parameters:
     name: Authorization
     required: true
 definitions:
-  User:
+  users:
     type: object
     properties:
       id:
+        type: integer
+        example: 1
+      fullname:
         type: string
-        example: 539c3032
-      name:
+        example: John Doe
+      username:
         type: string
         example: admin
-      username:
+      password:
         type: string
         example: admin
       roles:
@@ -62,14 +65,31 @@ definitions:
       created_at:
         type: string
         example: 25/10/2018
+      modified_at:
+        type: string
+        example: 25/10/2018
+  blacklists:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      token:
+        type: string
+        example: John Doe
+      created_at:
+        type: string
+        example: 25/10/2018
 responses:
   200:
-    description: An object containing a success message
+    description: A success message and a created user
     schema:
       properties:
         success:
           type: string
           example: User registered successfully
+        user:
+          type: object
   400:
     description: An object containing error messages
     schema:
@@ -77,6 +97,13 @@ responses:
         errors:
           type: string
           example: All fields are required
+  401:
+    description: An object containing error message
+    schema:
+      properties:
+        errors:
+          type: string
+          example: User already exists
   500:
     description: An object containing error messages
     schema:

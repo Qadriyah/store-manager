@@ -1,6 +1,6 @@
 # Store-Manager
 
-[![Build Status](https://travis-ci.org/Qadriyah/store-manager.svg?branch=api-v1)](https://travis-ci.org/Qadriyah/store-manager) [![Maintainability](https://api.codeclimate.com/v1/badges/40a62aea724af677d9cb/maintainability)](https://codeclimate.com/github/Qadriyah/store-manager/maintainability) [![Coverage Status](https://coveralls.io/repos/github/Qadriyah/store-manager/badge.svg?branch=api-v1)](https://coveralls.io/github/Qadriyah/store-manager?branch=Feat-api-v1) [![codecov](https://codecov.io/gh/Qadriyah/store-manager/branch/api-v1/graph/badge.svg)](https://codecov.io/gh/Qadriyah/store-manager) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/56edd9b9630a4b3ba39e22e5a9bd425e)](https://www.codacy.com/app/Qadriyah/store-manager?utm_source=github.com&utm_medium=referral&utm_content=Qadriyah/store-manager&utm_campaign=Badge_Grade_Dashboard)
+[![Build Status](https://travis-ci.org/Qadriyah/store-manager.svg?branch=api-v1-postgres-db)](https://travis-ci.org/Qadriyah/store-manager) [![Maintainability](https://api.codeclimate.com/v1/badges/40a62aea724af677d9cb/maintainability)](https://codeclimate.com/github/Qadriyah/store-manager/maintainability) [![Coverage Status](https://coveralls.io/repos/github/Qadriyah/store-manager/badge.svg?branch=api-v1-postgres-db)](https://coveralls.io/github/Qadriyah/store-manager?branch=api-v1-postgres-db) [![codecov](https://codecov.io/gh/Qadriyah/store-manager/branch/api-v1-postgres-db/graph/badge.svg)](https://codecov.io/gh/Qadriyah/store-manager) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/56edd9b9630a4b3ba39e22e5a9bd425e)](https://www.codacy.com/app/Qadriyah/store-manager?utm_source=github.com&utm_medium=referral&utm_content=Qadriyah/store-manager&utm_campaign=Badge_Grade_Dashboard)
 
 Store Manager is a web application that helps store owners manage sales and product inventory  records. This application is meant for use in a single store.
 
@@ -36,7 +36,7 @@ git checkout gh-pages
 ### Production ready code for the API endpoints
 
 ```
-git checkout api-v1
+git checkout api-v1-postgres-db
 ```
 
 ## Runing the tests
@@ -86,7 +86,7 @@ pytest test/test_validations.py -p no:warnings
 ## Links
 
 - [gh-pages](https://qadriyah.github.io/store-manager/UI/)
-- [herouk](https://pos-api-v1.herokuapp.com/apidocs)
+- [herouk](https://pos-api-v1.herokuapp.com)
 - [No documentation yet]()
 
 ## Usage
