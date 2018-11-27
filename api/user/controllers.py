@@ -115,6 +115,7 @@ class AuthController:
             response.update({"msg": "Username not found"})
             self.status_code = 404
         else:
+            return jsonify({"user": user})
             #  Check if password provided matches one in the database
             if bcrypt.check_password_hash(user.get("users")[0].get("password"),
                                           data.get("password")):
